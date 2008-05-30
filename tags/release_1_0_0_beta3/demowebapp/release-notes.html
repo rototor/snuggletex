@@ -1,0 +1,96 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type: text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="includes/physics.css" />
+    <title>SnuggleTeX - Release Notes</title>
+  </head>
+  <body>
+
+    <h2>Release Notes</h2>
+
+    <h3>Version 1.0.0-beta3 [r76] (29/05/08)</h3>
+
+    <ul>
+      <li>
+        Fixed silly bug in the handling of multi-line <tt>verbatim</tt> environments.
+      </li>
+      <li>
+        Fixed bug in the recording of the slices of compound tokens, introduced by
+        an earlier over-simplification to how this all worked.
+      </li>
+      <li>
+        Added belated support for <tt>\!</tt>. Need to test browser support for this...
+      </li>
+      <li>
+        Fixed handling of <tt>\hline</tt> inside tabular environments. I had forgotten that
+        this explicitly starts a new row!
+      </li>
+      <li>
+        Added support for verbatim-mode arguments in built-in commands and environments.
+        (We don't support having verbatim-mode content for environments yet, apart from
+        the usual <tt>verbatim</tt> environment.)
+      </li>
+      <li>
+        Added special <tt>\href</tt> macro to make it easy to create a hypertext link
+        with optional link text. (This may change before 1.0.0)
+      </li>
+      <li>
+        Added <tt>\xmlName</tt> command which takes a single argument (in verbatim mode)
+        and verifies that it is a proper XML Name.
+      </li>
+      <li>
+        Improved information provided by <tt>MessageFormatter</tt> class when expanding
+        out error messages.
+      </li>
+      <li>
+        Added support for <tt>\vert</tt> and <tt>\Vert</tt>, both as standalone operators
+        and as combiners for <tt>\left</tt> and <tt>\right</tt>. Changed the way math
+        bracket operators are represented internally to accommodate this as these are
+        the first examples where the openers and closers are identical, hence can't be
+        inferred.
+      </li>
+    </ul>
+
+    <hr />
+
+    <h3>Version 1.0.0-beta2 [r57] (20/05/08)</h3>
+
+    <ul>
+      <li>
+        Distribution ZIPs now package all files into a single base directory, which
+        is more convenient for users.
+      </li>
+      <li>
+        Binary ZIP distribution now contains a <tt>src.zip</tt> file containing the
+        SnuggleTeX source code (excluding classes for the test suite and demonstration
+        webapp) as a convenience for users of IDEs such as Eclipse.
+      </li>
+      <li>
+        MathML annotations are now generated correctly (when requested)
+      </li>
+      <li>
+        Added support for <tt>\hspace</tt> (and <tt>\hspace*</tt>, though without its
+        proper LaTeX semantics), including all units supported by LaTeX plus the
+        <tt>em</tt> amd <tt>ex</tt> units commonly used on the web.
+      </li>
+      <li>
+        Fixed an obscure bug when trying to generate XHTML errors for errors occurring
+        within a MathML element that has no parent XHTML element.
+      </li>
+      <li>
+        Certain math operators (e.g. summation) now generate limits using <tt>munder</tt>
+        and friends rather than <tt>msub</tt> et al when used in displaymath mode.
+      </li>
+      <li>
+        Added support for <tt>--</tt> and <tt>---</tt>, which result in the appropriate Unicode
+        dash characters.
+      </li>
+    </ul>
+
+    <hr />
+
+    <h3>Version 1.0.0-beta1 [r42] (13/05/08)</h3>
+
+    <p>First public beta release.</p>
+  </body>
+</html>

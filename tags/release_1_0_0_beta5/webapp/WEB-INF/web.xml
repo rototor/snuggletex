@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!--
+
+Web Deployment Descriptor for the SnuggleTeX Demo Application
+
+$Id:web.xml 158 2008-07-31 10:48:14Z davemckain $
+
+-->
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" version="2.4"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+  <display-name>SnuggleTeX</display-name>
+  <description>SnuggleTeX Documentation Webapp</description>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+
+  <!--
+  Set up Content Types for generated document, which maps to content produced (offline)
+  by SnuggleTeX during the Ant build process
+  -->
+  <mime-mapping>
+    <extension>xml</extension>
+    <mime-type>application/xhtml+xml</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>xhtml</extension>
+    <mime-type>application/xhtml+xml</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>tex</extension>
+    <mime-type>application/x-tex</mime-type>
+  </mime-mapping>
+
+  <servlet>
+    <description>
+      Processes and displays user-submitted input for demonstration purposes
+    </description>
+    <servlet-name>TryOutServlet</servlet-name>
+    <servlet-class>uk.ac.ed.ph.snuggletex.webapp.TryOutServlet</servlet-class>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>TryOutServlet</servlet-name>
+    <url-pattern>/tryout.xml</url-pattern>
+  </servlet-mapping>
+
+</web-app>

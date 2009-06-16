@@ -1,0 +1,45 @@
+\pageId{basicUsage}
+
+\subsection*{The \verb|SnuggleEngine|}
+
+To use SnuggleTeX, you first need to create a \verb|SnuggleEngine|:
+
+\begin{verbatim}SnuggleEngine engine = new SnuggleEngine();\end{verbatim}
+
+An instance of a \verb|SnuggleEngine| is thread-safe and can be used
+to perform as many conversions as you like. It houses a number of defaults,
+options, command and environment definitions that can be set if you want to
+perform a number of very similar conversion processes (which is quite common).
+See the \href[API Docs]{maven://apidocs/} for more information.
+
+Despite its heavy-weight name, creating and setting up a \verb|SnuggleEngine|
+is not expensive so don't worry about it!
+
+\subsection*{The \verb|SnuggleSession|}
+
+A \verb|SnuggleSession| represents a single SnuggleTeX conversion "job",
+which typically consists of the following steps:
+
+\begin{enumerate}
+  \item Parse one or more \href[\verb|SnuggleInput|s]{inputs.html}.
+  \item Generate one or more Outputs (either \href[XML/DOM Outputs]{dom-output.html}
+  or \href[Web Pages]{web-output.html}).
+  \item (Check for any \href[errors]{error-reporting.html} in the LaTeX reported
+        by the above proceses\ldots)
+\end{enumerate}
+
+To create a new \verb|SnuggleSession|, you use:
+
+\begin{verbatim}SnuggleSession session = engine.createSession();\end{verbatim}
+
+This creates a fresh job using the current default settings in your
+\verb|SnuggleEngine|. You can then call methods described in
+\href[Inputs]{inputs.html}, \href[Error Reporting]{error-reporting.html}
+and \href[Creating XML/DOM Outputs]{dom-output.html} or
+\href[Creating Web Pages]{web-output.html} to do whatever it is you want to do.
+
+See the \href[First Example]{first-example.html} for a simple working
+example of how everything comes together.
+
+You can discard a \verb|SnuggleSession| once it has done everything
+you need. (Note that a \verb|SnuggleSession| is \emph{not} thread safe.)

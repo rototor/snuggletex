@@ -6,8 +6,7 @@
 package uk.ac.ed.ph.snuggletex.internal;
 
 import uk.ac.ed.ph.snuggletex.SnuggleLogicException;
-import uk.ac.ed.ph.snuggletex.definitions.BuiltinEnvironment;
-import uk.ac.ed.ph.snuggletex.definitions.CorePackageDefinitions;
+import uk.ac.ed.ph.snuggletex.definitions.LaTeXMode;
 import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle.FontFamily;
 import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle.FontSize;
@@ -41,7 +40,8 @@ public final class StyleEvaluator {
     //-----------------------------------------
 
     public void evaluateStyles(RootToken rootToken) throws SnuggleParseException {
-        visitSiblings(rootToken.getContents(), makeRootStyle());
+        rootToken.setComputedStyle(makeRootStyle());
+        visitSiblings(rootToken.getContents(), rootToken.getComputedStyle());
     }
     
     //-----------------------------------------
@@ -50,16 +50,10 @@ public final class StyleEvaluator {
             throws SnuggleParseException {
         ComputedStyle currentStyle = scopeStyle;
         for (FlowToken token : content) {
+            /* Use current style */
             token.setComputedStyle(currentStyle);
-            if (token.hasInterpretationType(InterpretationType.STYLE_DECLARATION)) {
-                /* This is a style change, so compute effective style for next tokens.
-                 * 
-                 * Note that we associate the OLD style to THIS token. The new style will
-                 * be associated to successive tokens.
-                 */
-                currentStyle = mergeStyle(currentStyle, (StyleDeclarationInterpretation) token.getInterpretation(InterpretationType.STYLE_DECLARATION));
-            }
-            /* Then descend as appropriate */
+
+            /* Descend as appropriate */
             switch (token.getType()) {
                 case COMMAND:
                     visitCommand((CommandToken) token);
@@ -71,7 +65,7 @@ public final class StyleEvaluator {
                     
                 case BRACE_CONTAINER:
                     visitContainerContent(((BraceContainerToken) token).getBraceContent(), 
-                            newStyleScope(token.getComputedStyle()));
+                            newStyleScope(currentStyle));
                     break;
                     
                 case TEXT_MODE_TEXT:
@@ -88,55 +82,73 @@ public final class StyleEvaluator {
                 default:
                     throw new SnuggleLogicException("Unhandled type " + token.getType());
             }
+            
+            /* Note any style changes for subsequent tokens */
+            if (token.hasInterpretationType(InterpretationType.STYLE_DECLARATION)) {
+                /* This is a style change, so compute effective style for next tokens.
+                 * 
+                 * Note that we associate the OLD style to THIS token. The new style will
+                 * be associated to successive tokens.
+                 */
+                currentStyle = mergeStyle(currentStyle, (StyleDeclarationInterpretation) token.getInterpretation(InterpretationType.STYLE_DECLARATION));
+            }
         }
-    }
-    
-    private void visitContainerContent(ArgumentContainerToken parent, ComputedStyle scopeStyle) throws SnuggleParseException {
-        visitSiblings(parent.getContents(), scopeStyle);
     }
     
     private void visitCommand(CommandToken commandToken) throws SnuggleParseException {
         /* Visit arguments and content */
+        ComputedStyle argumentStyle = commandToken.getComputedStyle();
         ArgumentContainerToken optArgument = commandToken.getOptionalArgument();
         if (optArgument!=null) {
-            visitContainerContent(optArgument, commandToken.getComputedStyle());
+            visitContainerContent(optArgument, argumentStyle);
         }
         ArgumentContainerToken[] arguments = commandToken.getArguments();
         if (arguments!=null) {
             for (ArgumentContainerToken argument : arguments) {
-                visitContainerContent(argument, commandToken.getComputedStyle());
+                visitContainerContent(argument, argumentStyle);
             }
         }
     }
 
     private void visitEnvironment(EnvironmentToken environmentToken) throws SnuggleParseException {
-        /* Visit arguments (usually)...
-         * 
-         * We don't drill into the arguments of ENV_BRACKETED as that will end up with an infinite
-         * loop of parenthesis nesting!
-         */
-        BuiltinEnvironment environment = environmentToken.getEnvironment();
-        if (environment!=CorePackageDefinitions.ENV_BRACKETED) {
-            ArgumentContainerToken optArgument = environmentToken.getOptionalArgument();
-            if (optArgument!=null) {
-                visitContainerContent(optArgument, environmentToken.getComputedStyle());
-            }
-            ArgumentContainerToken[] arguments = environmentToken.getArguments();
-            if (arguments!=null) {
-                for (ArgumentContainerToken argument : arguments) {
-                    visitContainerContent(argument, environmentToken.getComputedStyle());
-                }
+        /* Visit arguments */
+        ComputedStyle argumentStyle = environmentToken.getComputedStyle();
+        ArgumentContainerToken optArgument = environmentToken.getOptionalArgument();
+        if (optArgument!=null) {
+            visitContainerContent(optArgument, argumentStyle);
+        }
+        ArgumentContainerToken[] arguments = environmentToken.getArguments();
+        if (arguments!=null) {
+            for (ArgumentContainerToken argument : arguments) {
+                visitContainerContent(argument, argumentStyle);
             }
         }
         
-        /* Visit content */
-        visitContainerContent(environmentToken.getContent(), environmentToken.getComputedStyle());
+        /* Now descend into content.
+         * 
+         * We use current style, unless we're transitioning into MATH mode, in which case the
+         * font size is inherited but the font family reverts to the default.
+         */
+        ComputedStyle contentStyle = environmentToken.getComputedStyle();
+        if (environmentToken.getEnvironment().getContentMode()==LaTeXMode.MATH && environmentToken.getLatexMode()!=LaTeXMode.MATH) {
+            /* We're transitioning into MATH mode.
+             * 
+             * MATH Mode inherits the current font size, but reverts font family
+             */
+            contentStyle = new ComputedStyle(contentStyle, FontFamily.NORMAL, contentStyle.getFontSize());
+        }
+        visitContainerContent(environmentToken.getContent(), contentStyle);
+    }
+    
+    private void visitContainerContent(ArgumentContainerToken parent, ComputedStyle scopeStyle) throws SnuggleParseException {
+        parent.setComputedStyle(scopeStyle);
+        visitSiblings(parent.getContents(), scopeStyle);
     }
     
     //-----------------------------------------
     
     private ComputedStyle makeRootStyle() {
-        return new ComputedStyle(null, FontFamily.RM, FontSize.NORMALSIZE);
+        return new ComputedStyle(null, FontFamily.NORMAL, FontSize.NORMALSIZE);
     }
     
     private ComputedStyle newStyleScope(ComputedStyle currentStyle) {

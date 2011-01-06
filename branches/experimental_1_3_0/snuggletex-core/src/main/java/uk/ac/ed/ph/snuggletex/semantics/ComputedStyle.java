@@ -18,6 +18,7 @@ import uk.ac.ed.ph.snuggletex.internal.util.ObjectDumperOptions;
 public final class ComputedStyle {
     
     public static enum FontFamily {
+        NORMAL,
         BF,
         RM,
         EM,

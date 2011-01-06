@@ -20,7 +20,6 @@ import uk.ac.ed.ph.snuggletex.tokens.EnvironmentToken;
 import uk.ac.ed.ph.snuggletex.tokens.FlowToken;
 import uk.ac.ed.ph.snuggletex.tokens.RootToken;
 import uk.ac.ed.ph.snuggletex.tokens.Token;
-import uk.ac.ed.ph.snuggletex.tokens.TokenType;
 
 import java.util.List;
 
@@ -49,49 +48,46 @@ public final class StyleEvaluator {
     
     private void visitSiblings(List<FlowToken> content, ComputedStyle scopeStyle)
             throws SnuggleParseException {
-        /* Compute resultant style for each token */
-        computeStyles(content, scopeStyle);
-        
-        /* Then descend into each token */
+        ComputedStyle currentStyle = scopeStyle;
         for (FlowToken token : content) {
-            visitToken(token);
-        }
-    }
-    
-    
-    private void visitToken(Token startToken) throws SnuggleParseException {
-        /* Dive into containers */
-        switch (startToken.getType()) {
-            case ARGUMENT_CONTAINER:
-                visitContainerContent((ArgumentContainerToken) startToken, newStyleScope(startToken.getComputedStyle()));
-                break;
-                
-            case COMMAND:
-                visitCommand((CommandToken) startToken);
-                break;
-                
-            case ENVIRONMENT:
-                visitEnvironment((EnvironmentToken) startToken);
-                break;
-                
-            case BRACE_CONTAINER:
-                visitContainerContent(((BraceContainerToken) startToken).getBraceContent(), 
-                        newStyleScope(startToken.getComputedStyle()));
-                break;
-                
-            case TEXT_MODE_TEXT:
-            case VERBATIM_MODE_TEXT:
-            case LR_MODE_NEW_PARAGRAPH:
-            case MATH_NUMBER:
-            case MATH_CHARACTER:
-            case ERROR:
-            case TAB_CHARACTER:
-            case NEW_PARAGRAPH:
-                /* Nothing to do here */
-                break;
-                
-            default:
-                throw new SnuggleLogicException("Unhandled type " + startToken.getType());
+            token.setComputedStyle(currentStyle);
+            if (token.hasInterpretationType(InterpretationType.STYLE_DECLARATION)) {
+                /* This is a style change, so compute effective style for next tokens.
+                 * 
+                 * Note that we associate the OLD style to THIS token. The new style will
+                 * be associated to successive tokens.
+                 */
+                currentStyle = mergeStyle(currentStyle, (StyleDeclarationInterpretation) token.getInterpretation(InterpretationType.STYLE_DECLARATION));
+            }
+            /* Then descend as appropriate */
+            switch (token.getType()) {
+                case COMMAND:
+                    visitCommand((CommandToken) token);
+                    break;
+                    
+                case ENVIRONMENT:
+                    visitEnvironment((EnvironmentToken) token);
+                    break;
+                    
+                case BRACE_CONTAINER:
+                    visitContainerContent(((BraceContainerToken) token).getBraceContent(), 
+                            newStyleScope(token.getComputedStyle()));
+                    break;
+                    
+                case TEXT_MODE_TEXT:
+                case VERBATIM_MODE_TEXT:
+                case LR_MODE_NEW_PARAGRAPH:
+                case MATH_NUMBER:
+                case MATH_CHARACTER:
+                case ERROR:
+                case TAB_CHARACTER:
+                case NEW_PARAGRAPH:
+                    /* Nothing to do here */
+                    break;
+                    
+                default:
+                    throw new SnuggleLogicException("Unhandled type " + token.getType());
+            }
         }
     }
     
@@ -138,7 +134,6 @@ public final class StyleEvaluator {
     }
     
     //-----------------------------------------
-    // Style computation (happens before mainstream fixing)
     
     private ComputedStyle makeRootStyle() {
         return new ComputedStyle(null, FontFamily.RM, FontSize.NORMALSIZE);
@@ -156,23 +151,5 @@ public final class StyleEvaluator {
         FontSize newFontSize = interpretation.getFontSize();
         return new ComputedStyle(currentStyle, newFontFamily!=null ? newFontFamily : currentStyle.getFontFamily(),
                 newFontSize!=null ?  newFontSize : currentStyle.getFontSize());
-    }
-    
-    private void computeStyles(List<FlowToken> tokens, ComputedStyle scopeStyle) {
-        FlowToken token;
-        ComputedStyle currentStyle = scopeStyle;
-        for (int i=0; i<tokens.size(); i++) { /* (This does fix-in-place as required) */
-            token = tokens.get(i);
-            if (token.hasInterpretationType(InterpretationType.STYLE_DECLARATION)) {
-                /* Compute effective style */
-                currentStyle = mergeStyle(currentStyle, (StyleDeclarationInterpretation) token.getInterpretation(InterpretationType.STYLE_DECLARATION));
-//                if (token.getType()==TokenType.COMMAND && ((CommandToken) token).getCommand().getArgumentCount()==0) {
-//                    /* Old style change commands like \bf and \it get removed from the tree here */
-//                    tokens.remove(i--);
-//                    continue;
-//                }
-            }
-            token.setComputedStyle(currentStyle);
-        }
     }
 }

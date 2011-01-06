@@ -1,0 +1,6 @@
+le->leq
+ge->geq
+lor->vee
+land->wedge
+lnot->neg
+emptyset->varnothing

@@ -5,6 +5,9 @@
  */
 package uk.ac.ed.ph.snuggletex.semantics;
 
+import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle.FontFamily;
+import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle.FontSize;
+
 /**
  * Represents styled text in either MATH and/or TEXT Modes.
  * 
@@ -13,29 +16,33 @@ package uk.ac.ed.ph.snuggletex.semantics;
  */
 public enum StyleDeclarationInterpretation implements TextInterpretation {
 
-    BF("div", "bf", "b",    null, "bold"),
-    RM("div", "rm", "span", "rm", "normal"),
-    EM("div", "em", "em",   null, "italic"),
-    IT("div", "it", "i",    null, "italic"),
-    TT("div", "tt", "tt",   null, "monospace"),
-    SC("div", "sc", "span", "sc", null),
-    SL("div", "sl", "span", "sl", null),
-    SF("div", "sf", "span", "sf", "sans-serif"),
+    BF(FontFamily.BF, null, "div", "bf", "b",    null, "bold"),
+    RM(FontFamily.RM, null, "div", "rm", "span", "rm", "normal"),
+    EM(FontFamily.EM, null, "div", "em", "em",   null, "italic"),
+    IT(FontFamily.IT, null, "div", "it", "i",    null, "italic"),
+    TT(FontFamily.TT, null, "div", "tt", "tt",   null, "monospace"),
+    SC(FontFamily.SC, null, "div", "sc", "span", "sc", null),
+    SL(FontFamily.SL, null, "div", "sl", "span", "sl", null),
+    SF(FontFamily.SF, null, "div", "sf", "span", "sf", "sans-serif"),
 
-    TINY("div", "tiny", "span", "tiny", null),
-    SCRIPTSIZE("div", "scriptsize", "span", "scriptsize", null),
-    FOOTNOTESIZE("div", "footnotesize", "span", "footnotesize", null),
-    SMALL("div", "small", "span", "small", null),
-    NORMALSIZE("div", "normalsize", "span", "normalsize", null),
-    LARGE("div", "large", "span", "large", null),
-    LARGE_2("div", "large2", "span", "large2", null),
-    LARGE_3("div", "large3", "span", "large3", null),
-    HUGE("div", "huge", "span", "huge", null),
-    HUGE_2("div", "huge2", "span", "huge2", null),
+    TINY(null, FontSize.TINY, "div", "tiny", "span", "tiny", null),
+    SCRIPTSIZE(null, FontSize.SCRIPTSIZE, "div", "scriptsize", "span", "scriptsize", null),
+    FOOTNOTESIZE(null, FontSize.FOOTNOTESIZE, "div", "footnotesize", "span", "footnotesize", null),
+    SMALL(null, FontSize.SMALL, "div", "small", "span", "small", null),
+    NORMALSIZE(null, FontSize.NORMALSIZE, "div", "normalsize", "span", "normalsize", null),
+    LARGE(null, FontSize.LARGE, "div", "large", "span", "large", null),
+    LARGE_2(null, FontSize.LARGE_2, "div", "large2", "span", "large2", null),
+    LARGE_3(null, FontSize.LARGE_3, "div", "large3", "span", "large3", null),
+    HUGE(null, FontSize.HUGE, "div", "huge", "span", "huge", null),
+    HUGE_2(null, FontSize.HUGE_2, "div", "huge2", "span", "huge2", null),
 
-    UNDERLINE("div", "underline", "span", "underline", null),
+    UNDERLINE(null, null, "div", "underline", "span", "underline", null),
     
     ;
+    
+    private final FontFamily fontFamily;
+    
+    private final FontSize fontSize;
     
     /** Name of resulting XHTML block element name */
     private final String targetBlockXHTMLElementName;
@@ -55,9 +62,12 @@ public enum StyleDeclarationInterpretation implements TextInterpretation {
      */
     private final String targetMathMLMathVariantName;
     
-    private StyleDeclarationInterpretation(final String targetBlockXHTMLElementName,
+    private StyleDeclarationInterpretation(final FontFamily fontFamily, final FontSize fontSize,
+            final String targetBlockXHTMLElementName,
             final String targetBlockCSSClassName, final String targetInlineXHTMLElementName,
             final String targetInlineCSSClassName, final String targetMathMLMathVariantName) {
+        this.fontFamily = fontFamily;
+        this.fontSize = fontSize;
         this.targetBlockXHTMLElementName = targetBlockXHTMLElementName;
         this.targetBlockCSSClassName = targetBlockCSSClassName;
         this.targetInlineXHTMLElementName = targetInlineXHTMLElementName;
@@ -65,6 +75,14 @@ public enum StyleDeclarationInterpretation implements TextInterpretation {
         this.targetMathMLMathVariantName = targetMathMLMathVariantName;
     }
     
+    public FontFamily getFontFamily() {
+        return fontFamily;
+    }
+
+    public FontSize getFontSize() {
+        return fontSize;
+    }
+
     public String getTargetBlockXHTMLElementName() {
         return targetBlockXHTMLElementName;
     }

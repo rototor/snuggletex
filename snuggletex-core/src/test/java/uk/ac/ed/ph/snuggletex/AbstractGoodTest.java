@@ -5,6 +5,7 @@ import uk.ac.ed.ph.snuggletex.internal.DOMBuildingController;
 import uk.ac.ed.ph.snuggletex.internal.LaTeXTokeniser;
 import uk.ac.ed.ph.snuggletex.internal.SessionContext;
 import uk.ac.ed.ph.snuggletex.internal.SnuggleInputReader;
+import uk.ac.ed.ph.snuggletex.internal.StyleEvaluator;
 import uk.ac.ed.ph.snuggletex.internal.TokenFixer;
 import uk.ac.ed.ph.snuggletex.internal.util.DumpMode;
 import uk.ac.ed.ph.snuggletex.internal.util.ObjectDumper;
@@ -33,6 +34,7 @@ public abstract class AbstractGoodTest {
     protected final String inputLaTeX;
     
     protected String rawDump = null;
+    protected String styledDump = null;
     protected String fixedDump = null;
     
     /**
@@ -87,6 +89,11 @@ public abstract class AbstractGoodTest {
         
         /* Make sure we got no errors */
         checkNoErrors(session);
+        
+        /* Evaluate styles */
+        StyleEvaluator styleEvaluator = new StyleEvaluator(session);
+        styleEvaluator.evaluateStyles(rootToken);
+        styledDump = ObjectDumper.dumpObject(rootToken, DumpMode.DEEP);
         
         /* Run token fixer */
         TokenFixer fixer = new TokenFixer(session);

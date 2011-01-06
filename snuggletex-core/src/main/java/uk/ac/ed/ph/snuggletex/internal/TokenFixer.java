@@ -58,15 +58,16 @@ public final class TokenFixer {
     
     //-----------------------------------------
     
-    private void visitSiblings(Token parent, List<FlowToken> content) throws SnuggleParseException {
+    private void visitSiblings(Token parent, List<FlowToken> content)
+            throws SnuggleParseException {
         /* Handle content as appropriate for the current mode */
         switch (parent.getLatexMode()) {
             case PARAGRAPH:
-                visitSiblingsParagraphMode(parent, content);
+                visitSiblingsParagraphMode(content);
                 break;
                 
             case LR:
-                visitSiblingsLRMode(parent, content);
+                visitSiblingsLRMode(content);
                 break;
                 
             case MATH:
@@ -124,11 +125,29 @@ public final class TokenFixer {
                 throw new SnuggleLogicException("Unhandled type " + startToken.getType());
         }
     }
+    
+    
+    private void visitContainerContent(ArgumentContainerToken parent) throws SnuggleParseException {
+        visitSiblings(parent, parent.getContents());
+    }
+    
+    private void visitCommand(CommandToken commandToken) throws SnuggleParseException {
+        /* (Currently no requirement for any specific handling for certain commands) */
+        
+        /* Visit arguments and content */
+        ArgumentContainerToken optArgument = commandToken.getOptionalArgument();
+        if (optArgument!=null) {
+            visitContainerContent(optArgument);
+        }
+        ArgumentContainerToken[] arguments = commandToken.getArguments();
+        if (arguments!=null) {
+            for (ArgumentContainerToken argument : arguments) {
+                visitContainerContent(argument);
+            }
+        }
+    }
 
     private void visitEnvironment(EnvironmentToken environmentToken) throws SnuggleParseException {
-        /* Compute Styles */
-        /* FIXME: This needs to go here! */
-        
         /* We may do special handling for certain environments */
         BuiltinEnvironment environment = environmentToken.getEnvironment();
         if (environment.hasInterpretation(InterpretationType.LIST)) {
@@ -160,93 +179,14 @@ public final class TokenFixer {
         visitContainerContent(environmentToken.getContent());
     }
     
-    private void visitCommand(CommandToken commandToken) throws SnuggleParseException {
-        /* (Currently no requirement for any specific handling for certain commands) */
-        
-        /* Visit arguments and content */
-        ArgumentContainerToken optArgument = commandToken.getOptionalArgument();
-        if (optArgument!=null) {
-            visitContainerContent(optArgument);
-        }
-        ArgumentContainerToken[] arguments = commandToken.getArguments();
-        if (arguments!=null) {
-            for (ArgumentContainerToken argument : arguments) {
-                visitContainerContent(argument);
-            }
-        }
-    }
-    
-    //-----------------------------------------
-    
-    private void visitContainerContent(ArgumentContainerToken parent) throws SnuggleParseException {
-        visitSiblings(parent, parent.getContents());
-    }
-    
-
-    
     //-----------------------------------------
     // PARAGRAPH mode stuff
     
-    /**
-     * NOTE: This does fix in place!
-     * 
-     * @throws SnuggleParseException 
-     */
-    private void visitSiblingsParagraphMode(Token parentToken, List<FlowToken> tokens) throws SnuggleParseException {
-        groupStyleCommands(parentToken, tokens);
+    private void visitSiblingsParagraphMode(List<FlowToken> tokens) throws SnuggleParseException {
         stripRedundantWhitespaceTokens(tokens);
         inferParagraphs(tokens);
         for (FlowToken token : tokens) {
             visitToken(token);
-        }
-    }
-    
-    /**
-     * We go through looking for old TeX "style" and sizing commands like
-     * 
-     * <tt>A \\bf B ...</tt>
-     * 
-     * and replace with more explicit environment versions:
-     * 
-     * <tt>A \begin{bf} B ... \end{bf}</tt>
-     *  
-     * to make things a bit easier to handle.
-     * <p>
-     * Only commands that take no arguments are handled this way, since LaTeX style commands like
-     * <tt>\\underline</tt> behave more like normal commands.
-     */
-    private void groupStyleCommands(Token parentToken, List<FlowToken> tokens) {
-        FlowToken token;
-        for (int i=0; i<tokens.size(); i++) { /* (This does fix-in-place) */
-            token = tokens.get(i);
-            if (token.getType()==TokenType.COMMAND && token.hasInterpretationType(InterpretationType.STYLE_DECLARATION)
-                    && ((CommandToken) token).getCommand().getArgumentCount()==0) {
-                /* Look up the corresponding environment (having the same name as the command) */
-                CommandToken commandToken = (CommandToken) token;
-                BuiltinCommand command = commandToken.getCommand();
-                BuiltinEnvironment environment = sessionContext.getBuiltinEnvironmentByTeXName(command.getTeXName());
-                if (environment==null) {
-                    throw new SnuggleLogicException("No environment defined to replace old TeX command " + command);
-                }
-                if (i+1<tokens.size()) {
-                    /* Replacement environment content is everything from after the token */
-                    FlowToken lastToken = tokens.get(tokens.size()-1);
-                    ArgumentContainerToken contentToken = ArgumentContainerToken.createFromContiguousTokens(parentToken, token.getLatexMode(), tokens, i+1, tokens.size());
-                    FrozenSlice replacementSlice = token.getSlice().rightOuterSpan(lastToken.getSlice());
-                    
-                    /* Now make replacement and remove all tokens that come afterwards */
-                    EnvironmentToken replacement = new EnvironmentToken(replacementSlice, token.getLatexMode(), environment, contentToken);
-                    tokens.set(i, replacement);
-                    tokens.subList(i+1, tokens.size()).clear();
-                }
-                else {
-                    /* Something like {\\bf}, which we'll convert to an empty environment */
-                    ArgumentContainerToken contentToken = ArgumentContainerToken.createEmptyContainer(token, token.getLatexMode());
-                    EnvironmentToken replacement = new EnvironmentToken(token.getSlice(), token.getLatexMode(), environment, contentToken);
-                    tokens.set(i, replacement);
-                }
-                break;
-            }
         }
     }
     
@@ -368,8 +308,7 @@ public final class TokenFixer {
      * 
      * @throws SnuggleParseException 
      */
-    private void visitSiblingsLRMode(Token parentToken, List<FlowToken> tokens) throws SnuggleParseException {
-        groupStyleCommands(parentToken, tokens);
+    private void visitSiblingsLRMode(List<FlowToken> tokens) throws SnuggleParseException {
         stripBlocks(tokens);
         for (FlowToken token : tokens) {
             visitToken(token);
@@ -580,7 +519,6 @@ public final class TokenFixer {
         if (!isStructural) {
             /* The order below is important in order to establish precedence */
             fixLeadingNegativeNumber(tokens);
-            groupStyleCommands(parentToken, tokens);
             fencePairedParentheses(parentToken, tokens); /* (Want to get parentheses first) */
             fixOverInstances(parentToken, tokens);
             inferParenthesisFences(parentToken, tokens);

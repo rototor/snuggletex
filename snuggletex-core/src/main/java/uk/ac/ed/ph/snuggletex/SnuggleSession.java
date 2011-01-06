@@ -15,6 +15,7 @@ import uk.ac.ed.ph.snuggletex.internal.LaTeXTokeniser;
 import uk.ac.ed.ph.snuggletex.internal.SessionContext;
 import uk.ac.ed.ph.snuggletex.internal.SnuggleInputReader;
 import uk.ac.ed.ph.snuggletex.internal.SnuggleParseException;
+import uk.ac.ed.ph.snuggletex.internal.StyleEvaluator;
 import uk.ac.ed.ph.snuggletex.internal.TokenFixer;
 import uk.ac.ed.ph.snuggletex.internal.WebPageBuilder;
 import uk.ac.ed.ph.snuggletex.internal.util.ConstraintUtilities;
@@ -104,6 +105,8 @@ public final class SnuggleSession implements SessionContext {
     /** {@link LaTeXTokeniser} used to parse inputs */
     private final LaTeXTokeniser tokeniser;
     
+    private final StyleEvaluator styleEvaluator;
+    
     /** {@link TokenFixer} used to massage inputs after parsing */
     private final TokenFixer tokenFixer;
     
@@ -153,6 +156,7 @@ public final class SnuggleSession implements SessionContext {
 
         /* Set up main worker Objects */
         this.tokeniser = new LaTeXTokeniser(this);
+        this.styleEvaluator = new StyleEvaluator(this);
         this.tokenFixer = new TokenFixer(this);
         
         /* Initialise session state */
@@ -169,6 +173,7 @@ public final class SnuggleSession implements SessionContext {
     SnuggleSession(final SnuggleSnapshot snapshot) {
         /* Set up main worker Objects */
         this.tokeniser = new LaTeXTokeniser(this);
+        this.styleEvaluator = new StyleEvaluator(this);
         this.tokenFixer = new TokenFixer(this);
         
         /* Copy stuff from the template */
@@ -214,9 +219,10 @@ public final class SnuggleSession implements SessionContext {
         /* Perform tokenisation, then fix up and store the results */
         try {
             SnuggleInputReader reader = new SnuggleInputReader(this, snuggleInput);
-            RootToken result = tokeniser.tokenise(reader);
-            tokenFixer.fixTokenTree(result);
-            parsedTokens.addAll(result.getContents());
+            RootToken rootToken = tokeniser.tokenise(reader);
+            styleEvaluator.evaluateStyles(rootToken);
+            tokenFixer.fixTokenTree(rootToken);
+            parsedTokens.addAll(rootToken.getContents());
         }
         catch (SnuggleParseException e) {
             return false;

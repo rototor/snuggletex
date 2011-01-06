@@ -6,13 +6,14 @@
 package uk.ac.ed.ph.snuggletex.tokens;
 
 import uk.ac.ed.ph.snuggletex.SnugglePackage;
-import uk.ac.ed.ph.snuggletex.internal.util.DumpMode;
-import uk.ac.ed.ph.snuggletex.internal.util.ObjectDumperOptions;
-import uk.ac.ed.ph.snuggletex.internal.util.ObjectUtilities;
 import uk.ac.ed.ph.snuggletex.definitions.BuiltinCommand;
 import uk.ac.ed.ph.snuggletex.definitions.LaTeXMode;
 import uk.ac.ed.ph.snuggletex.definitions.MathCharacter;
 import uk.ac.ed.ph.snuggletex.internal.FrozenSlice;
+import uk.ac.ed.ph.snuggletex.internal.util.DumpMode;
+import uk.ac.ed.ph.snuggletex.internal.util.ObjectDumperOptions;
+import uk.ac.ed.ph.snuggletex.internal.util.ObjectUtilities;
+import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.semantics.Interpretation;
 import uk.ac.ed.ph.snuggletex.semantics.InterpretationType;
 import uk.ac.ed.ph.snuggletex.semantics.MathCharacterInterpretation;
@@ -38,6 +39,8 @@ public abstract class Token {
     
     /** Interpretation(s) of this token, if it can be readily deduced from the input. May be null. */
     protected final EnumMap<InterpretationType, Interpretation> interpretationMap;
+    
+    protected ComputedStyle computedStyle;
     
     protected Token(final FrozenSlice slice, final TokenType type, final LaTeXMode latexMode,
             final Interpretation... interpretations) {
@@ -75,6 +78,15 @@ public abstract class Token {
     
     public Interpretation getInterpretation(InterpretationType type) {
         return interpretationMap!=null ? interpretationMap.get(type) : null;
+    }
+    
+    
+    public ComputedStyle getComputedStyle() {
+        return computedStyle;
+    }
+    
+    public void setComputedStyle(ComputedStyle computedStyle) {
+        this.computedStyle = computedStyle;
     }
     
     //------------------------------------------------------

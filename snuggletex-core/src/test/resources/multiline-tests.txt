@@ -439,3 +439,80 @@ Hello
 ----
 Hello
 ====
+#######################################################
+## Required fixes for SnuggleTeX 1.3.0
+A \bf B
+
+C
+----
+<p>A <b>B</b></p>
+<p><b>C</b></p>
+====
+A \begin{bf}B
+
+C\end{bf}
+----
+<p>A <b>B</b></p>
+<p><b>C</b></p>
+====
+A{ B
+
+C}
+----
+<p>A B</p>
+C
+====
+A \em B
+
+C
+----
+<p>A <em>B</em></p>
+<div class="em">C</div>
+====
+A {\em B
+
+C} D
+----
+<p>A <em>B</em></p>
+<p><em>C</em> D</p>
+====
+A {\Huge B
+
+C} D
+----
+<p>A <span class="Huge">B</span></p>
+<p><span class="Huge">C</span> D</p>
+====
+## But would be nice to have...
+\Huge{A
+
+B}
+----
+<div class="Huge">
+<p>A</p>
+<p>B</p>
+</div>
+====
+\begin{itemize}
+\item A
+\begin{em} \item B \end{em}
+\end{itemize}
+----
+<ul>
+  <li>A</li>
+  <li><span class="em">B</span></li>
+</ul>
+====
+## This one would be equivalent to \frac{a \bf b}{\bf c}
+$$ a \bf b \over c $$
+----
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mfrac>
+    <mrow>
+      <mi>a</mi>
+      <mstyle mathvariant="bold"><mi>b</mi></mstyle>
+    </mrow>
+    <mstyle mathvariant="bold"><mi>c</mi></mstyle>
+  </mfrac>
+</math>
+====

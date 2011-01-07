@@ -330,8 +330,9 @@ public final class TokenFixer {
             FlowToken token = tokens.get(i);
             if (token.getType()==TokenType.NEW_PARAGRAPH || token.isCommand(CorePackageDefinitions.CMD_PAR)) {
                 /* We'll replace with a space */
-                tokens.set(i, new SimpleToken(token.getSlice(), TokenType.LR_MODE_NEW_PARAGRAPH,
-                        LaTeXMode.LR, TextFlowContext.ALLOW_INLINE));
+                SimpleToken replacementToken = new SimpleToken(token.getSlice(), TokenType.LR_MODE_NEW_PARAGRAPH,
+                        LaTeXMode.LR, TextFlowContext.ALLOW_INLINE);
+                replaceToken(tokens, i, replacementToken);
             }
             else if (token.getType()==TokenType.ERROR) {
                 /* Keep errors as-is */
@@ -340,7 +341,7 @@ public final class TokenFixer {
                 /* We're not allowing blocks inside LR mode, which is more prescriptive but generally
                  * consistent with LaTeX.
                  */
-                tokens.set(i, createError(token, CoreErrorCode.TFEG00, token.getSlice().extract().toString()));
+                replaceToken(tokens, i, createError(token, CoreErrorCode.TFEG00, token.getSlice().extract().toString()));
             }
         }
     }
@@ -630,7 +631,7 @@ public final class TokenFixer {
                             ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, leftToken),
                             ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, maybePrimeToken),
                 });
-                replaceTokens(tokens, i, i+1, replacementToken);
+                replaceTokens(tokens, i, i+2, replacementToken);
                 /* Keep searching! */
             }
         }
@@ -671,7 +672,7 @@ public final class TokenFixer {
              */
             if (i==size-1) {
                 /* Error: Trailing subscript/superscript */
-                tokens.set(i, createError(token, CoreErrorCode.TFEM01));
+                replaceToken(tokens, i, createError(token, CoreErrorCode.TFEM01));
                 continue;
             }
             if (i==0) {
@@ -696,8 +697,7 @@ public final class TokenFixer {
                     /* OK, need to find the "T3" operator! */
                     if (i+3>=size) {
                         /* Trailing super/subscript */
-                        tokens.set(i-1, createError(token, CoreErrorCode.TFEM01));
-                        tokens.subList(i, i+3).clear();
+                        replaceTokens(tokens, i-1, i+3, createError(token, CoreErrorCode.TFEM01));
                         continue;
                     }
                     t3 = tokens.get(i+3);
@@ -706,8 +706,7 @@ public final class TokenFixer {
                     if ((tokenCodePoint=='^' && followingCodePoint=='^')
                             || (tokenCodePoint=='_' && followingCodePoint=='_')) {
                         /* Double super/subscript */
-                        tokens.set(i-1, createError(token, CoreErrorCode.TFEM02));
-                        tokens.subList(i, i+3).clear();
+                        replaceTokens(tokens, i-1, i+3, createError(token, CoreErrorCode.TFEM02));
                         continue;
                     }
                 }
@@ -768,7 +767,7 @@ public final class TokenFixer {
              */
             if (token.isCommand(CorePackageDefinitions.CMD_RIGHT)) {
                 /* Error: \right had not preceding \left */
-                tokens.set(i, createError(token, CoreErrorCode.TFEM03));
+                replaceToken(tokens, i, createError(token, CoreErrorCode.TFEM03));
                 continue LEFT_SEARCH;
             }
             else if (token.isCommand(CorePackageDefinitions.CMD_LEFT)) {
@@ -797,8 +796,7 @@ public final class TokenFixer {
                 }
                 if (matchingCloseBracketToken==null) {
                     /* Error: We never found a match for \\left so we'll kill the whole expression off */
-                    tokens.set(i, createError(token, CoreErrorCode.TFEM04));
-                    tokens.subList(i+1, tokens.size()).clear();
+                    replaceTokens(tokens, i, tokens.size(), createError(token, CoreErrorCode.TFEM04));
                     break LEFT_SEARCH;
                 }
                 /* Now replace this bracket with a fence */
@@ -948,6 +946,11 @@ public final class TokenFixer {
     //-----------------------------------------
     // Helpers
     
+    private void replaceToken(List<FlowToken> tokens, final int index, FlowToken replacementToken) {
+        replacementToken.setComputedStyle(tokens.get(index).getComputedStyle());
+        tokens.set(index, replacementToken);
+    }
+    
     /**
      * Replaces elements in the tokens List with the given replacement {@link Token}, starting
      * at the given startIndex (inclusive) up to endIndex (exclusive).
@@ -957,9 +960,8 @@ public final class TokenFixer {
      */
     private void replaceTokens(List<FlowToken> tokens, final int startIndex, final int endIndex,
             FlowToken replacementToken) {
-        replacementToken.setComputedStyle(tokens.get(startIndex).getComputedStyle());
-        tokens.set(startIndex, replacementToken);
-        if (endIndex>startIndex) {
+        replaceToken(tokens, startIndex, replacementToken);
+        if (endIndex>startIndex+1) {
             tokens.subList(startIndex+1, endIndex).clear();
         }
     }

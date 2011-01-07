@@ -52,15 +52,25 @@ public final class StyleEvaluator {
         for (FlowToken token : content) {
             /* Use current style */
             token.setComputedStyle(currentStyle);
+            
+            /* Note any style changes for subsequent tokens */
+            if (token.hasInterpretationType(InterpretationType.STYLE_DECLARATION)) {
+                /* This is a style change, so compute effective style for next tokens.
+                 * 
+                 * Note that we associate the OLD style to THIS token. The new style will
+                 * be associated to successive tokens.
+                 */
+                currentStyle = mergeStyle(currentStyle, (StyleDeclarationInterpretation) token.getInterpretation(InterpretationType.STYLE_DECLARATION));
+            }
 
             /* Descend as appropriate */
             switch (token.getType()) {
                 case COMMAND:
-                    visitCommand((CommandToken) token);
+                    visitCommand((CommandToken) token, currentStyle);
                     break;
                     
                 case ENVIRONMENT:
-                    visitEnvironment((EnvironmentToken) token);
+                    visitEnvironment((EnvironmentToken) token, currentStyle);
                     break;
                     
                 case BRACE_CONTAINER:
@@ -82,45 +92,33 @@ public final class StyleEvaluator {
                 default:
                     throw new SnuggleLogicException("Unhandled type " + token.getType());
             }
-            
-            /* Note any style changes for subsequent tokens */
-            if (token.hasInterpretationType(InterpretationType.STYLE_DECLARATION)) {
-                /* This is a style change, so compute effective style for next tokens.
-                 * 
-                 * Note that we associate the OLD style to THIS token. The new style will
-                 * be associated to successive tokens.
-                 */
-                currentStyle = mergeStyle(currentStyle, (StyleDeclarationInterpretation) token.getInterpretation(InterpretationType.STYLE_DECLARATION));
-            }
         }
     }
     
-    private void visitCommand(CommandToken commandToken) throws SnuggleParseException {
+    private void visitCommand(CommandToken commandToken, ComputedStyle currentStyle) throws SnuggleParseException {
         /* Visit arguments and content */
-        ComputedStyle argumentStyle = commandToken.getComputedStyle();
         ArgumentContainerToken optArgument = commandToken.getOptionalArgument();
         if (optArgument!=null) {
-            visitContainerContent(optArgument, argumentStyle);
+            visitContainerContent(optArgument, currentStyle);
         }
         ArgumentContainerToken[] arguments = commandToken.getArguments();
         if (arguments!=null) {
             for (ArgumentContainerToken argument : arguments) {
-                visitContainerContent(argument, argumentStyle);
+                visitContainerContent(argument, currentStyle);
             }
         }
     }
 
-    private void visitEnvironment(EnvironmentToken environmentToken) throws SnuggleParseException {
+    private void visitEnvironment(EnvironmentToken environmentToken, ComputedStyle currentStyle) throws SnuggleParseException {
         /* Visit arguments */
-        ComputedStyle argumentStyle = environmentToken.getComputedStyle();
         ArgumentContainerToken optArgument = environmentToken.getOptionalArgument();
         if (optArgument!=null) {
-            visitContainerContent(optArgument, argumentStyle);
+            visitContainerContent(optArgument, currentStyle);
         }
         ArgumentContainerToken[] arguments = environmentToken.getArguments();
         if (arguments!=null) {
             for (ArgumentContainerToken argument : arguments) {
-                visitContainerContent(argument, argumentStyle);
+                visitContainerContent(argument, currentStyle);
             }
         }
         
@@ -129,7 +127,7 @@ public final class StyleEvaluator {
          * We use current style, unless we're transitioning into MATH mode, in which case the
          * font size is inherited but the font family reverts to the default.
          */
-        ComputedStyle contentStyle = environmentToken.getComputedStyle();
+        ComputedStyle contentStyle = currentStyle;
         if (environmentToken.getEnvironment().getContentMode()==LaTeXMode.MATH && environmentToken.getLatexMode()!=LaTeXMode.MATH) {
             /* We're transitioning into MATH mode.
              * 

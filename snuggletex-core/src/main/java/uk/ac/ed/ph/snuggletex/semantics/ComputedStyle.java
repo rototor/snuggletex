@@ -17,29 +17,92 @@ import uk.ac.ed.ph.snuggletex.internal.util.ObjectDumperOptions;
 @ObjectDumperOptions(DumpMode.TO_STRING)
 public final class ComputedStyle {
     
+    public static final ComputedStyle DEFAULT_STYLE = new ComputedStyle(null, FontFamily.NORMAL, FontSize.NORMALSIZE);
+    
     public static enum FontFamily {
-        NORMAL,
-        BF,
-        RM,
-        EM,
-        IT,
-        TT,
-        SC,
-        SL,
-        SF,
+        NORMAL("div", "rm", "span", "rm", "normal"),
+        BF("div", "bf", "b", null, "bold"),
+        RM("div", "rm", "span", "rm", "normal"),
+        EM("div", "em", "em", null, "italic"),
+        IT("div", "it", "i", null, "italic"),
+        TT("div", "tt", "tt", null, "monospace"),
+        SC("div", "sc", "span", "sc", null),
+        SL("div", "sl", "span", "sl", null),
+        SF("div", "sf", "span", "sf", "sans-serif"),
+        ;
+        
+        /** Name of resulting XHTML block element name */
+        private final String targetBlockXHTMLElementName;
+        
+        /** Name of resulting CSS class for XHTML block elements */
+        private final String targetBlockCSSClassName;
+        
+        /** Name of resulting XHTML inline element name */
+        private final String targetInlineXHTMLElementName;
+        
+        /** Name of resulting CSS class for XHTML inline elements */
+        private final String targetInlineCSSClassName;
+        
+        /** 
+         * Name of 'variant' attribute in resulting MathML <mstyle/> element, if supported, or null
+         * if this style cannot be used in Math mode.
+         */
+        private final String targetMathMLMathVariantName;
+        
+        private FontFamily(final String targetBlockXHTMLElementName,
+                final String targetBlockCSSClassName, final String targetInlineXHTMLElementName,
+                final String targetInlineCSSClassName, final String targetMathMLMathVariantName) {
+            this.targetBlockXHTMLElementName = targetBlockXHTMLElementName;
+            this.targetBlockCSSClassName = targetBlockCSSClassName;
+            this.targetInlineXHTMLElementName = targetInlineXHTMLElementName;
+            this.targetInlineCSSClassName = targetInlineCSSClassName;
+            this.targetMathMLMathVariantName = targetMathMLMathVariantName;
+        }
+        
+        public String getTargetBlockXHTMLElementName() {
+            return targetBlockXHTMLElementName;
+        }
+        
+        public String getTargetBlockCSSClassName() {
+            return targetBlockCSSClassName;
+        }
+        
+        public String getTargetInlineXHTMLElementName() {
+            return targetInlineXHTMLElementName;
+        }
+
+        public String getTargetInlineCSSClassName() {
+            return targetInlineCSSClassName;
+        }
+        
+        public String getTargetMathMLMathVariantName() {
+            return targetMathMLMathVariantName;
+        }
     }
     
     public static enum FontSize {
-        TINY,
-        SCRIPTSIZE,
-        FOOTNOTESIZE,
-        SMALL,
-        NORMALSIZE,
-        LARGE,
-        LARGE_2,
-        LARGE_3,
-        HUGE,
-        HUGE_2,
+        
+        TINY("tiny"),
+        SCRIPTSIZE("scriptsize"),
+        FOOTNOTESIZE("footnotesize"),
+        SMALL("small"),
+        NORMALSIZE("normalsize"),
+        LARGE("large"),
+        LARGE_2("large2"),
+        LARGE_3("large3"),
+        HUGE("huge"),
+        HUGE_2("huge2"),
+        ;
+        
+        private final String targetCSSClassName;
+        
+        private FontSize(final String targetCSSClassName) {
+            this.targetCSSClassName = targetCSSClassName;
+        }
+        
+        public String getTargetCSSClassName() {
+            return targetCSSClassName;
+        }
     }
     
     private final ComputedStyle parentStyle;

@@ -16,6 +16,7 @@ import uk.ac.ed.ph.snuggletex.internal.SessionContext;
 import uk.ac.ed.ph.snuggletex.internal.SnuggleInputReader;
 import uk.ac.ed.ph.snuggletex.internal.SnuggleParseException;
 import uk.ac.ed.ph.snuggletex.internal.StyleEvaluator;
+import uk.ac.ed.ph.snuggletex.internal.StyleRebuilder;
 import uk.ac.ed.ph.snuggletex.internal.TokenFixer;
 import uk.ac.ed.ph.snuggletex.internal.WebPageBuilder;
 import uk.ac.ed.ph.snuggletex.internal.util.ConstraintUtilities;
@@ -110,6 +111,8 @@ public final class SnuggleSession implements SessionContext {
     /** {@link TokenFixer} used to massage inputs after parsing */
     private final TokenFixer tokenFixer;
     
+    private final StyleRebuilder styleRebuilder;
+    
     /** Configuration for this session */
     private final SessionConfiguration configuration;
     
@@ -158,6 +161,7 @@ public final class SnuggleSession implements SessionContext {
         this.tokeniser = new LaTeXTokeniser(this);
         this.styleEvaluator = new StyleEvaluator(this);
         this.tokenFixer = new TokenFixer(this);
+        this.styleRebuilder = new StyleRebuilder(this);
         
         /* Initialise session state */
         this.errors = new ArrayList<InputError>();
@@ -175,6 +179,7 @@ public final class SnuggleSession implements SessionContext {
         this.tokeniser = new LaTeXTokeniser(this);
         this.styleEvaluator = new StyleEvaluator(this);
         this.tokenFixer = new TokenFixer(this);
+        this.styleRebuilder = new StyleRebuilder(this);
         
         /* Copy stuff from the template */
         this.engine = snapshot.engine;
@@ -222,6 +227,7 @@ public final class SnuggleSession implements SessionContext {
             RootToken rootToken = tokeniser.tokenise(reader);
             styleEvaluator.evaluateStyles(rootToken);
             tokenFixer.fixTokenTree(rootToken);
+            styleRebuilder.rebuildStyles(rootToken);
             parsedTokens.addAll(rootToken.getContents());
         }
         catch (SnuggleParseException e) {

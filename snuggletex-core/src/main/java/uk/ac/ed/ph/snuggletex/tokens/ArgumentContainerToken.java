@@ -47,9 +47,14 @@ public final class ArgumentContainerToken extends Token implements Iterable<Flow
     
     public static ArgumentContainerToken createFromSingleToken(final LaTeXMode latexMode,
             final FlowToken content) {
+        return createFromSingleToken(latexMode, content, content.getComputedStyle());
+    }
+    
+    public static ArgumentContainerToken createFromSingleToken(final LaTeXMode latexMode,
+            final FlowToken content, final ComputedStyle computedStyle) {
         List<FlowToken> contentList = new ArrayList<FlowToken>();
         contentList.add(content);
-        return new ArgumentContainerToken(content.getSlice(), latexMode, contentList, content.getComputedStyle());
+        return new ArgumentContainerToken(content.getSlice(), latexMode, contentList, computedStyle);
     }
     
     public static ArgumentContainerToken createFromContiguousTokens(final Token parentToken,

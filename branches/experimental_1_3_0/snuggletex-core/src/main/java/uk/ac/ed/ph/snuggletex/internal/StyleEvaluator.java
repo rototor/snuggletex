@@ -41,7 +41,7 @@ public final class StyleEvaluator {
 
     public void evaluateStyles(RootToken rootToken) throws SnuggleParseException {
         if (!sessionContext.getConfiguration().isIgnoringStyling()) {
-            visitToken(rootToken, makeRootStyle());
+            visitToken(rootToken, ComputedStyle.DEFAULT_STYLE);
         }
     }
     
@@ -193,10 +193,6 @@ public final class StyleEvaluator {
     }
     
     //-----------------------------------------
-    
-    private ComputedStyle makeRootStyle() {
-        return new ComputedStyle(null, FontFamily.NORMAL, FontSize.NORMALSIZE);
-    }
     
     private ComputedStyle newStyleScope(ComputedStyle currentStyle) {
         if (currentStyle==null) {

@@ -6,13 +6,13 @@
 package uk.ac.ed.ph.snuggletex.internal;
 
 import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
+import uk.ac.ed.ph.snuggletex.DOMOutputOptions.ErrorOutputOptions;
 import uk.ac.ed.ph.snuggletex.ErrorCode;
 import uk.ac.ed.ph.snuggletex.InputError;
 import uk.ac.ed.ph.snuggletex.LinkResolver;
 import uk.ac.ed.ph.snuggletex.SnuggleConstants;
 import uk.ac.ed.ph.snuggletex.SnuggleLogicException;
 import uk.ac.ed.ph.snuggletex.SnuggleSession;
-import uk.ac.ed.ph.snuggletex.DOMOutputOptions.ErrorOutputOptions;
 import uk.ac.ed.ph.snuggletex.definitions.CoreErrorCode;
 import uk.ac.ed.ph.snuggletex.definitions.LaTeXMode;
 import uk.ac.ed.ph.snuggletex.definitions.MathCharacter;
@@ -24,6 +24,7 @@ import uk.ac.ed.ph.snuggletex.dombuilding.EqnArrayHandler;
 import uk.ac.ed.ph.snuggletex.internal.util.ArrayListStack;
 import uk.ac.ed.ph.snuggletex.internal.util.StringUtilities;
 import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
+import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.semantics.Interpretation;
 import uk.ac.ed.ph.snuggletex.semantics.InterpretationType;
 import uk.ac.ed.ph.snuggletex.semantics.MathFunctionInterpretation;
@@ -115,6 +116,8 @@ public final class DOMBuilder {
     /** Stack of active {@link MathVariantMap}s. */
     private final ArrayListStack<MathVariantMap> mathVariantMapStack;
     
+    private final ArrayListStack<ComputedStyle> textStyleStack;
+    
     //-------------------------------------------
     
     public DOMBuilder(final SessionContext sessionContext, final Element buildRootElement,
@@ -127,6 +130,7 @@ public final class DOMBuilder {
         this.currentInlineCSSProperties = null;
         this.outputContextStack = new ArrayListStack<OutputContext>();
         this.mathVariantMapStack = new ArrayListStack<MathVariantMap>();
+        this.textStyleStack = new ArrayListStack<ComputedStyle>();
     }
     
     //-------------------------------------------
@@ -144,10 +148,13 @@ public final class DOMBuilder {
         /* Reset state */
         outputContextStack.clear();
         mathVariantMapStack.clear();
+        textStyleStack.clear();
         
         /* Do work */
         outputContextStack.push(OutputContext.XHTML);
+        textStyleStack.push(ComputedStyle.DEFAULT_STYLE);
         handleTokens(buildRootElement, fixedTokens, true);
+        textStyleStack.pop();
         outputContextStack.pop();
         
         /* Perform state sanity check at end */
@@ -156,6 +163,9 @@ public final class DOMBuilder {
         }
         if (!outputContextStack.isEmpty()) {
             throw new SnuggleLogicException("outputContextStack was non-empty at end of DOM building process");
+        }
+        if (!textStyleStack.isEmpty()) {
+            throw new SnuggleLogicException("textStyleStack was non-empty at end of DOM building process");
         }
     }
     
@@ -213,6 +223,20 @@ public final class DOMBuilder {
     public boolean isBuildingMathMLIsland() {
         OutputContext currentOutputContext = getOutputContext();
         return currentOutputContext==OutputContext.MATHML_BLOCK || currentOutputContext==OutputContext.MATHML_INLINE;
+    }
+    
+    //-------------------------------------------
+    
+    public ComputedStyle getCurrentTextStyle() {
+        return textStyleStack.peek();
+    }
+    
+    public void pushTextStyle(ComputedStyle style) {
+        textStyleStack.push(style);
+    }
+    
+    public ComputedStyle popTextStyle() {
+        return textStyleStack.pop();
     }
     
     //-------------------------------------------

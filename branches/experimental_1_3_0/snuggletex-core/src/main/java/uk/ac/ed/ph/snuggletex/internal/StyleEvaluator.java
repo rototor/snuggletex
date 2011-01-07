@@ -63,7 +63,7 @@ public final class StyleEvaluator {
                 break;
                 
             case BRACE_CONTAINER:
-                visitContainerContent(((BraceContainerToken) token).getBraceContent(), 
+                visitSiblings(((BraceContainerToken) token).getContents(), 
                         newStyleScope(currentStyle));
                 break;
                 

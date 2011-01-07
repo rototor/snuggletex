@@ -62,7 +62,7 @@ public final class StyleRebuilder {
                 
             case BRACE_CONTAINER:
                 BraceContainerToken braceToken = (BraceContainerToken) token;
-                visitSiblings(braceToken.getBraceContent().getContents(), braceToken.getComputedStyle());
+                visitSiblings(braceToken.getContents(), braceToken.getComputedStyle());
                 break;
                 
             case TEXT_MODE_TEXT:

@@ -31,6 +31,7 @@ import uk.ac.ed.ph.snuggletex.tokens.Token;
 import uk.ac.ed.ph.snuggletex.tokens.TokenType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
@@ -102,7 +103,7 @@ public final class TokenFixer {
                 break;
                 
             case BRACE_CONTAINER:
-                visitContainerContent(((BraceContainerToken) startToken).getBraceContent());
+                visitSiblings(startToken, ((BraceContainerToken) startToken).getContents());
                 break;
                 
             case TEXT_MODE_TEXT:
@@ -675,8 +676,7 @@ public final class TokenFixer {
             }
             if (i==0) {
                 /* No token before sub/super, so we'll make a pretend one */
-                ArgumentContainerToken emptyBeforeContainer = ArgumentContainerToken.createEmptyContainer(parentToken, LaTeXMode.MATH, tokens.get(0).getComputedStyle());
-                t1 = new BraceContainerToken(emptyBeforeContainer.getSlice(), LaTeXMode.MATH, emptyBeforeContainer);
+                t1 = new BraceContainerToken(parentToken.getSlice(), LaTeXMode.MATH, Collections.<FlowToken>emptyList());
                 t1.setComputedStyle(tokens.get(0).getComputedStyle());
                 startModifyIndex = i;
             }

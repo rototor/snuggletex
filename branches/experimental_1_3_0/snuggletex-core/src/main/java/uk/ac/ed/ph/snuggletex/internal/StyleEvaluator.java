@@ -40,7 +40,9 @@ public final class StyleEvaluator {
     //-----------------------------------------
 
     public void evaluateStyles(RootToken rootToken) throws SnuggleParseException {
-        visitToken(rootToken, makeRootStyle());
+        if (!sessionContext.getConfiguration().isIgnoringStyling()) {
+            visitToken(rootToken, makeRootStyle());
+        }
     }
     
     //-----------------------------------------

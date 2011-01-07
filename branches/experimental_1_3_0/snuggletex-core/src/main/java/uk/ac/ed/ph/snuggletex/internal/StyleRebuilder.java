@@ -37,7 +37,9 @@ public final class StyleRebuilder {
     //-----------------------------------------
 
     public void rebuildStyles(RootToken rootToken) {
-        visitToken(rootToken);
+        if (!sessionContext.getConfiguration().isIgnoringStyling()) {
+            visitToken(rootToken);
+        }
     }
     
     //-----------------------------------------

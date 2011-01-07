@@ -1001,6 +1001,9 @@ public final class TokenFixer {
         FrozenSlice slice = token.getSlice();
         InputError error = new InputError(errorCode, slice, arguments);
         sessionContext.registerError(error);
-        return new ErrorToken(error, token.getLatexMode());
+        
+        ErrorToken result = new ErrorToken(error, token.getLatexMode());
+        result.setComputedStyle(token.getComputedStyle());
+        return result;
     }
 }

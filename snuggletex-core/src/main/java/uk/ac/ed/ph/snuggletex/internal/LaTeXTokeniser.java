@@ -784,11 +784,8 @@ public final class LaTeXTokeniser {
         ModeState result = tokeniseInNewState(TokenisationMode.BRACE, new StringTerminator("}"),
                 currentModeState.latexMode);
         
-        int endInnerIndex = result.foundTerminator ? position-1 : position;
         FrozenSlice braceOuterSlice = workingDocument.freezeSlice(openBraceIndex, position); /* Includes {...} */
-        FrozenSlice braceInnerSlice = workingDocument.freezeSlice(openBraceIndex+1, endInnerIndex); /* Without {...} */
-        ArgumentContainerToken braceContents = new ArgumentContainerToken(braceInnerSlice, openLaTeXMode, result.tokens);
-        return new BraceContainerToken(braceOuterSlice, openLaTeXMode, braceContents);
+        return new BraceContainerToken(braceOuterSlice, openLaTeXMode, result.tokens);
     }
     
     /** 

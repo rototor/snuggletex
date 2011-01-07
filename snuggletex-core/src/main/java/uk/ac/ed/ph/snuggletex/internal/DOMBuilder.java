@@ -304,7 +304,6 @@ public final class DOMBuilder {
             case BRACE_CONTAINER:
                 /* Create an appropriate content container */
                 BraceContainerToken braceToken = (BraceContainerToken) token;
-                ArgumentContainerToken content = braceToken.getBraceContent();
                 Element container = null;
                 if (braceToken.getLatexMode()==LaTeXMode.MATH) {
                     container = appendMathMLElement(parentElement, "mrow");
@@ -314,7 +313,7 @@ public final class DOMBuilder {
                 }
                 
                 /* Handle the children of this token */
-                handleTokens(container, content, true);
+                handleTokens(container, braceToken.getContents(), true);
                 
                 /* If we only added one child, we'll remove from the container and add directly
                  * to the tree instead.

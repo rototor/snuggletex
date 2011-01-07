@@ -114,6 +114,9 @@ public abstract class AbstractGoodXMLTest extends AbstractGoodTest {
                 if (fixedDump!=null) {
                     log.severe("Fixed dump was: " + fixedDump);
                 }
+                if (rebuiltDump!=null) {
+                    log.severe("Rebuilt dump was: " + rebuiltDump);
+                }
             }
             if (output!=null) {
                 log.severe("Expected output: " + expectedXML);

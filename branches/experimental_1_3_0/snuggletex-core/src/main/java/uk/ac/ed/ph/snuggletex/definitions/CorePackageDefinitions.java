@@ -17,6 +17,7 @@ import static uk.ac.ed.ph.snuggletex.definitions.TextFlowContext.ALLOW_INLINE;
 import static uk.ac.ed.ph.snuggletex.definitions.TextFlowContext.IGNORE;
 import static uk.ac.ed.ph.snuggletex.definitions.TextFlowContext.START_NEW_XHTML_BLOCK;
 
+import uk.ac.ed.ph.snuggletex.SnuggleLogicException;
 import uk.ac.ed.ph.snuggletex.SnugglePackage;
 import uk.ac.ed.ph.snuggletex.SnuggleRuntimeException;
 import uk.ac.ed.ph.snuggletex.dombuilding.AccentHandler;
@@ -26,6 +27,7 @@ import uk.ac.ed.ph.snuggletex.dombuilding.BoxHandler;
 import uk.ac.ed.ph.snuggletex.dombuilding.CharacterCommandHandler;
 import uk.ac.ed.ph.snuggletex.dombuilding.DoNothingHandler;
 import uk.ac.ed.ph.snuggletex.dombuilding.EnsureMathHandler;
+import uk.ac.ed.ph.snuggletex.dombuilding.EnvironmentHandler;
 import uk.ac.ed.ph.snuggletex.dombuilding.EqnArrayHandler;
 import uk.ac.ed.ph.snuggletex.dombuilding.GetVarHandler;
 import uk.ac.ed.ph.snuggletex.dombuilding.HSpaceHandler;
@@ -60,17 +62,21 @@ import uk.ac.ed.ph.snuggletex.dombuilding.XMLBlockElementHandler;
 import uk.ac.ed.ph.snuggletex.dombuilding.XMLInlineElementHandler;
 import uk.ac.ed.ph.snuggletex.dombuilding.XMLNameOrIdHandler;
 import uk.ac.ed.ph.snuggletex.dombuilding.XMLUnparseHandler;
+import uk.ac.ed.ph.snuggletex.internal.DOMBuilder;
 import uk.ac.ed.ph.snuggletex.semantics.Interpretation;
 import uk.ac.ed.ph.snuggletex.semantics.InterpretationType;
 import uk.ac.ed.ph.snuggletex.semantics.MathBracketInterpretation;
+import uk.ac.ed.ph.snuggletex.semantics.MathBracketInterpretation.BracketType;
 import uk.ac.ed.ph.snuggletex.semantics.MathIdentifierInterpretation;
 import uk.ac.ed.ph.snuggletex.semantics.MathOperatorInterpretation;
 import uk.ac.ed.ph.snuggletex.semantics.StyleDeclarationInterpretation;
-import uk.ac.ed.ph.snuggletex.semantics.MathBracketInterpretation.BracketType;
+import uk.ac.ed.ph.snuggletex.tokens.EnvironmentToken;
 import uk.ac.ed.ph.snuggletex.tokens.FlowToken;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import org.w3c.dom.Element;
 
 /**
  * This defines the default {@link SnugglePackage} (containing {@link BuiltinCommand} and
@@ -133,6 +139,7 @@ public final class CorePackageDefinitions {
     public static BuiltinEnvironment ENV_MATH;
     public static BuiltinEnvironment ENV_DISPLAYMATH;
     public static BuiltinEnvironment ENV_BRACKETED;
+    public static BuiltinEnvironment ENV_STYLE;
     
     private static final SnugglePackage corePackage;
 
@@ -496,7 +503,15 @@ public final class CorePackageDefinitions {
          * NOTE: The arguments for this actually end up being in MATH mode.
          */
         ENV_BRACKETED = corePackage.addEnvironment("<mfenced>", false, 2, MATH_MODE_ONLY, MATH, null, new MathFenceHandler(), null);
-
+        
+        /* FIXME: Document this! */
+        EnvironmentHandler styleHandler = new EnvironmentHandler() {
+            public void handleEnvironment(DOMBuilder builder, Element parentElement, EnvironmentToken token) {
+                throw new SnuggleLogicException("Not finished!");
+            }
+        };
+        ENV_STYLE = corePackage.addEnvironment("<style>", ALL_MODES, null, null, styleHandler, ALLOW_INLINE);
+        
         /* Environments for generating custom XML islands (see corresponding command versions as well) */
         corePackage.addEnvironment("xmlBlockElement", true, 2, ALL_MODES, null, null, new XMLBlockElementHandler(), START_NEW_XHTML_BLOCK);
         corePackage.addEnvironment("xmlInlineElement", true, 2, ALL_MODES, null, null, new XMLInlineElementHandler(), ALLOW_INLINE);

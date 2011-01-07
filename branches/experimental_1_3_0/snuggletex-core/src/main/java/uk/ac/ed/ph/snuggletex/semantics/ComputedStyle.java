@@ -65,6 +65,10 @@ public final class ComputedStyle {
     }
     
     
+    public boolean isEquivalentTo(ComputedStyle other) {
+        return fontFamily==other.fontFamily && fontSize==other.fontSize;
+    }
+    
     @Override
     public String toString() {
         return getClass().getSimpleName()

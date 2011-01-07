@@ -82,10 +82,6 @@ public final class TokenFixer {
             default:
                 throw new SnuggleLogicException("Unhandled mode " + parent.getLatexMode());
         }
-        /* Trim underlying ArrayLists once fixed up to use as little memory as possible */
-        if (content instanceof ArrayList) {
-            ((ArrayList<FlowToken>) content).trimToSize();
-        }
     }
     
     //-----------------------------------------
@@ -812,8 +808,8 @@ public final class TokenFixer {
                         CorePackageDefinitions.ENV_BRACKETED,
                         null,
                         new ArgumentContainerToken[] {
-                            ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, openBracketToken.getCombinerTarget()),
-                            ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, matchingCloseBracketToken.getCombinerTarget())
+                            ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, openBracketToken.getCombinerTarget(), openBracketToken.getComputedStyle()),
+                            ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, matchingCloseBracketToken.getCombinerTarget(), matchingCloseBracketToken.getComputedStyle())
                         },
                         ArgumentContainerToken.createFromContiguousTokens(parentToken, LaTeXMode.MATH, innerTokens, openBracketToken.getComputedStyle())
                 );
@@ -995,6 +991,7 @@ public final class TokenFixer {
                 null, /* No optional argument */
                 new ArgumentContainerToken[] { contentToken } /* Single argument containing content */
         );
+        result.setComputedStyle(computedStyle);
         itemBuilder.clear();
         return result;
     }

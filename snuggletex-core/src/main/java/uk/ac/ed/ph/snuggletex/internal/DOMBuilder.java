@@ -24,6 +24,8 @@ import uk.ac.ed.ph.snuggletex.internal.util.ArrayListStack;
 import uk.ac.ed.ph.snuggletex.internal.util.StringUtilities;
 import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
 import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle;
+import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle.FontFamily;
+import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle.FontSize;
 import uk.ac.ed.ph.snuggletex.semantics.Interpretation;
 import uk.ac.ed.ph.snuggletex.semantics.InterpretationType;
 import uk.ac.ed.ph.snuggletex.semantics.MathFunctionInterpretation;
@@ -221,20 +223,6 @@ public final class DOMBuilder {
     public boolean isBuildingMathMLIsland() {
         OutputContext currentOutputContext = getOutputContext();
         return currentOutputContext==OutputContext.MATHML_BLOCK || currentOutputContext==OutputContext.MATHML_INLINE;
-    }
-    
-    //-------------------------------------------
-    
-    public ComputedStyle getCurrentTextStyle() {
-        return textStyleStack.peek();
-    }
-    
-    public void pushTextStyle(ComputedStyle style) {
-        textStyleStack.push(style);
-    }
-    
-    public ComputedStyle popTextStyle() {
-        return textStyleStack.pop();
     }
     
     //-------------------------------------------
@@ -710,6 +698,63 @@ public final class DOMBuilder {
             }
         }
     }
+    
+    //-------------------------------------------
+    
+    public Element openStyle(Element parentElement, ComputedStyle newStyle, boolean hasBlockContent, boolean hasEmptyContent) {
+        Element builderElement = parentElement; /* Default if we can't do any sensible styling */
+        if (isBuildingMathMLIsland()) {
+            /* We're doing MathML. We create an <mstyle/> element, but only if we can reasonably
+             * handle this style.
+             * 
+             * NB: Currently we only support setting font family styles.
+             * 
+             * Note: Even though there is no \mathsc{...}, we can legally end up here if doing
+             * something like \mbox{\sc ....} so we'll ignore unsupported stylings, rather than
+             * failing.
+             * 
+             * Regression Note: If the content is truly empty, we'll generate an empty <mrow/>
+             * instead of an empty <mstyle/>
+             */
+            String mathVariantName = newStyle.getFontFamily().getTargetMathMLMathVariantName();
+            if (mathVariantName!=null && !hasEmptyContent) {
+                builderElement = appendMathMLElement(builderElement, "mstyle");
+                builderElement.setAttribute("mathvariant", mathVariantName);
+            }
+            else {
+                builderElement = appendMathMLElement(builderElement, "mrow");
+            }
+        }
+        else {
+            /* We're doing XHTML */
+            
+            /* Adjust font size if required */
+            ComputedStyle currentTextStyle = textStyleStack.peek();
+            FontSize newFontSize = newStyle.getFontSize();
+            if (newFontSize!=currentTextStyle.getFontSize()) {
+                builderElement = appendXHTMLElement(builderElement, hasBlockContent ? "div" : "span");
+                applyCSSStyle(builderElement, newFontSize.getTargetCSSClassName());
+            }
+            
+            /* Adjust font family if required */
+            FontFamily newFontFamily = newStyle.getFontFamily();
+            if (newFontFamily!=currentTextStyle.getFontFamily()) {
+                String elementName = hasBlockContent ? newFontFamily.getTargetBlockXHTMLElementName() : newFontFamily.getTargetInlineXHTMLElementName();
+                String cssClassName = hasBlockContent ? newFontFamily.getTargetBlockCSSClassName() : newFontFamily.getTargetInlineCSSClassName();
+                builderElement = appendXHTMLElement(builderElement, elementName);
+                if (cssClassName!=null) {
+                    applyCSSStyle(builderElement, cssClassName);
+                }
+            }
+        }
+        textStyleStack.push(newStyle);
+        return builderElement;
+    }
+    
+    public ComputedStyle closeStyle() {
+        return textStyleStack.pop();
+    }
+    
     
     //-------------------------------------------
     

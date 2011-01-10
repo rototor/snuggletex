@@ -474,7 +474,7 @@ A {\em B
 C} D
 ----
 <p>A <em>B</em></p>
-<div class="em"><p><em>C</em><span class="rm"> D</span></p></div>
+<div class="em"><p>C<span class="rm"> D</span></p></div>
 ====
 A {\huge B
 
@@ -499,7 +499,7 @@ B}
 ----
 <ul>
   <li>A</li>
-  <li><span class="em">B</span></li>
+  <li><div class="em">B</div></li>
 </ul>
 ====
 ## This one would be equivalent to \frac{a \bf b}{\bf c}

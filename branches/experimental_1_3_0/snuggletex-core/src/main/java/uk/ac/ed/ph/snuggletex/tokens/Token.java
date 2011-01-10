@@ -7,6 +7,7 @@ package uk.ac.ed.ph.snuggletex.tokens;
 
 import uk.ac.ed.ph.snuggletex.SnugglePackage;
 import uk.ac.ed.ph.snuggletex.definitions.BuiltinCommand;
+import uk.ac.ed.ph.snuggletex.definitions.BuiltinEnvironment;
 import uk.ac.ed.ph.snuggletex.definitions.LaTeXMode;
 import uk.ac.ed.ph.snuggletex.definitions.MathCharacter;
 import uk.ac.ed.ph.snuggletex.internal.FrozenSlice;
@@ -106,6 +107,10 @@ public abstract class Token {
     
     public boolean isCommand(BuiltinCommand command) {
         return this instanceof CommandToken && ((CommandToken) this).getCommand()==command;
+    }
+    
+    public boolean isEnvironment(BuiltinEnvironment environment) {
+        return this instanceof EnvironmentToken && ((EnvironmentToken) this).getEnvironment()==environment;
     }
     
     public MathCharacter getMathCharacter() {

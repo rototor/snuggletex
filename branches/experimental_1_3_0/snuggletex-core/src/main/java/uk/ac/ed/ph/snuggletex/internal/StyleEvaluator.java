@@ -26,6 +26,8 @@ import java.util.List;
  * This calculates the {@link ComputedStyle} for each raw parsed {@link Token}. It is
  * used directly after {@link LaTeXTokeniser} but before the {@link TokenFixer}.
  * 
+ * FIXME: Document exactly what this does to the tree!
+ * 
  * @author  David McKain
  * @version $Revision$
  */
@@ -41,53 +43,18 @@ public final class StyleEvaluator {
 
     public void evaluateStyles(RootToken rootToken) throws SnuggleParseException {
         if (!sessionContext.getConfiguration().isIgnoringStyling()) {
-            visitToken(rootToken, ComputedStyle.DEFAULT_STYLE);
+            rootToken.setComputedStyle(ComputedStyle.DEFAULT_STYLE);
+            visitSiblings(rootToken.getContents(), ComputedStyle.DEFAULT_STYLE);
         }
     }
     
     //-----------------------------------------
     
-    private void visitToken(Token token, ComputedStyle currentStyle) throws SnuggleParseException {
-        token.setComputedStyle(currentStyle);
-        switch (token.getType()) {
-            case ROOT:
-                visitSiblings(((RootToken) token).getContents(), currentStyle);
-                break;
-                
-            case COMMAND:
-                visitCommand((CommandToken) token, currentStyle);
-                break;
-                
-            case ENVIRONMENT:
-                visitEnvironment((EnvironmentToken) token, currentStyle);
-                break;
-                
-            case BRACE_CONTAINER:
-                visitSiblings(((BraceContainerToken) token).getContents(), 
-                        newStyleScope(currentStyle));
-                break;
-                
-            case TEXT_MODE_TEXT:
-            case VERBATIM_MODE_TEXT:
-            case LR_MODE_NEW_PARAGRAPH:
-            case MATH_NUMBER:
-            case MATH_CHARACTER:
-            case ERROR:
-            case TAB_CHARACTER:
-            case NEW_PARAGRAPH:
-                /* Nothing to do here */
-                break;
-                
-            default:
-                throw new SnuggleLogicException("Unhandled type " + token.getType());
-        }
-    }
-    
     private void visitSiblings(List<FlowToken> content, ComputedStyle scopeStyle)
             throws SnuggleParseException {
         ComputedStyle currentStyle = scopeStyle;
         FlowToken token;
-        for (int index=0; index<content.size(); ) {
+        for (int index=0; index<content.size(); ) { /* (The siblings will be fixed in place here) */
             token = content.get(index);
             
             /* Evaluate and then handle any style change tokens, which are all either commands
@@ -133,9 +100,37 @@ public final class StyleEvaluator {
                 continue;
             }
             
-            /* For non-style change tokens, we'll descend down the parse tree as appropriate */
-            visitToken(token, currentStyle);
-            
+            /* For non style change tokens, we tell it what the current ComputedStyle is and
+             * then descend into its parse subtree as appropriate */
+            token.setComputedStyle(currentStyle);
+            switch (token.getType()) {
+                case COMMAND:
+                    visitCommand((CommandToken) token, currentStyle);
+                    break;
+                    
+                case ENVIRONMENT:
+                    visitEnvironment((EnvironmentToken) token, currentStyle);
+                    break;
+                    
+                case BRACE_CONTAINER:
+                    BraceContainerToken braceToken = (BraceContainerToken) token;
+                    visitSiblings(braceToken.getContents(), newStyleScope(currentStyle));
+                    break;
+                    
+                case TEXT_MODE_TEXT:
+                case VERBATIM_MODE_TEXT:
+                case LR_MODE_NEW_PARAGRAPH:
+                case MATH_NUMBER:
+                case MATH_CHARACTER:
+                case ERROR:
+                case TAB_CHARACTER:
+                case NEW_PARAGRAPH:
+                    /* Nothing to do here */
+                    break;
+                    
+                default:
+                    throw new SnuggleLogicException("Unhandled/unexpected TokenType " + token.getType());
+            }
             index++; /* (Since we kept this token, next iteration looks at the next token) */
         }
     }
@@ -157,9 +152,9 @@ public final class StyleEvaluator {
                 visitContainerContent(argument, currentStyle);
             }
         }
-        FlowToken combinerTarget = commandToken.getCombinerTarget();
+        ArgumentContainerToken combinerTarget = commandToken.getCombinerTarget();
         if (combinerTarget!=null) {
-            visitToken(combinerTarget, currentStyle);
+            visitContainerContent(combinerTarget, currentStyle);
         }
     }
 

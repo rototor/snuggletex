@@ -31,7 +31,6 @@ import uk.ac.ed.ph.snuggletex.tokens.Token;
 import uk.ac.ed.ph.snuggletex.tokens.TokenType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
@@ -59,9 +58,17 @@ public final class TokenFixer {
     }
     
     //-----------------------------------------
+
     
     private void visitSiblings(Token parent, List<FlowToken> content)
             throws SnuggleParseException {
+        /* Unwind fully braced groups */
+        while (content.size()==1 && content.get(0).getType()==TokenType.BRACE_CONTAINER) {
+            List<FlowToken> innerContent = ((BraceContainerToken) content.get(0)).getContents();
+            content.clear();
+            content.addAll(innerContent);
+        }
+        
         /* Handle content as appropriate for the current mode */
         switch (parent.getLatexMode()) {
             case PARAGRAPH:
@@ -85,6 +92,8 @@ public final class TokenFixer {
         }
     }
     
+
+    
     //-----------------------------------------
     
     private void visitToken(Token startToken) throws SnuggleParseException {
@@ -102,9 +111,10 @@ public final class TokenFixer {
                 visitEnvironment((EnvironmentToken) startToken);
                 break;
                 
-            case BRACE_CONTAINER:
-                visitSiblings(startToken, ((BraceContainerToken) startToken).getContents());
-                break;
+//            case BRACE_CONTAINER:
+//                BraceContainerToken braceContainer = (BraceContainerToken) startToken;
+//                visitSiblings(braceContainer, braceContainer.getContents());
+//                break;
                 
             case TEXT_MODE_TEXT:
             case VERBATIM_MODE_TEXT:
@@ -121,13 +131,18 @@ public final class TokenFixer {
                         + startToken);
                 
             default:
-                throw new SnuggleLogicException("Unhandled type " + startToken.getType());
+                throw new SnuggleLogicException("Unhandled/unexpected TokenType " + startToken.getType());
         }
     }
     
-    
     private void visitContainerContent(ArgumentContainerToken parent) throws SnuggleParseException {
         visitSiblings(parent, parent.getContents());
+    }
+    
+    private void visitChildren(List<FlowToken> tokens) throws SnuggleParseException {
+        for (FlowToken token : tokens) {
+            visitToken(token);
+        }
     }
     
     private void visitCommand(CommandToken commandToken) throws SnuggleParseException {
@@ -178,15 +193,28 @@ public final class TokenFixer {
         visitContainerContent(environmentToken.getContent());
     }
     
+    private void flattenBraceContainers(List<FlowToken> tokens) {
+        FlowToken token;
+        for (int index=0; index<tokens.size(); ) {
+            token = tokens.get(index);
+            if (token.getType()==TokenType.BRACE_CONTAINER) {
+                List<FlowToken> braceContent = ((BraceContainerToken) token).getContents();
+                tokens.remove(index);
+                tokens.addAll(index, braceContent);
+                continue; /* Continue from the same index in case of deep braces */
+            }
+            index++;
+        }
+    }
+    
     //-----------------------------------------
     // PARAGRAPH mode stuff
     
     private void visitSiblingsParagraphMode(List<FlowToken> tokens) throws SnuggleParseException {
+        flattenBraceContainers(tokens);
         stripRedundantWhitespaceTokens(tokens);
         inferParagraphs(tokens);
-        for (FlowToken token : tokens) {
-            visitToken(token);
-        }
+        visitChildren(tokens);
     }
     
     /**
@@ -305,16 +333,10 @@ public final class TokenFixer {
     //-----------------------------------------
     // LR mode stuff
     
-    /**
-     * NOTE: This does fix in place!
-     * 
-     * @throws SnuggleParseException 
-     */
     private void visitSiblingsLRMode(List<FlowToken> tokens) throws SnuggleParseException {
+        flattenBraceContainers(tokens);
         stripBlocks(tokens);
-        for (FlowToken token : tokens) {
-            visitToken(token);
-        }
+        visitChildren(tokens);
     }
     
     /**
@@ -546,10 +568,11 @@ public final class TokenFixer {
             fixPrimes(tokens);
         }
         
+        /* Then flatten braces */
+        flattenBraceContainers(tokens);
+        
         /* Visit each sub-token */
-        for (FlowToken token : tokens) {
-            visitToken(token);
-        }
+        visitChildren(tokens);
     }
     
     /**
@@ -594,18 +617,20 @@ public final class TokenFixer {
             }
         }
         if (overIndex!=-1) {
-            /* OK, we've got {... \over ...} which we'll convert into \frac{...}{...} */
+            /* OK, we've got {... \over ...} which we'll convert into \frac{...}{...}.
+             * Each argument will assume the style that was in place at the start of the original
+             * \over expression.
+             */
             List<FlowToken> beforeTokens = new ArrayList<FlowToken>(tokens.subList(0, overIndex));
             List<FlowToken> afterTokens = new ArrayList<FlowToken>(tokens.subList(overIndex+1, tokens.size()));
             ComputedStyle beforeStyle = tokens.get(0).getComputedStyle();
-            ComputedStyle afterStyle = overIndex<tokens.size()-1 ? tokens.get(overIndex+1).getComputedStyle() : tokens.get(overIndex).getComputedStyle();
             CommandToken replacementToken = new CommandToken(parentToken.getSlice(),
                     LaTeXMode.MATH,
                     CorePackageDefinitions.CMD_FRAC,
                     null, /* No optional arg */
                     new ArgumentContainerToken[] {
                         ArgumentContainerToken.createFromContiguousTokens(parentToken, LaTeXMode.MATH, beforeTokens, beforeStyle), /* Numerator */
-                        ArgumentContainerToken.createFromContiguousTokens(parentToken, LaTeXMode.MATH, afterTokens, afterStyle)  /* Denominator */
+                        ArgumentContainerToken.createFromContiguousTokens(parentToken, LaTeXMode.MATH, afterTokens, beforeStyle)  /* Denominator */
             });
             replaceTokens(tokens, 0, tokens.size(), replacementToken);
         }
@@ -651,6 +676,7 @@ public final class TokenFixer {
         int size, startModifyIndex;
         FlowToken token;
         FlowToken t1, t2, t3;
+        ArgumentContainerToken t1Result, t2Result, t3Result;
         int tokenCodePoint;
         int followingCodePoint;
         boolean isSubOrSuper;
@@ -676,37 +702,40 @@ public final class TokenFixer {
                 continue;
             }
             if (i==0) {
-                /* No token before sub/super, so we'll make a pretend one */
-                t1 = new BraceContainerToken(parentToken.getSlice(), LaTeXMode.MATH, Collections.<FlowToken>emptyList());
-                t1.setComputedStyle(tokens.get(0).getComputedStyle());
+                /* No token before sub/super, so we'll eventually create an empty container for it */
+                t1 = token;
+                t1Result = ArgumentContainerToken.createEmptyContainer(parentToken, LaTeXMode.MATH, tokens.get(0).getComputedStyle());
                 startModifyIndex = i;
             }
             else {
                 /* Found token before sub/super */
                 t1 = tokens.get(i-1);
+                t1Result = ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, t1);
                 startModifyIndex = i-1;
             }
             t2 = tokens.get(i+1);
+            t2Result = ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, t2);
             
             /* See if there's another '^' or '_' afterwards */
             t3 = null;
-            followingCodePoint = 0;
+            t3Result = null;
             if (i+2<size) {
                 followingCodePoint = tokens.get(i+2).getMathCharacterCodePoint();
                 if (followingCodePoint=='_' || followingCodePoint=='^') {
                     /* OK, need to find the "T3" operator! */
                     if (i+3>=size) {
                         /* Trailing super/subscript */
-                        replaceTokens(tokens, i-1, i+3, createError(token, CoreErrorCode.TFEM01));
+                        replaceTokens(tokens, startModifyIndex, i+3, createError(token, CoreErrorCode.TFEM01));
                         continue;
                     }
                     t3 = tokens.get(i+3);
+                    t3Result = ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, t3);
                     
                     /* Make sure we've got the right pair of operators e.g. not something like T1^T2^T3 */
                     if ((tokenCodePoint=='^' && followingCodePoint=='^')
                             || (tokenCodePoint=='_' && followingCodePoint=='_')) {
                         /* Double super/subscript */
-                        replaceTokens(tokens, i-1, i+3, createError(token, CoreErrorCode.TFEM02));
+                        replaceTokens(tokens, startModifyIndex, i+3, createError(token, CoreErrorCode.TFEM02));
                         continue;
                     }
                 }
@@ -715,7 +744,7 @@ public final class TokenFixer {
             FrozenSlice replacementSlice;
             BuiltinCommand replacementCommand;
             if (t3!=null) {
-                /* Create replacement, replacing tokens at i-1,i+1,i+2 and i+3 */
+                /* Create replacement, replacing tokens at startModifyIndex up to i+3 */
                 replacementSlice = t1.getSlice().rightOuterSpan(t3.getSlice());
                 replacementCommand = CorePackageDefinitions.CMD_MSUBSUP_OR_MUNDEROVER;
                 CommandToken replacementToken = new CommandToken(replacementSlice,
@@ -723,22 +752,22 @@ public final class TokenFixer {
                         replacementCommand,
                         null, /* No optional args */
                         new ArgumentContainerToken[] {
-                            ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, t1),
-                            firstIsSuper ? ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, t3) : ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, t2),
-                            firstIsSuper ? ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, t2) : ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, t3)        
+                            t1Result,
+                            firstIsSuper ? t3Result : t2Result,
+                            firstIsSuper ? t2Result : t3Result        
                 });
                 replaceTokens(tokens, startModifyIndex, i+4, replacementToken);
             }
             else {
-                /* Just replace tokens at i-1, i, i+1 */
+                /* Just replace tokens at startModifyIndex up to i+2 */
                 replacementSlice = t1.getSlice().rightOuterSpan(t2.getSlice());
                 replacementCommand = firstIsSuper ? CorePackageDefinitions.CMD_MSUP_OR_MOVER : CorePackageDefinitions.CMD_MSUB_OR_MUNDER;
                 CommandToken replacementToken = new CommandToken(replacementSlice, LaTeXMode.MATH,
                         replacementCommand,
                         null, /* No optional args */
                         new ArgumentContainerToken[] {
-                            ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, t1),
-                            ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, t2)
+                            t1Result,
+                            t2Result
                 });
                 replaceTokens(tokens, startModifyIndex, i+2, replacementToken);
             }
@@ -806,8 +835,8 @@ public final class TokenFixer {
                         CorePackageDefinitions.ENV_BRACKETED,
                         null,
                         new ArgumentContainerToken[] {
-                            ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, openBracketToken.getCombinerTarget(), openBracketToken.getComputedStyle()),
-                            ArgumentContainerToken.createFromSingleToken(LaTeXMode.MATH, matchingCloseBracketToken.getCombinerTarget(), matchingCloseBracketToken.getComputedStyle())
+                            ArgumentContainerToken.createFromContiguousTokens(parentToken, LaTeXMode.MATH, openBracketToken.getCombinerTarget().getContents(), openBracketToken.getComputedStyle()),
+                            ArgumentContainerToken.createFromContiguousTokens(parentToken, LaTeXMode.MATH, matchingCloseBracketToken.getCombinerTarget().getContents(), matchingCloseBracketToken.getComputedStyle())
                         },
                         ArgumentContainerToken.createFromContiguousTokens(parentToken, LaTeXMode.MATH, innerTokens, openBracketToken.getComputedStyle())
                 );

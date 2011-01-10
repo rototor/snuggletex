@@ -14,7 +14,6 @@ import uk.ac.ed.ph.snuggletex.SnuggleConstants;
 import uk.ac.ed.ph.snuggletex.SnuggleLogicException;
 import uk.ac.ed.ph.snuggletex.SnuggleSession;
 import uk.ac.ed.ph.snuggletex.definitions.CoreErrorCode;
-import uk.ac.ed.ph.snuggletex.definitions.LaTeXMode;
 import uk.ac.ed.ph.snuggletex.definitions.MathCharacter;
 import uk.ac.ed.ph.snuggletex.definitions.MathVariantMap;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
@@ -32,7 +31,6 @@ import uk.ac.ed.ph.snuggletex.semantics.MathIdentifierInterpretation;
 import uk.ac.ed.ph.snuggletex.semantics.MathNumberInterpretation;
 import uk.ac.ed.ph.snuggletex.semantics.MathOperatorInterpretation;
 import uk.ac.ed.ph.snuggletex.tokens.ArgumentContainerToken;
-import uk.ac.ed.ph.snuggletex.tokens.BraceContainerToken;
 import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import uk.ac.ed.ph.snuggletex.tokens.EnvironmentToken;
 import uk.ac.ed.ph.snuggletex.tokens.ErrorToken;
@@ -301,31 +299,6 @@ public final class DOMBuilder {
             
             /* Complex Tokens */
             
-            case BRACE_CONTAINER:
-                /* Create an appropriate content container */
-                BraceContainerToken braceToken = (BraceContainerToken) token;
-                Element container = null;
-                if (braceToken.getLatexMode()==LaTeXMode.MATH) {
-                    container = appendMathMLElement(parentElement, "mrow");
-                }
-                else {
-                    container = appendXHTMLElement(parentElement, "span");
-                }
-                
-                /* Handle the children of this token */
-                handleTokens(container, braceToken.getContents(), true);
-                
-                /* If we only added one child, we'll remove from the container and add directly
-                 * to the tree instead.
-                 */
-                NodeList childNodes = container.getChildNodes();
-                if (childNodes.getLength()==1) {
-                    Node singleNode = childNodes.item(0);
-                    parentElement.removeChild(container);
-                    parentElement.appendChild(singleNode);
-                }
-                break;
-                
             case COMMAND:
                 /* Each command has its own builder instance to do the work here */
                 CommandToken commandToken = (CommandToken) token;

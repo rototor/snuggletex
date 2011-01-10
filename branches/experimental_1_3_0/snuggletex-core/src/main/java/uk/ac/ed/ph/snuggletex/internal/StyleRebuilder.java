@@ -9,7 +9,6 @@ import uk.ac.ed.ph.snuggletex.SnuggleLogicException;
 import uk.ac.ed.ph.snuggletex.definitions.CorePackageDefinitions;
 import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.tokens.ArgumentContainerToken;
-import uk.ac.ed.ph.snuggletex.tokens.BraceContainerToken;
 import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import uk.ac.ed.ph.snuggletex.tokens.EnvironmentToken;
 import uk.ac.ed.ph.snuggletex.tokens.FlowToken;
@@ -60,11 +59,6 @@ public final class StyleRebuilder {
                 visitEnvironment((EnvironmentToken) token);
                 break;
                 
-            case BRACE_CONTAINER:
-                BraceContainerToken braceToken = (BraceContainerToken) token;
-                visitSiblings(braceToken.getContents(), braceToken.getComputedStyle());
-                break;
-                
             case TEXT_MODE_TEXT:
             case VERBATIM_MODE_TEXT:
             case LR_MODE_NEW_PARAGRAPH:
@@ -77,7 +71,7 @@ public final class StyleRebuilder {
                 break;
                 
             default:
-                throw new SnuggleLogicException("Unhandled type " + token.getType());
+                throw new SnuggleLogicException("Unhandled/unexpected TokenType " + token.getType());
         }
     }
     

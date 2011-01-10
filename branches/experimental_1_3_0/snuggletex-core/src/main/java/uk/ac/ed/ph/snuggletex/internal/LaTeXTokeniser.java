@@ -1173,7 +1173,8 @@ public final class LaTeXTokeniser {
         }
         /* Create combined token spanning the two "raw" tokens */
         return new CommandToken(workingDocument.freezeSlice(startCommandIndex, nextToken.getSlice().endIndex),
-                currentModeState.latexMode, command, nextToken);
+                currentModeState.latexMode, command,
+                ArgumentContainerToken.createFromSingleToken(currentModeState.latexMode, nextToken));
     }
     
     /**

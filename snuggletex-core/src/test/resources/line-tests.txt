@@ -531,8 +531,8 @@ A
 ====
 ## Regression: Empty style commands were not being handled correctly before. Silly me!
 ## (Note: the result of this changed in 1.3.0.)
-{\rm }
-<span/>
+X{\rm }
+X
 ====
 ## Regression: Bug 2801656
 \verb|%|

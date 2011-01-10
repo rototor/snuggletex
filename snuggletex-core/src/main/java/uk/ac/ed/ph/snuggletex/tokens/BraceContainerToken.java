@@ -7,6 +7,7 @@ package uk.ac.ed.ph.snuggletex.tokens;
 
 import uk.ac.ed.ph.snuggletex.definitions.LaTeXMode;
 import uk.ac.ed.ph.snuggletex.internal.FrozenSlice;
+import uk.ac.ed.ph.snuggletex.internal.TokenFixer;
 import uk.ac.ed.ph.snuggletex.internal.util.DumpMode;
 import uk.ac.ed.ph.snuggletex.internal.util.ObjectDumperOptions;
 
@@ -14,8 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Represents a literal braced section the incoming LaTeX document, i.e. something like
+ * Represents a literal braced section in the original LaTeX document, i.e. something like
  * <tt>{ ... }</tt>.
+ * <p>
+ * All instances of these tokens will have disappeared once the {@link TokenFixer} has run.
  *
  * @author  David McKain
  * @version $Revision$

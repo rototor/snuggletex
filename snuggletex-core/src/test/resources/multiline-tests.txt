@@ -460,30 +460,29 @@ A{ B
 C}
 ----
 <p>A B</p>
-C
+<p>C</p>
 ====
 A \em B
 
 C
 ----
 <p>A <em>B</em></p>
-<div class="em">C</div>
+<div class="em"><p>C</p></div>
 ====
 A {\em B
 
 C} D
 ----
 <p>A <em>B</em></p>
-<div class="em"><p><em>C</em> D</p></div>
+<div class="em"><p><em>C</em><span class="rm"> D</span></p></div>
 ====
 A {\huge B
 
 C} D
 ----
 <p>A <span class="huge">B</span></p>
-<p><span class="huge">C</span> D</p>
+<div class="huge"><p>C<span class="normalsize"> D</span></p></div>
 ====
-## But would be nice to have...
 \huge{A
 
 B}

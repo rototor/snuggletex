@@ -134,12 +134,12 @@ public final class StyleRebuilder {
     private void visitCommand(CommandToken commandToken) {
         ArgumentContainerToken optArgument = commandToken.getOptionalArgument();
         if (optArgument!=null) {
-            visitSiblings(optArgument.getContents(), commandToken.getComputedStyle());
+            visitArgumentContainer(optArgument);
         }
         ArgumentContainerToken[] arguments = commandToken.getArguments();
         if (arguments!=null) {
             for (ArgumentContainerToken argument : arguments) {
-                visitSiblings(argument.getContents(), commandToken.getComputedStyle());
+                visitArgumentContainer(argument);
             }
         }
         /* (Currently not doing anything to combiner targets, as I don't think it's needed) */
@@ -148,14 +148,18 @@ public final class StyleRebuilder {
     private void visitEnvironment(EnvironmentToken environmentToken) {
         ArgumentContainerToken optArgument = environmentToken.getOptionalArgument();
         if (optArgument!=null) {
-            visitSiblings(optArgument.getContents(), environmentToken.getComputedStyle());
+            visitArgumentContainer(optArgument);
         }
         ArgumentContainerToken[] arguments = environmentToken.getArguments();
         if (arguments!=null) {
             for (ArgumentContainerToken argument : arguments) {
-                visitSiblings(argument.getContents(), environmentToken.getComputedStyle());
+                visitArgumentContainer(argument);
             }
         }
-        visitSiblings(environmentToken.getContent().getContents(), environmentToken.getComputedStyle());
+        visitArgumentContainer(environmentToken.getContent());
+    }
+    
+    private void visitArgumentContainer(ArgumentContainerToken token) {
+        visitSiblings(token.getContents(), token.getComputedStyle());
     }
 }

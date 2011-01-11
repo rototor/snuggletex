@@ -40,17 +40,10 @@ public final class SessionConfiguration implements Cloneable {
      */
     private NumberMatcher numberMatcher;
     
-    /**
-     * Set to true to ignore commands and environments such as \bf, \large,
-     * \textbf{...} and \begin{bf}...\end{bf} that change font size/family stylings.
-     */
-    private boolean ignoringStyling;
-    
     public SessionConfiguration() {
         this.failingFast = false;
         this.expansionLimit = DEFAULT_EXPANSION_LIMIT;
         this.numberMatcher = null;
-        this.ignoringStyling = false;
     }
     
     /**
@@ -128,15 +121,6 @@ public final class SessionConfiguration implements Cloneable {
         this.numberMatcher = numberMatcher;
     }
     
-    
-    public boolean isIgnoringStyling() {
-        return ignoringStyling;
-    }
-    
-    public void setIgnoringStyling(boolean ignoreStyling) {
-        this.ignoringStyling = ignoreStyling;
-    }
-
 
     @Override
     public Object clone() {

@@ -27,6 +27,7 @@ import java.util.List;
  */
 public final class StyleRebuilder {
     
+    @SuppressWarnings("unused")
     private final SessionContext sessionContext;
     
     public StyleRebuilder(final SessionContext sessionContext) {
@@ -36,9 +37,7 @@ public final class StyleRebuilder {
     //-----------------------------------------
 
     public void rebuildStyles(RootToken rootToken) {
-        if (!sessionContext.getConfiguration().isIgnoringStyling()) {
-            visitToken(rootToken);
-        }
+        visitToken(rootToken);
     }
     
     //-----------------------------------------

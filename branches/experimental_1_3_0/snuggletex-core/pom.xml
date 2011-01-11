@@ -30,6 +30,12 @@ All Rights Reserved
       <version>${easymock.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>thaiopensource</groupId>
+      <artifactId>jing</artifactId>
+      <version>20091111</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

@@ -1,115 +1,276 @@
-/* School of Physics and Astronomy core stylesheet
- *
- * $Id$
- */
+/* ======================================================================== */
+/* 1. PAGE TEMPLATE */
+/* ======================================================================== */
+/* 1.1. Global Body
+/* ======================================================================== */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  overflow: -moz-scrollbars-vertical;
+}
 
 body {
-  font-family: Arial, sans-serif;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  text-align: center;
+  color: #000;
+  background-image: url(images/centralsitebg.gif);
+  background-repeat: repeat-x;
 }
 
-h1 {
-  font-size: 150%;
+/* (Style for IE<=6) */
+* html body {
+  background-image: url(images/bgbodyie.jpg)
 }
 
-h2 {
-  font-size: 160%;
+/* YUI Font size reset
+Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD License: http://developer.yahoo.net/yui/license.txt
+version: 2.3.1 */
+body {
+  font:13px/1.22 arial, helvetica, clean, sans-serif;
+  font-size:small;
 }
 
-h3 {
-  font-size: 130%;
+table {
+  font-size: inherit;
 }
+
+/* Bump up IE to get to 13px equivalent */
+pre,
+code,
+kbd,
+samp,
+tt {
+  font-family:monospace;
+  font-size:108%;
+  line-height:99%;
+}
+
+a:hover {
+  color:#ff0000;
+}
+
+/* ======================================================================== */
+/* 1.4. Content Container */
+/* ======================================================================== */
+
+#container {
+  width: 100%;
+  margin: 0;
+  text-align: left
+}
+
+/* ======================================================================== */
+/* 1.2.   Header */
+/* ======================================================================== */
+/* 1.2.1. Standard School Header */
+/* ======================================================================== */
 
 #header {
-  background-color: #232b5a;
-  background-image: url(header.jpg);
-  background-repeat: no-repeat;
-  background-position: top right;
-}
-
-#header a:link,
-#header a:visited {
-  color: white;
-  text-decoration: none;
-}
-
-#header a:hover {
-  text-decoration: underline;
-}
-
-#header h1 {
-  color: white;
-  font-size: 150%;
-  font-weight: bold;
-  padding: 0;
-  margin: 0;
-}
-
-#header h3 {
-  color: white;
-  font-size: 130%;
-  font-weight: bold;
-  margin: 0;
-  padding: 0 0 8px 0;
-}
-
-#header td#logo {
-  width: 84px;
-  height: 84px;
+  background: #25476C;
+  height: 70px;
+  border-bottom: #CAD8E5 10px solid;
 }
 
 #header img {
   border: none;
 }
 
-#topnavigation {
-  margin: 0.5em 20px 0.5em 0;
-  list-style-image: url(arrow.gif);
+#identities {
+  width:615px;
+  float:left
 }
 
-#location {
-  background: #555588;
-  color: white;
-  font-weight: bold;
+#edlogo {
+  height:70px;
+  width:70px;
+  float:left
+}
+
+#edname {
+  height:29px;
+  margin-left: 70px;
+  margin-top:5px
+}
+
+#schoolname {
+  margin-left: 70px;
+  height:41px;
+}
+
+/* ======================================================================== */
+/* 1.2.2. Global Navigation Tabs (top right) */
+/* ======================================================================== */
+
+#GlobalNav {
+  background-color: #25476C;
+  font-size: 85%; /* 11px*/
+  float: right;
+  width: 360px;
+  text-align: right;
+}
+
+#GlobalNav ul {
+  list-style: none;
+}
+
+#GlobalNav li {
+  display: inline;
+  padding-left: 2px;
+}
+
+#GlobalNav li a {
+  text-decoration: none;
+  color: #fff;
+  line-height: 2em;
+  text-align: center;
+}
+
+#GlobalNav li.active a,
+#GlobalNav li.active-trail a {
+  border-top: #cad8e5 2px solid;
+}
+
+#GlobalNav li a:hover {
+  background-color: #006699;
+  border-top: #cad8e5 2px solid;
+}
+
+#GlobalNav li a:active {
+  color: #fff;
+}
+
+/* ======================================================================== */
+/* 1.2.3. Utility Area & Search Box */
+/* ======================================================================== */
+
+#utility {
+  position: absolute;
+  right: 0;
+  height: 20px;
+  margin-top: 50px;
+  width: 200px;
+  background-color: #cad8e5;
+  text-align: center;
+  line-height: 20px;
+  /*
+  float: right;
+  margin-top: 24px!important;
+  background-color: #CAD8E5;
+  float: right;
+  width: 230px;
+  height: 70px;
+  text-align: center;
+  padding-top:3px;
+  */
+}
+
+#utility div {
+  display: inline;
+}
+
+#utility a {
+  color: #25476C;
   font-size: 100%;
-  margin: 0;
-  padding: 0.5em;
+  font-weight: bold;
 }
 
-#location a {
-  color: white;
+#utility a:hover {
+  color: #FF0000;
+}
+
+#utility .utilContact {
+  margin-left: 15px;
+}
+
+/* ======================================================================== */
+/* 1.3. Section Header */
+/* ======================================================================== */
+
+/* Unless specified below, pages get School banner with gap at bottom for left menu */
+#sectionHeader {
+  clear: both;
+  background: #EAEFF5 url(images/school-banner-blank.jpg) right top no-repeat;
+  height: 51px;
+  border-bottom: 2px solid #25476c;
+}
+
+/* Home page and "no sidebars" pages get full School banner */
+.node-type-home-page #sectionHeader,
+.no-sidebars #sectionHeader {
+  background-image: url(images/school-section-banner-blank.jpg);
+}
+
+#sectionHeader div#sectionHeaderTitle {
+  display: block;
+  padding: 10px 0 0 10px;
+  font-size: 167%; /* 22px */
+  color: #25476C;
+}
+
+#sectionHeader a {
+  text-decoration: none;
+  color: #25476C;
+}
+
+#sectionHeader div#sectionHeaderTitle:hover {
   text-decoration: none;
 }
 
-#location a:visited {
-  color: #ccccff;
-}
+/* ======================================================================== */
+/* 1.7. Standard Page Footer */
+/* ======================================================================== */
 
-#location a:hover {
-  text-decoration: underline;
-}
-
-#location a:visited:hover {
-  color: #ccccff;
-}
-
-#content {
-  padding: 1em;
-}
-
-#copyright {
-  margin-top: 10px;
-  border-top: 1px solid #232b5a;
+#footer {
   clear: both;
-  padding: 10px;
-  font-style: italic;
+  border-top: #25476C 10px solid;
+  font-size: 1em;
+  padding: 0 10px 0 20px;
+  background: white url(images/footerbg.jpg) repeat-x;
+  min-height: 90px;
 }
 
-#copyright a:link {
-  color: black;
+#footer a {
+  color: #999999;
 }
 
-#copyright a:visited {
-  color: #000033;
+#footer a:hover {
+  color: #FF0000;
 }
+
+#footer #copyright {
+  width: auto;
+  margin: 0 auto;
+  text-align: left;
+  color: #000;
+  padding: 10px 0;
+}
+
+#footer p {
+  display: block;
+  padding-bottom: 5px;
+  font-size: 85%
+}
+
+#footer-text {
+  width: auto;
+  float: left;
+}
+
+/* ======================================================================== */
+/* 2. PAGE CONTENT */
+/* ======================================================================== */
+/* 2.1. Content Layouts */
+/* ======================================================================== */
+
+#contentArea {
+  margin: 1em;
+}
+
+/* ======================================================================== */
+/* Basic elements */
+/* ======================================================================== */
+

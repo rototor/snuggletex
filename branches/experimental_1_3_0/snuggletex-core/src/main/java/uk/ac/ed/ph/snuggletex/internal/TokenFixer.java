@@ -7,14 +7,15 @@ package uk.ac.ed.ph.snuggletex.internal;
 
 import uk.ac.ed.ph.snuggletex.InputError;
 import uk.ac.ed.ph.snuggletex.SnuggleLogicException;
+import uk.ac.ed.ph.snuggletex.SnuggleSession;
 import uk.ac.ed.ph.snuggletex.definitions.BuiltinCommand;
 import uk.ac.ed.ph.snuggletex.definitions.BuiltinEnvironment;
 import uk.ac.ed.ph.snuggletex.definitions.Command;
+import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.definitions.CoreErrorCode;
 import uk.ac.ed.ph.snuggletex.definitions.CorePackageDefinitions;
 import uk.ac.ed.ph.snuggletex.definitions.LaTeXMode;
 import uk.ac.ed.ph.snuggletex.definitions.TextFlowContext;
-import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.semantics.InterpretationType;
 import uk.ac.ed.ph.snuggletex.semantics.MathBracketInterpretation;
 import uk.ac.ed.ph.snuggletex.semantics.MathBracketInterpretation.BracketType;
@@ -35,10 +36,17 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * This takes the output from {@link LaTeXTokeniser} and performs simplifications and
- * groupings on the {@link FlowToken}s that makes them easier to convert to a DOM.
+ * This takes the parse tree after {@link StyleEvaluator} has run and performs grouping operations
+ * on the {@link FlowToken}s to convert them to a more tree-like structure that is easier to handle.
+ * <p>
+ * Once this has run, all {@link BraceContainerToken} tokens will have been unwrapped or flattened.
+ * Many other types of tokens, such as the "new paragraph" or "new list item" token will have been
+ * removed, with the surrounding content grouped accordingly.
  * 
  * @see LaTeXTokeniser
+ * @see StyleEvaluator
+ * @see StyleRebuilder
+ * @see SnuggleSession#parseInput(uk.ac.ed.ph.snuggletex.SnuggleInput)
  * 
  * @author  David McKain
  * @version $Revision$

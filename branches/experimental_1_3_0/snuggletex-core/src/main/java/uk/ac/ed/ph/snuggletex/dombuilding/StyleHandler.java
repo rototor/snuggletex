@@ -5,10 +5,10 @@
  */
 package uk.ac.ed.ph.snuggletex.dombuilding;
 
+import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.definitions.TextFlowContext;
 import uk.ac.ed.ph.snuggletex.internal.DOMBuilder;
 import uk.ac.ed.ph.snuggletex.internal.SnuggleParseException;
-import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.tokens.ArgumentContainerToken;
 import uk.ac.ed.ph.snuggletex.tokens.EnvironmentToken;
 import uk.ac.ed.ph.snuggletex.tokens.FlowToken;

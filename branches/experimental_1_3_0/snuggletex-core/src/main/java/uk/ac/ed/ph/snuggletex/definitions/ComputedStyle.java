@@ -3,13 +3,14 @@
  * Copyright (c) 2010, The University of Edinburgh.
  * All Rights Reserved
  */
-package uk.ac.ed.ph.snuggletex.semantics;
+package uk.ac.ed.ph.snuggletex.definitions;
 
 import uk.ac.ed.ph.snuggletex.internal.util.DumpMode;
 import uk.ac.ed.ph.snuggletex.internal.util.ObjectDumperOptions;
+import uk.ac.ed.ph.snuggletex.tokens.Token;
 
 /**
- * FIXME: Document this type!
+ * This represents the computed or runtime style of a {@link Token}.
  *
  * @author  David McKain
  * @version $Revision$
@@ -17,8 +18,10 @@ import uk.ac.ed.ph.snuggletex.internal.util.ObjectDumperOptions;
 @ObjectDumperOptions(DumpMode.TO_STRING)
 public final class ComputedStyle {
     
+    /** Default style */
     public static final ComputedStyle DEFAULT_STYLE = new ComputedStyle(null, FontFamily.NORMAL, FontSize.NORMALSIZE);
     
+    /** TeX "Font Family" */
     public static enum FontFamily {
         NORMAL("div", "rm", "span", "rm", "normal"),
         BF("div", "bf", "b", null, "bold"),
@@ -80,6 +83,7 @@ public final class ComputedStyle {
         }
     }
     
+    /** TeX Font Size */
     public static enum FontSize {
         
         TINY("tiny"),
@@ -141,5 +145,4 @@ public final class ComputedStyle {
             + ",parentStyle=" + (parentStyle!=null ? Integer.toString(parentStyle.hashCode(), 16) : null)
             + ")";
     }
-
 }

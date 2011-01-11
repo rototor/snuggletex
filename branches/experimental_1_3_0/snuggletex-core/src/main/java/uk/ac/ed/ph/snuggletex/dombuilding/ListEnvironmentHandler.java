@@ -7,11 +7,11 @@ package uk.ac.ed.ph.snuggletex.dombuilding;
 
 import uk.ac.ed.ph.snuggletex.SnuggleLogicException;
 import uk.ac.ed.ph.snuggletex.definitions.BuiltinEnvironment;
+import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.definitions.CoreErrorCode;
 import uk.ac.ed.ph.snuggletex.definitions.CorePackageDefinitions;
 import uk.ac.ed.ph.snuggletex.internal.DOMBuilder;
 import uk.ac.ed.ph.snuggletex.internal.SnuggleParseException;
-import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import uk.ac.ed.ph.snuggletex.tokens.EnvironmentToken;
 import uk.ac.ed.ph.snuggletex.tokens.FlowToken;

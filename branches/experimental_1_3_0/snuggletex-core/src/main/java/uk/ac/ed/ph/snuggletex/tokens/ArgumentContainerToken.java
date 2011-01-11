@@ -6,12 +6,12 @@
 package uk.ac.ed.ph.snuggletex.tokens;
 
 import uk.ac.ed.ph.snuggletex.definitions.Command;
+import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.definitions.Environment;
 import uk.ac.ed.ph.snuggletex.definitions.LaTeXMode;
 import uk.ac.ed.ph.snuggletex.internal.FrozenSlice;
 import uk.ac.ed.ph.snuggletex.internal.util.DumpMode;
 import uk.ac.ed.ph.snuggletex.internal.util.ObjectDumperOptions;
-import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -57,6 +57,11 @@ public abstract class AbstractGoodXMLTest extends AbstractGoodTest {
         return true;
     }
     
+    @SuppressWarnings("unused")
+    protected void validateResultDocument(Document resultDocument) throws Throwable {
+        /* Subclasses should fill in here as required */
+    }
+    
     protected void verifyResultDocument(TransformerFactory transformerFactory, Document resultDocument) throws Throwable {
         /* Create mock to handle the SAX streams */
         IMocksControl control = createStrictControl();
@@ -101,6 +106,9 @@ public abstract class AbstractGoodXMLTest extends AbstractGoodTest {
             
             /* Verify result */
             verifyResultDocument(transformerFactory, resultDocument);
+            
+            /* Maybe validate the result */
+            validateResultDocument(resultDocument);
         }
         catch (Throwable e) {
             log.severe("Input was: " + inputLaTeX);

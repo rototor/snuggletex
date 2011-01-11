@@ -61,6 +61,11 @@ public final class WebPageOutputOptionsTemplates {
                 options.setDoctypeSystem(W3CConstants.XHTML_11_MATHML_20_SYSTEM_IDENTIFIER);
                 break;
                 
+            case MATHJAX_CROSS_BROWSER_XHTML:
+                options.setSerializationMethod(SerializationMethod.XHTML);
+                options.setIncludingXMLDeclaration(false);
+                break;
+                
             case MATHPLAYER_HTML:
                 options.setSerializationMethod(SerializationMethod.HTML);
                 options.setContentType("text/html");

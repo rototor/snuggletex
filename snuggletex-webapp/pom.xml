@@ -59,6 +59,12 @@ All Rights Reserved
       <version>2.4</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.mathjax</groupId>
+      <artifactId>MathJax</artifactId>
+      <version>1.0.1a-dec10</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -68,6 +74,33 @@ All Rights Reserved
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
+      <!-- Unpack MathJax JavaScript -->
+      <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-dependency-plugin</artifactId>
+         <executions>
+           <execution>
+             <id>unpack</id>
+             <phase>prepare-package</phase>
+             <goals>
+               <goal>unpack</goal>
+             </goals>
+             <configuration>
+               <artifactItems>
+                 <artifactItem>
+                   <groupId>org.mathjax</groupId>
+                   <artifactId>MathJax</artifactId>
+                   <version>1.0.1a-dec10</version>
+                   <type>zip</type>
+                   <overWrite>false</overWrite>
+                   <outputDirectory>${project.build.directory}/extras/lib</outputDirectory>
+                 </artifactItem>
+               </artifactItems>
+             </configuration>
+           </execution>
+         </executions>
+      </plugin>
+      <!-- Dynamically Generated Resources -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -75,10 +108,10 @@ All Rights Reserved
           <!-- Generate snuggletex.css -->
           <execution>
             <id>snuggletex.css</id>
+            <phase>prepare-package</phase>
             <goals>
               <goal>exec</goal>
             </goals>
-            <phase>compile</phase>
             <configuration>
               <executable>java</executable>
               <classpathScope>runtime</classpathScope>
@@ -93,10 +126,10 @@ All Rights Reserved
           <!-- Create Error Codes documentation page source -->
           <execution>
             <id>generate-error-codes-page</id>
+            <phase>prepare-package</phase>
             <goals>
               <goal>exec</goal>
             </goals>
-            <phase>compile</phase>
             <configuration>
               <executable>java</executable>
               <classpathScope>runtime</classpathScope>
@@ -110,7 +143,7 @@ All Rights Reserved
           </execution>
         </executions>
       </plugin>
-      <!-- Pull in auto-generated content created above when building WAR structure -->
+      <!-- Pull in extra content created above when building WAR structure -->
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <version>2.1-beta-1</version>

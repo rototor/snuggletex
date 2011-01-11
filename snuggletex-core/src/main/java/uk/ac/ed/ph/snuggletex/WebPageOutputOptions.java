@@ -68,6 +68,12 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
          * hinders performance slightly.
          */
         CROSS_BROWSER_XHTML,
+        
+        /**
+         * NEW: Uses MathJax to get cross-browser support. You will need to have MathJax available
+         * to your page and tell SnuggleTeX where <tt>MathJax.js</tt> lives.
+         */
+        MATHJAX_CROSS_BROWSER_XHTML,
 
         /**
          * HTML + MathML intended for Internet Explorer 6/7 with the MathPlayer plug-in.
@@ -215,6 +221,10 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
      * If null or empty, then no stylesheet is applied.
      */
     private Transformer[] stylesheets;
+    
+    /* EXPERIMENTAL */
+    
+    private String mathJaxPath;
     
     public WebPageOutputOptions() {
         super();
@@ -472,10 +482,6 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
      * generate is also in the correct namespace; it will later be converted to
      * no-namespace HTML if required by the serialisation process.
      * <p>
-     * <strong>WARNING:</strong> This feature is a convenience that doesn't fit well
-     * with the idea that these "options" Objects should be reusable and Thread-safe,
-     * which a {@link Transformer} is generally neither. Use this feature accordingly!
-     * <p>
      * <strong>NOTE:</strong> Source documents may contain Processing
      * Instructions (e.g. to invoke MathPlayer) so these must be handled as
      * appropriate.
@@ -494,10 +500,6 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
      * to write your stylesheet appropriately. Ensure that any further XHTML you
      * generate is also in the correct namespace; it will later be converted to
      * no-namespace HTML if required by the serialisation process.
-     * <p>
-     * <strong>WARNING:</strong> This feature is a convenience that doesn't fit well
-     * with the idea that these "options" Objects should be reusable and Thread-safe,
-     * which a {@link Transformer} is generally neither. Use this feature accordingly!
      * <p>
      * <strong>NOTE:</strong> Source documents may contain Processing
      * Instructions (e.g. to invoke MathPlayer) so these must be handled as
@@ -521,10 +523,6 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
      * generate is also in the correct namespace; it will later be converted to
      * no-namespace HTML if required by the serialisation process.
      * <p>
-     * <strong>WARNING:</strong> This feature is a convenience that doesn't fit well
-     * with the idea that these "options" Objects should be reusable and Thread-safe,
-     * which a {@link Transformer} is generally neither. Use this feature accordingly!
-     * <p>
      * <strong>NOTE:</strong> Source documents may contain Processing
      * Instructions (e.g. to invoke MathPlayer) so these must be handled as
      * appropriate.
@@ -534,5 +532,15 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
      */
     public void addStylesheets(Transformer... stylesheets) {
         this.stylesheets = concat(this.stylesheets, stylesheets, Transformer.class);
+    }
+
+
+    
+    public String getMathJaxPath() {
+        return mathJaxPath;
+    }
+    
+    public void setMathJaxPath(String mathJaxBasePath) {
+        this.mathJaxPath = mathJaxBasePath;
     }
 }

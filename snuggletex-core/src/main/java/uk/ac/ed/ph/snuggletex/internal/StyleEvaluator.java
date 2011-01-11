@@ -6,10 +6,13 @@
 package uk.ac.ed.ph.snuggletex.internal;
 
 import uk.ac.ed.ph.snuggletex.SnuggleLogicException;
+import uk.ac.ed.ph.snuggletex.SnuggleSession;
+import uk.ac.ed.ph.snuggletex.definitions.Command;
+import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle;
+import uk.ac.ed.ph.snuggletex.definitions.Environment;
 import uk.ac.ed.ph.snuggletex.definitions.LaTeXMode;
-import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle;
-import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle.FontFamily;
-import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle.FontSize;
+import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle.FontFamily;
+import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle.FontSize;
 import uk.ac.ed.ph.snuggletex.semantics.InterpretationType;
 import uk.ac.ed.ph.snuggletex.semantics.StyleDeclarationInterpretation;
 import uk.ac.ed.ph.snuggletex.tokens.ArgumentContainerToken;
@@ -25,8 +28,18 @@ import java.util.List;
 /**
  * This calculates the {@link ComputedStyle} for each raw parsed {@link Token}. It is
  * used directly after {@link LaTeXTokeniser} but before the {@link TokenFixer}.
+ * <p>
+ * Once this has run, all {@link Command}s and {@link Environment}s with a
+ * {@link StyleDeclarationInterpretation} will have been removed from the parse tree. This
+ * corresponds to commands such as \bf, \textrm{...} and environments like \begin{em}...\end{em}.
+ * Each {@link Token} remaining in the tree will have its
+ * {@link Token#setComputedStyle(ComputedStyle)} called
+ * to indicate the resulting "style" it will have.
  * 
- * FIXME: Document exactly what this does to the tree!
+ * @see LaTeXTokeniser
+ * @see TokenFixer
+ * @see StyleRebuilder
+ * @see SnuggleSession#parseInput(uk.ac.ed.ph.snuggletex.SnuggleInput)
  * 
  * @author  David McKain
  * @version $Revision$

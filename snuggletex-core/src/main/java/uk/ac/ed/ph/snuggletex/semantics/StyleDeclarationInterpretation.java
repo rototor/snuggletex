@@ -5,11 +5,16 @@
  */
 package uk.ac.ed.ph.snuggletex.semantics;
 
-import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle.FontFamily;
-import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle.FontSize;
+import uk.ac.ed.ph.snuggletex.definitions.Command;
+import uk.ac.ed.ph.snuggletex.definitions.Environment;
+import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle.FontFamily;
+import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle.FontSize;
+import uk.ac.ed.ph.snuggletex.internal.StyleEvaluator;
 
 /**
- * Represents styled text in either MATH and/or TEXT Modes.
+ * Represents styled text in either MATH and/or TEXT Modes. {@link Command}s and
+ * {@link Environment}s having this interpretation are removed from the parse tree
+ * by the {@link StyleEvaluator}, so these are somewhat transient.
  * 
  * @author  David McKain
  * @version $Revision:179 $

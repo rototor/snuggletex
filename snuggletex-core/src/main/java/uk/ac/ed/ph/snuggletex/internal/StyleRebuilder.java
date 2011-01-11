@@ -6,8 +6,9 @@
 package uk.ac.ed.ph.snuggletex.internal;
 
 import uk.ac.ed.ph.snuggletex.SnuggleLogicException;
+import uk.ac.ed.ph.snuggletex.SnuggleSession;
+import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.definitions.CorePackageDefinitions;
-import uk.ac.ed.ph.snuggletex.semantics.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.tokens.ArgumentContainerToken;
 import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import uk.ac.ed.ph.snuggletex.tokens.EnvironmentToken;
@@ -19,8 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This rebuilds style change information into a tree structure to make DOM
- * building easier.
+ * This runs after {@link TokenFixer} and groups style changes together using the
+ * pseudo-environment {@link CorePackageDefinitions#ENV_STYLE}, which makes DOM building
+ * much easier.
+ * 
+ * @see LaTeXTokeniser
+ * @see StyleEvaluator
+ * @see TokenFixer
+ * @see SnuggleSession#parseInput(uk.ac.ed.ph.snuggletex.SnuggleInput)
  * 
  * @author  David McKain
  * @version $Revision$

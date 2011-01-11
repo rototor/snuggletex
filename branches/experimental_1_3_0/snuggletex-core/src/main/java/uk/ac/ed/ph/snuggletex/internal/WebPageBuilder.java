@@ -142,6 +142,22 @@ public final class WebPageBuilder {
             head.appendChild(style);
         }
         
+        /* Bootstrap MathJax JS if requested */
+        if (pageType==WebPageType.MATHJAX_CROSS_BROWSER_XHTML) {
+            String mathJaxPath = options.getMathJaxPath();
+            if (mathJaxPath!=null) {
+                String scriptContent = "MathJax.Hub.Config({\n"
+                    + "  config: ['MMLorHTML.js'],\n"
+                    + "  extensions: ['mml2jax.js'],\n" 
+                    + "  jax: ['input/MathML']\n"
+                    + "})";
+                Element script = createXHTMLElement(document, "script", scriptContent);
+                script.setAttribute("type", "text/javascript");
+                script.setAttribute("src", mathJaxPath);
+                head.appendChild(script);
+            }
+        }
+        
         /* Create finished document */
         Element html = createXHTMLElement(document, "html");
         
@@ -196,6 +212,14 @@ public final class WebPageBuilder {
      * underlying{@link WebPageOutputOptions}.
      */
     private Element createXHTMLElement(Document document, String elementLocalName) {
+        return createXHTMLElement(document, elementLocalName, null);
+    }
+    
+    /**
+     * Helper to create XHTML text elements, setting the correct namespace prefix if required by the
+     * underlying{@link WebPageOutputOptions}.
+     */
+    private Element createXHTMLElement(Document document, String elementLocalName, String content) {
         String qName;
         if (options.isPrefixingXHTML()) {
             qName = options.getXHTMLPrefix() + ":" + elementLocalName;
@@ -203,7 +227,11 @@ public final class WebPageBuilder {
         else {
             qName = elementLocalName;
         }
-        return document.createElementNS(W3CConstants.XHTML_NAMESPACE, qName);
+        Element result = document.createElementNS(W3CConstants.XHTML_NAMESPACE, qName);
+        if (content!=null) {
+            result.appendChild(document.createTextNode(content));
+        }
+        return result;
     }
     
     /**

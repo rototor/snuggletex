@@ -33,6 +33,7 @@ import java.util.List;
  */
 public final class StyleEvaluator {
     
+    @SuppressWarnings("unused")
     private final SessionContext sessionContext;
     
     public StyleEvaluator(final SessionContext sessionContext) {
@@ -42,10 +43,8 @@ public final class StyleEvaluator {
     //-----------------------------------------
 
     public void evaluateStyles(RootToken rootToken) throws SnuggleParseException {
-        if (!sessionContext.getConfiguration().isIgnoringStyling()) {
-            rootToken.setComputedStyle(ComputedStyle.DEFAULT_STYLE);
-            visitSiblings(rootToken.getContents(), ComputedStyle.DEFAULT_STYLE);
-        }
+        rootToken.setComputedStyle(ComputedStyle.DEFAULT_STYLE);
+        visitSiblings(rootToken.getContents(), ComputedStyle.DEFAULT_STYLE);
     }
     
     //-----------------------------------------

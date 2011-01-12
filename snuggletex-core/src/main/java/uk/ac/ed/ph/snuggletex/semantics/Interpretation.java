@@ -33,6 +33,7 @@ public interface Interpretation {
     
     public static Interpretation TABULAR = new MarkerInterpretation(InterpretationType.TABULAR);
     public static Interpretation LIST = new MarkerInterpretation(InterpretationType.LIST);
+    public static Interpretation STYLE_SENTINEL = new MarkerInterpretation(InterpretationType.STYLE_SENTINEL);
     
     static class MarkerInterpretation implements Interpretation {
         private final InterpretationType type;

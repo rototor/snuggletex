@@ -27,8 +27,8 @@ import org.w3c.dom.Element;
  * Handles the (rather complex) <tt>tabular</tt> environment.
  * It also handles the <tt>\\hline</tt> command.
  * 
- * TODO: This is legal inside $\mbox{...}$ so needs to output MathML in this case. Eeek!!!
- * TODO: No support for \vline and friends!!!
+ * FIXME: This is legal inside $\mbox{...}$ so needs to output MathML in this case. Eeek!!!
+ * FIXME: No support for \vline and friends!!!
  * 
  * @author  David McKain
  * @version $Revision$

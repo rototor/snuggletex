@@ -47,6 +47,7 @@ public enum InterpretationType {
     /* These can be applied to both Text and Math stuff. (Generally only environments) */
     TABULAR,
     LIST,
+    STYLE_SENTINEL,
     
     ;
 }

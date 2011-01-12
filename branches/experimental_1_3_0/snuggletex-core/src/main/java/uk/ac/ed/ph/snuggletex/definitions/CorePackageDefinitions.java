@@ -238,15 +238,16 @@ public final class CorePackageDefinitions {
         /* Tree version of standard \item. Any \items are converted to these during token fixing.
          * I'm not allowing this to be directly input, which makes list handling a bit easier.
          */
-        CMD_LIST_ITEM = corePackage.addComplexCommandSameArgMode("<list item>", false, 1, PARA_MODE_ONLY, new ListEnvironmentHandler(), START_NEW_XHTML_BLOCK);
+        ListEnvironmentHandler listEnvironmentHandler = new ListEnvironmentHandler();
+        CMD_LIST_ITEM = corePackage.addComplexCommandSameArgMode("<list item>", false, 1, PARA_MODE_ONLY, Interpretation.STYLE_SENTINEL, listEnvironmentHandler, START_NEW_XHTML_BLOCK);
         
         /* Tree-like placeholders for specifying columns and rows in environments such as 'tabular'.
          * We don't allow to be inputed as the containment requirements can make it awkward to ensure
          * that the input is valid. These tokens are produced during the fixing process and make it
          * easier to handle the table content further down the line.
          */
-        CMD_TABLE_ROW = corePackage.addComplexCommandSameArgMode("<tr>", false, 1, ALL_MODES, null, null);
-        CMD_TABLE_COLUMN = corePackage.addComplexCommandSameArgMode("<td>", false, 1, ALL_MODES, null, null);
+        CMD_TABLE_ROW = corePackage.addComplexCommandSameArgMode("<tr>", false, 1, ALL_MODES, Interpretation.STYLE_SENTINEL, null, null);
+        CMD_TABLE_COLUMN = corePackage.addComplexCommandSameArgMode("<td>", false, 1, ALL_MODES, Interpretation.STYLE_SENTINEL, null, null);
         
         /* We'll support the usual LaTeX sectioning commands...
          * 
@@ -409,7 +410,8 @@ public final class CorePackageDefinitions {
         corePackage.addComplexCommandOneArg("fbox", false, ALL_MODES, LR, new BoxHandler("fbox"), null);
         
         /* Table stuff */
-        CMD_HLINE = corePackage.addSimpleCommand("hline", ALL_MODES, new TabularHandler(), IGNORE);
+        TabularHandler tabularHandler = new TabularHandler();
+        CMD_HLINE = corePackage.addSimpleCommand("hline", ALL_MODES, Interpretation.STYLE_SENTINEL, tabularHandler, IGNORE);
         
         /* Commands for creating user-defined commands and environments */
 
@@ -443,13 +445,13 @@ public final class CorePackageDefinitions {
         
         /* =================================== ENVIRONMENTS ================================= */
         
-        ENV_MATH = corePackage.addEnvironment("math", TEXT_MODE_ONLY, MATH, null, new MathEnvironmentHandler(), ALLOW_INLINE);
-        ENV_DISPLAYMATH = corePackage.addEnvironment("displaymath", TEXT_MODE_ONLY, MATH, null, new MathEnvironmentHandler(), ALLOW_INLINE);
-        ENV_VERBATIM = corePackage.addEnvironment("verbatim", PARA_MODE_ONLY, VERBATIM, null, new VerbatimHandler(false), START_NEW_XHTML_BLOCK);
-        ENV_ITEMIZE = corePackage.addEnvironment("itemize", PARA_MODE_ONLY, null, Interpretation.LIST, new ListEnvironmentHandler(), START_NEW_XHTML_BLOCK);
-        ENV_ENUMERATE = corePackage.addEnvironment("enumerate", PARA_MODE_ONLY, null, Interpretation.LIST, new ListEnvironmentHandler(), START_NEW_XHTML_BLOCK);
+        ENV_MATH = corePackage.addEnvironment("math", TEXT_MODE_ONLY, MATH, (Interpretation) null, new MathEnvironmentHandler(), ALLOW_INLINE);
+        ENV_DISPLAYMATH = corePackage.addEnvironment("displaymath", TEXT_MODE_ONLY, MATH, (Interpretation) null, new MathEnvironmentHandler(), ALLOW_INLINE);
+        ENV_VERBATIM = corePackage.addEnvironment("verbatim", PARA_MODE_ONLY, VERBATIM, (Interpretation) null, new VerbatimHandler(false), START_NEW_XHTML_BLOCK);
+        ENV_ITEMIZE = corePackage.addEnvironment("itemize", PARA_MODE_ONLY, null, new Interpretation[] { Interpretation.LIST, Interpretation.STYLE_SENTINEL }, listEnvironmentHandler, START_NEW_XHTML_BLOCK);
+        ENV_ENUMERATE = corePackage.addEnvironment("enumerate", PARA_MODE_ONLY, null, new Interpretation[] { Interpretation.LIST, Interpretation.STYLE_SENTINEL }, listEnvironmentHandler, START_NEW_XHTML_BLOCK);
         
-        corePackage.addEnvironment("tabular", false, 1, PARA_MODE_ONLY, PARAGRAPH, Interpretation.TABULAR, new TabularHandler(), START_NEW_XHTML_BLOCK);
+        corePackage.addEnvironment("tabular", false, 1, PARA_MODE_ONLY, PARAGRAPH, new Interpretation[] { Interpretation.STYLE_SENTINEL, Interpretation.TABULAR  }, tabularHandler, START_NEW_XHTML_BLOCK);
         corePackage.addEnvironment("array", false, 1, MATH_MODE_ONLY, MATH, Interpretation.TABULAR, new ArrayHandler(), null);
         corePackage.addEnvironment("cases", MATH_MODE_ONLY, MATH, Interpretation.TABULAR, new MatrixHandler(2, "{", ""), null);
         corePackage.addEnvironment("eqnarray", PARA_MODE_ONLY, MATH, Interpretation.TABULAR, new EqnArrayHandler(), START_NEW_XHTML_BLOCK);
@@ -464,12 +466,12 @@ public final class CorePackageDefinitions {
         corePackage.addEnvironment("Vmatrix", MATH_MODE_ONLY, MATH, Interpretation.TABULAR, new MatrixHandler("\u2225", "\u2225"), null);
         
         /* Simple text environments */
-        corePackage.addEnvironment("quote", PARA_MODE_ONLY, PARAGRAPH, null, new SimpleXHTMLContainerBuildingHandler("blockquote"), START_NEW_XHTML_BLOCK);
+        corePackage.addEnvironment("quote", PARA_MODE_ONLY, PARAGRAPH, (Interpretation) null, new SimpleXHTMLContainerBuildingHandler("blockquote"), START_NEW_XHTML_BLOCK);
         
         /* Text justification environments. (Note that each line is supposed to be delimited by '\\' */
-        corePackage.addEnvironment("center", PARA_MODE_ONLY, PARAGRAPH, null, new SimpleXHTMLContainerBuildingHandler("div", "center"), START_NEW_XHTML_BLOCK);
-        corePackage.addEnvironment("flushleft", PARA_MODE_ONLY, PARAGRAPH, null, new SimpleXHTMLContainerBuildingHandler("div", "flushleft"), START_NEW_XHTML_BLOCK);
-        corePackage.addEnvironment("flushright", PARA_MODE_ONLY, PARAGRAPH, null, new SimpleXHTMLContainerBuildingHandler("div", "flushright"), START_NEW_XHTML_BLOCK);
+        corePackage.addEnvironment("center", PARA_MODE_ONLY, PARAGRAPH, (Interpretation) null, new SimpleXHTMLContainerBuildingHandler("div", "center"), START_NEW_XHTML_BLOCK);
+        corePackage.addEnvironment("flushleft", PARA_MODE_ONLY, PARAGRAPH, (Interpretation) null, new SimpleXHTMLContainerBuildingHandler("div", "flushleft"), START_NEW_XHTML_BLOCK);
+        corePackage.addEnvironment("flushright", PARA_MODE_ONLY, PARAGRAPH, (Interpretation) null, new SimpleXHTMLContainerBuildingHandler("div", "flushright"), START_NEW_XHTML_BLOCK);
         
         /* Alternative versions of \em and friends. These are converted internally to
          * environments as they're easier to deal with like that.
@@ -501,15 +503,15 @@ public final class CorePackageDefinitions {
          * 
          * NOTE: The arguments for this actually end up being in MATH mode.
          */
-        ENV_BRACKETED = corePackage.addEnvironment("<mfenced>", false, 2, MATH_MODE_ONLY, MATH, null, new MathFenceHandler(), null);
+        ENV_BRACKETED = corePackage.addEnvironment("<mfenced>", false, 2, MATH_MODE_ONLY, MATH, (Interpretation) null, new MathFenceHandler(), null);
 
         /* Special internal environment delimiting content to be rendered with a specific style */
-        ENV_STYLE = corePackage.addEnvironment("<style>", ALL_MODES, null, null, new StyleHandler(), ALLOW_INLINE);
+        ENV_STYLE = corePackage.addEnvironment("<style>", ALL_MODES, null, (Interpretation) null, new StyleHandler(), ALLOW_INLINE);
         
         /* Environments for generating custom XML islands (see corresponding command versions as well) */
-        corePackage.addEnvironment("xmlBlockElement", true, 2, ALL_MODES, null, null, new XMLBlockElementHandler(), START_NEW_XHTML_BLOCK);
-        corePackage.addEnvironment("xmlInlineElement", true, 2, ALL_MODES, null, null, new XMLInlineElementHandler(), ALLOW_INLINE);
-        corePackage.addEnvironment("xmlUnparse", false, 0, TEXT_MODE_ONLY, null, null, new XMLUnparseHandler(), ALLOW_INLINE);
+        corePackage.addEnvironment("xmlBlockElement", true, 2, ALL_MODES, null, (Interpretation) null, new XMLBlockElementHandler(), START_NEW_XHTML_BLOCK);
+        corePackage.addEnvironment("xmlInlineElement", true, 2, ALL_MODES, null, (Interpretation) null, new XMLInlineElementHandler(), ALLOW_INLINE);
+        corePackage.addEnvironment("xmlUnparse", false, 0, TEXT_MODE_ONLY, null, (Interpretation) null, new XMLUnparseHandler(), ALLOW_INLINE);
     }
 
 }

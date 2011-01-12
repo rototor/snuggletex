@@ -19,7 +19,7 @@ import uk.ac.ed.ph.snuggletex.internal.StyleEvaluator;
  * @author  David McKain
  * @version $Revision:179 $
  */
-public enum StyleDeclarationInterpretation implements TextInterpretation {
+public enum StyleDeclarationInterpretation implements Interpretation {
 
     BF(FontFamily.BF, null),
     RM(FontFamily.RM, null),
@@ -44,7 +44,6 @@ public enum StyleDeclarationInterpretation implements TextInterpretation {
     ;
     
     private final FontFamily fontFamily;
-    
     private final FontSize fontSize;
 
     private StyleDeclarationInterpretation(final FontFamily fontFamily, final FontSize fontSize) {

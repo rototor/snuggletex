@@ -198,9 +198,6 @@ public final class XMLUtilities {
             final SerializationSpecifier serializationOptions) {
         StringWriter resultWriter = new StringWriter();
         
-        /* This process consists of an XSLT 1.0 transform to extract the child Nodes, plus
-         * a further optional XSLT 2.0 transform to map character references to named entities.
-         */
         try {
             Transformer serializer = stylesheetManager.getSerializer(null, serializationOptions);
             serializer.transform(new DOMSource(node), new StreamResult(resultWriter));
@@ -224,9 +221,6 @@ public final class XMLUtilities {
             final SerializationSpecifier serializationOptions) {
         StringWriter resultWriter = new StringWriter();
         
-        /* This process consists of an XSLT 1.0 transform to extract the child Nodes, plus
-         * a further optional XSLT 2.0 transform to map character references to named entities.
-         */
         try {
             Transformer serializer = stylesheetManager.getSerializer(Globals.EXTRACT_CHILD_NODES_XSL_RESOURCE_NAME,
                     serializationOptions);

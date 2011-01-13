@@ -2,7 +2,9 @@
 <!--
 
 Trivial stylesheet to convert XHTML to HTML - i.e. move all XHTML elements
-into no namespace. It is safer to do all in one go here as the original tree
+into no namespace. It also does the same with MathML elements.
+
+It is safer to do all in one go here as the original tree
 construction is complex enough as it is!
 
 $Id$
@@ -10,7 +12,8 @@ $Id$
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:h="http://www.w3.org/1999/xhtml"
-  exclude-result-prefixes="h">
+  xmlns:m="http://www.w3.org/1998/Math/MathML"
+  exclude-result-prefixes="h m">
 
   <xsl:template match="h:html">
     <html>
@@ -24,7 +27,7 @@ $Id$
   </xsl:template>
 
   <!-- Replace XHTML elements with corresponding variants in no namespace -->
-  <xsl:template match="h:*">
+  <xsl:template match="h:*|m:*">
     <xsl:element name="{local-name()}">
       <xsl:copy-of select="@*[not(starts-with(name(),'xml:'))]"/>
       <xsl:apply-templates/>

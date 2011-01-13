@@ -97,7 +97,7 @@ public class DOMOutputOptions implements Cloneable {
      * Must be non-null and a valid NCName.
      */
     private String xhtmlPrefix;
-
+    
     /**
      * Set to true if you want MathML element names to be prefixed.
      * If false, then the default namespace is changed when entering a MathML element scope.
@@ -278,8 +278,8 @@ public class DOMOutputOptions implements Cloneable {
     public void setPrefixingXHTML(boolean prefixingXHTML) {
         this.prefixingXHTML = prefixingXHTML;
     }
-
     
+
     /**
      * Gets the prefix to use for XHTML elements when {@link #isPrefixingXHTML()} returns true.
      * Default is {@link #DEFAULT_XHTML_PREFIX}.
@@ -288,7 +288,6 @@ public class DOMOutputOptions implements Cloneable {
         return xhtmlPrefix;
     }
 
-    
     /**
      * Sets the prefix to use for XHTML elements when {@link #isPrefixingXHTML()} returns true.
      * 
@@ -317,8 +316,8 @@ public class DOMOutputOptions implements Cloneable {
     public void setPrefixingMathML(boolean prefixingMathML) {
         this.prefixingMathML = prefixingMathML;
     }
-
-
+    
+    
     /**
      * Gets the prefix to use for MathML elements when {@link #isPrefixingMathML()} returns true.
      * Default is {@link #DEFAULT_MATHML_PREFIX}.
@@ -355,7 +354,7 @@ public class DOMOutputOptions implements Cloneable {
     public void setPrefixingSnuggleXML(boolean prefixingSnuggleXML) {
         this.prefixingSnuggleXML = prefixingSnuggleXML;
     }
-
+    
     
     /**
      * Gets the prefix to use for custom SnuggleTeX XML elements when {@link #isPrefixingSnuggleXML()} 

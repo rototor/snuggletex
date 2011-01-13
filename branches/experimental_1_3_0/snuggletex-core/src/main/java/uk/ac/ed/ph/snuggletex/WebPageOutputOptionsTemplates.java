@@ -5,6 +5,7 @@
  */
 package uk.ac.ed.ph.snuggletex;
 
+import uk.ac.ed.ph.snuggletex.DOMOutputOptions.ErrorOutputOptions;
 import uk.ac.ed.ph.snuggletex.WebPageOutputOptions.WebPageType;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.internal.util.ConstraintUtilities;
@@ -55,6 +56,9 @@ public final class WebPageOutputOptionsTemplates {
                 break;
                 
             case CROSS_BROWSER_XHTML:
+                /* NB: There must be no namespace prefix for MathML or XHTML here, otherwise
+                 * it won't validate against the DTD. We don't enforce this here.
+                 */
                 options.setSerializationMethod(SerializationMethod.XHTML);
                 options.setIncludingXMLDeclaration(true);
                 options.setDoctypePublic(W3CConstants.XHTML_11_MATHML_20_PUBLIC_IDENTIFIER);
@@ -64,6 +68,12 @@ public final class WebPageOutputOptionsTemplates {
             case MATHJAX_CROSS_BROWSER_XHTML:
                 options.setSerializationMethod(SerializationMethod.XHTML);
                 options.setIncludingXMLDeclaration(false);
+                break;
+                
+            case HTML5:
+                options.setSerializationMethod(SerializationMethod.HTML);
+                options.setErrorOutputOptions(ErrorOutputOptions.XHTML);
+                options.setDoctypeSystem("about:legacy-compat");
                 break;
                 
             case MATHPLAYER_HTML:

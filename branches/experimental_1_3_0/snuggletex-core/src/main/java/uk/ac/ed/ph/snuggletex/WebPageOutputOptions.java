@@ -15,7 +15,7 @@ import javax.xml.transform.Transformer;
 /**
  * Builds on {@link XMLStringOutputOptions} to add in options for configuring how to build a
  * web page using the relevant methods in {@link SnuggleSession}
- * (e.g. {@link SnuggleSession#createWebPage(WebPageOutputOptions)}).
+ * (e.g. {@link SnuggleSession#buildWebPage(WebPageOutputOptions)}).
  * <p>
  * You will generally want to use
  * {@link WebPageOutputOptionsTemplates#createWebPageOptions(WebPageOutputOptions.WebPageType)}
@@ -74,6 +74,11 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
          * to your page and tell SnuggleTeX where <tt>MathJax.js</tt> lives.
          */
         MATHJAX_CROSS_BROWSER_XHTML,
+        
+        /**
+         * FIXME: EXPERIMENTAL!
+         */
+        HTML5,
 
         /**
          * HTML + MathML intended for Internet Explorer 6/7 with the MathPlayer plug-in.
@@ -161,7 +166,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
     /** 
      * Title for the resulting page.
      * Default is null.
-     * If null, then no title is added.
+     * If null, then a boilerplate title is added.
      */
     private String title;
     

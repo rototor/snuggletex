@@ -39,7 +39,7 @@ public final class VerbatimHandler implements CommandHandler, EnvironmentHandler
         else {
             verbContent = verbContent.replace(' ', '\u00a0'); /* Convert spaces to non-breaking spaces */
         }
-        Element verbatimElement = builder.appendXHTMLElement(parentElement, "tt");
+        Element verbatimElement = builder.appendXHTMLElement(parentElement, "span");
         verbatimElement.setAttribute("class", "verb");
         builder.appendTextNode(verbatimElement, verbContent, false);
         appendEmbeddedErrors(builder, parentElement, argumentToken);

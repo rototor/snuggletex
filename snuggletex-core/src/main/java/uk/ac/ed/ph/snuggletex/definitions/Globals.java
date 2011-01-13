@@ -63,9 +63,6 @@ public final class Globals {
     /** Specifies the location of the XSLT that converts MathML symbol characters to named entities */
     public static final String MATHML_ENTITIES_MAP_XSL_RESOURCE_NAME = "classpath:/uk/ac/ed/ph/snuggletex/mathml-entities-map.xsl";
     
-    /** Specifies the location of the XSLT that serializes and converts MathML symbol characters to named entities */
-    public static final String SERIALIZE_WITH_NAMED_ENTITIES_XSL_RESOURCE_NAME = "classpath:/uk/ac/ed/ph/snuggletex/serialize-with-named-entities.xsl";
-    
     /** Specifies the ClassPath location of the XHTML -> HTML used for serializing as legacy HTML */
     public static final String XHTML_TO_HTML_XSL_RESOURCE_NAME = "classpath:/uk/ac/ed/ph/snuggletex/xhtml-to-html.xsl";
     

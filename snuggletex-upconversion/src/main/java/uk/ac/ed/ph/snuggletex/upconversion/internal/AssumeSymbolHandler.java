@@ -32,9 +32,9 @@ public final class AssumeSymbolHandler extends UpConversionHandlerBase {
          * a blob of MathML. This will be "checked" in the XSLT to make sure we can handle
          * this correctly.
          */
-        builder.pushOutputContext(OutputContext.MATHML_INLINE);
+        builder.setOutputContext(parentElement, OutputContext.MATHML_INLINE);
         NodeList assumptionTargetRaw = builder.extractNodeListValue(token.getArguments()[0]);
-        builder.popOutputContext();
+        builder.setOutputContext(parentElement, OutputContext.XHTML);
         Element assumptionTarget = ensureLegalSymbolTarget(builder, parentElement, token, assumptionTargetRaw);
         if (assumptionTarget==null) {
             return;

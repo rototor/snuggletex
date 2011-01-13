@@ -13,6 +13,8 @@ import uk.ac.ed.ph.snuggletex.internal.util.ConstraintUtilities;
 import uk.ac.ed.ph.snuggletex.internal.util.StringUtilities;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -204,7 +206,7 @@ public final class StylesheetManager {
     
     /**
      * Obtains a serializer stylesheet based on the stylesheet at the given URI, configured
-     * as per  the given {@link SerializationSpecifier}. (Some options may require XSLT 2.0 support.)
+     * as per the given {@link SerializationSpecifier}. (Some options may require XSLT 2.0 support.)
      * 
      * @param serializerUri URI for the required serializing stylesheet, null for the default
      *   serializer.
@@ -214,38 +216,37 @@ public final class StylesheetManager {
      *   was required but could not be obtained.
      */
     public Transformer getSerializer(final String serializerUri, final SerializationSpecifier serializationOptions) {
-        /* Create appropriate serializer */
-        Transformer serializer;
+        /* Work out whether we need to use any stylesheets to help with serialization */
+        List<String> stylesheetUris = new ArrayList<String>();
+        if (serializerUri!=null) {
+            stylesheetUris.add(serializerUri);
+        }
         boolean supportsXSLT20 = supportsXSLT20();
+        boolean requiresXSLT20 = false;
+        if (serializationOptions!=null && serializationOptions.isUsingNamedEntities() && supportsXSLT20) {
+            /* We will perform character mapping here (which requires XSLT 2.0) */
+            stylesheetUris.add(Globals.MATHML_ENTITIES_MAP_XSL_RESOURCE_NAME);
+            requiresXSLT20 = true;
+        }
+        if (serializationOptions!=null && serializationOptions.getSerializationMethod()==SerializationMethod.HTML) {
+            /* Move XHTML and MathMl elements to no namespace */
+            stylesheetUris.add(Globals.XHTML_TO_HTML_XSL_RESOURCE_NAME);
+        }
+        
+        /* Now create serializer */
+        Transformer serializer;
         try {
-            if (serializationOptions!=null && serializationOptions.isUsingNamedEntities() && supportsXSLT20) {
-                /* We will perform character mapping here (which requires XSLT 2.0) */
-                if (serializerUri!=null) {
-                    /* Mix character mapper in with given serializer */
-                    serializer = cacheImporterStylesheet(true, serializerUri, Globals.MATHML_ENTITIES_MAP_XSL_RESOURCE_NAME)
-                        .newTransformer();
-                }
-                else {
-                    /* Do character mapping serializer only */
-                    serializer = getStylesheet(Globals.SERIALIZE_WITH_NAMED_ENTITIES_XSL_RESOURCE_NAME, true)
-                        .newTransformer();
-                }
+            if (stylesheetUris.isEmpty()) {
+                serializer = getTransformerFactory(false).newTransformer();
             }
             else {
-                if (serializerUri!=null) {
-                    /* Use given serializer */
-                    serializer = getStylesheet(serializerUri)
-                        .newTransformer();
-                }
-                else {
-                    /* Use default serializer */
-                    serializer = getTransformerFactory(false).newTransformer();
-                }
+                serializer = cacheImporterStylesheet(requiresXSLT20, stylesheetUris).newTransformer();
             }
         }
         catch (TransformerConfigurationException e) {
-            throw new SnuggleRuntimeException("Could not create serializer", e);
+            throw new SnuggleRuntimeException("Unexpected failure to create serializer", e);
         }
+
         /* Now configure it as per options */
         if (serializationOptions!=null) {
             SerializationMethod serializationMethod = serializationOptions.getSerializationMethod();
@@ -277,7 +278,7 @@ public final class StylesheetManager {
         return serializer;
     }
     
-    private Templates cacheImporterStylesheet(final boolean requireXSLT20, final String... importUris) {
+    private Templates cacheImporterStylesheet(final boolean requireXSLT20, final List<String> importUris) {
         Templates result;
         TransformerFactory transformerFactory = getTransformerFactory(requireXSLT20);
         if (stylesheetCache==null) {
@@ -304,7 +305,7 @@ public final class StylesheetManager {
      * @param importUris
      */
     private Templates compileImporterStylesheet(final TransformerFactory transformerFactory,
-            boolean requireXSLT20, final String... importUris) {
+            boolean requireXSLT20, final List<String> importUris) {
         /* Build up driver XSLT that simply imports the required stylesheets */
         StringBuilder xsltBuilder = new StringBuilder("<stylesheet version='")
             .append(requireXSLT20 ? "2.0" : "1.0")

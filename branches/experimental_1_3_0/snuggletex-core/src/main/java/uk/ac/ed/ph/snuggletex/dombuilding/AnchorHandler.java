@@ -30,7 +30,6 @@ public final class AnchorHandler implements CommandHandler {
             /* Create <a/> element */
             Element aElement = builder.appendXHTMLElement(parentElement, "a");
             aElement.setAttribute("id", validatedId);
-            aElement.setAttribute("name", validatedId);
             aElement.setIdAttribute("id", true);
         }
     }

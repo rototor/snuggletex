@@ -57,7 +57,7 @@ public final class XMLUnparseHandler implements EnvironmentHandler, CommandHandl
             parentElement.removeChild(childNodes.item(i));
         }
         Element resultElement = builder.appendXHTMLTextElement(parentElement,
-                isBlock ? "pre" : "tt",
+                isBlock ? "pre" : "span",
                 parentContentUnparsed, true);
         resultElement.setAttribute("class", "unparsed-xml");
     }

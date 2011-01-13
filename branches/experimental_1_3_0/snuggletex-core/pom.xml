@@ -36,6 +36,18 @@ All Rights Reserved
       <version>20091111</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon9</artifactId>
+      <version>${saxon9.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon9-dom</artifactId>
+      <version>${saxon9.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

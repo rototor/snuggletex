@@ -62,54 +62,48 @@ All Rights Reserved
           </includes>
         </configuration>
       </plugin>
-      <!-- Builds snuggletex.css and stores in the build directory -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
+          <!-- Builds snuggletex.css and stores in the build directory -->
           <execution>
             <id>snuggletex.css</id>
             <goals>
               <goal>exec</goal>
             </goals>
             <phase>compile</phase>
+            <configuration>
+              <executable>java</executable>
+              <classpathScope>runtime</classpathScope>
+              <arguments>
+                <argument>-classpath</argument>
+                <classpath/>
+                <argument>uk.ac.ed.ph.snuggletex.utilities.CSSUtilities</argument>
+                <argument>${project.build.directory}/snuggletex.css</argument>
+              </arguments>
+            </configuration>
           </execution>
-        </executions>
-        <configuration>
-          <executable>java</executable>
-          <classpathScope>runtime</classpathScope>
-          <arguments>
-            <argument>-classpath</argument>
-            <classpath/>
-            <argument>uk.ac.ed.ph.snuggletex.utilities.CSSUtilities</argument>
-            <argument>${project.build.directory}/snuggletex.css</argument>
-          </arguments>
-        </configuration>
-      </plugin>
-      <!-- Builds all-math-characters.txt from unicode-math-table.tex from the unicode-math LaTeX package -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <executions>
+          <!-- Builds all-math-characters.txt from unicode-math-table.tex from the unicode-math LaTeX package -->
           <execution>
             <id>MakeCharactersDefinitions</id>
             <goals>
               <goal>exec</goal>
             </goals>
             <phase>compile</phase>
+            <configuration>
+              <executable>java</executable>
+              <classpathScope>runtime</classpathScope>
+              <arguments>
+                <argument>-classpath</argument>
+                <classpath/>
+                <argument>uk.ac.ed.ph.snuggletex.internal.util.MakeCharacterDefinitions</argument>
+                <argument>${basedir}/src/main/resources/uk/ac/ed/ph/snuggletex/unicode-math-table.tex</argument>
+                <argument>${project.build.outputDirectory}/uk/ac/ed/ph/snuggletex/all-math-characters.txt</argument>
+              </arguments>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <executable>java</executable>
-          <classpathScope>runtime</classpathScope>
-          <arguments>
-            <argument>-classpath</argument>
-            <classpath/>
-            <argument>uk.ac.ed.ph.snuggletex.internal.util.MakeCharacterDefinitions</argument>
-            <argument>${basedir}/src/main/resources/uk/ac/ed/ph/snuggletex/unicode-math-table.tex</argument>
-            <argument>${project.build.outputDirectory}/uk/ac/ed/ph/snuggletex/all-math-characters.txt</argument>
-          </arguments>
-        </configuration>
       </plugin>
       <!-- Build JAR with main class + one with test classes for use in other modules -->
       <plugin>

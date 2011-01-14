@@ -103,7 +103,7 @@
   font-size: 130%;
 }
 
-#maininner h3 tt {
+#maininner h3 span.verb {
   color: #25476c;
 }
 
@@ -143,8 +143,8 @@ span.extlink {
   background: url(extlink.png) no-repeat center left;
 }
 
-tt, code {
-  font-family: Monospace;
+span.verb, code {
+  font-family: Courier, fixed;
   font-size: 90%;
   font-weight: bold;
   color: #333333;

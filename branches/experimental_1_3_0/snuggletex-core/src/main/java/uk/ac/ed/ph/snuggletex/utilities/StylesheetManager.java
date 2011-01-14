@@ -223,14 +223,20 @@ public final class StylesheetManager {
         }
         boolean supportsXSLT20 = supportsXSLT20();
         boolean requiresXSLT20 = false;
-        if (serializationOptions!=null && serializationOptions.isUsingNamedEntities() && supportsXSLT20) {
-            /* We will perform character mapping here (which requires XSLT 2.0) */
-            stylesheetUris.add(Globals.MATHML_ENTITIES_MAP_XSL_RESOURCE_NAME);
-            requiresXSLT20 = true;
-        }
-        if (serializationOptions!=null && serializationOptions.getSerializationMethod()==SerializationMethod.HTML) {
-            /* Move XHTML and MathMl elements to no namespace */
-            stylesheetUris.add(Globals.XHTML_TO_HTML_XSL_RESOURCE_NAME);
+        if (serializationOptions!=null) {
+            if (serializationOptions.isUsingNamedEntities() && supportsXSLT20) {
+                /* We will perform character mapping here (which requires XSLT 2.0) */
+                stylesheetUris.add(Globals.MATHML_ENTITIES_MAP_XSL_RESOURCE_NAME);
+                requiresXSLT20 = true;
+            }
+            if (serializationOptions.getSerializationMethod()==SerializationMethod.HTML) {
+                /* Move XHTML to no namespace, keep MathML and other namespace intact */
+                stylesheetUris.add(Globals.STRIP_XHTML_NAMESPACE_XSL_RESOURCE_NAME);
+            }
+            else if (serializationOptions.getSerializationMethod()==SerializationMethod.STRICTLY_HTML) {
+                /* Move *ALL* XML elements to no namespace */
+                stylesheetUris.add(Globals.STRIP_ALL_NAMESPACES_XSL_RESOURCE_NAME);
+            }
         }
         
         /* Now create serializer */

@@ -6,7 +6,10 @@
 package uk.ac.ed.ph.snuggletex;
 
 /**
- * Enumerates the 3 XML serialization methods available, based on XSLT 1.0 & 2.0
+ * Enumerates the XML serialization methods available.
+ * <p>
+ * This is based on XSLT 2, but provides two HTML serialization methods - one which
+ * keeps non-XHTML in a namespace and one which moves everything into the null namespace.
  * <p>
  * <strong>NOTE:</strong> XHTML is only supported if you are using an XSLT 2.0
  * processor. If not supported, you will get XML output.
@@ -22,8 +25,26 @@ public enum SerializationMethod {
     /** XHTML Serialization method (if available) */
     XHTML("xhtml"),
     
-    /** HTML serialization method */
+    /** 
+     * "Partial" HTML serialization method. 
+     * <p>
+     * HTML elements are serialized in NO namespace, XML elements in the MathML and other
+     * namespaces are kept as-is
+     * <p>
+     * (This is how you might serialize HTML for IE/MathPlayer, for example)
+     */
     HTML("html"),
+    
+    /** 
+     * Strictly HTML serialization method. 
+     * <p>
+     * All XML elements have their namespaces removed on serialization. (Hence, there's the
+     * potential for name clashes if you use something like XLink & XHTML together.)
+     * <p>
+     * (This is how you would serialize HTML5, for example.)
+     */
+    STRICTLY_HTML("html"),
+    
     ;
     
     private final String name;

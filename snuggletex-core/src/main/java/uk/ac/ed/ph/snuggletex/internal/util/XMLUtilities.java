@@ -197,7 +197,6 @@ public final class XMLUtilities {
     public static String serializeNode(StylesheetManager stylesheetManager, final Node node,
             final SerializationSpecifier serializationOptions) {
         StringWriter resultWriter = new StringWriter();
-        
         try {
             Transformer serializer = stylesheetManager.getSerializer(null, serializationOptions);
             serializer.transform(new DOMSource(node), new StreamResult(resultWriter));

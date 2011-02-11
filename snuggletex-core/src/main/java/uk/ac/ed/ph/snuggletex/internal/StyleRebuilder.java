@@ -11,6 +11,7 @@ import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle;
 import uk.ac.ed.ph.snuggletex.definitions.CorePackageDefinitions;
 import uk.ac.ed.ph.snuggletex.semantics.InterpretationType;
 import uk.ac.ed.ph.snuggletex.tokens.ArgumentContainerToken;
+import uk.ac.ed.ph.snuggletex.tokens.BraceContainerToken;
 import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import uk.ac.ed.ph.snuggletex.tokens.EnvironmentToken;
 import uk.ac.ed.ph.snuggletex.tokens.FlowToken;
@@ -124,6 +125,10 @@ public final class StyleRebuilder {
                 
             case ENVIRONMENT:
                 visitEnvironment((EnvironmentToken) token, currentStyle);
+                break;
+                
+            case BRACE_CONTAINER:
+                visitSiblings(((BraceContainerToken) token).getContents(), currentStyle);
                 break;
                 
             case TEXT_MODE_TEXT:

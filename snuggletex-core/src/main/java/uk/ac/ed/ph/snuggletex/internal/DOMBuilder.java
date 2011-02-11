@@ -33,6 +33,7 @@ import uk.ac.ed.ph.snuggletex.semantics.MathIdentifierInterpretation;
 import uk.ac.ed.ph.snuggletex.semantics.MathNumberInterpretation;
 import uk.ac.ed.ph.snuggletex.semantics.MathOperatorInterpretation;
 import uk.ac.ed.ph.snuggletex.tokens.ArgumentContainerToken;
+import uk.ac.ed.ph.snuggletex.tokens.BraceContainerToken;
 import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import uk.ac.ed.ph.snuggletex.tokens.EnvironmentToken;
 import uk.ac.ed.ph.snuggletex.tokens.ErrorToken;
@@ -305,6 +306,17 @@ public final class DOMBuilder {
                     throw new SnuggleLogicException("No builder registered for Environment " + envToken.getEnvironment());
                 }
                 envHandler.handleEnvironment(this, parentElement, envToken);
+                break;
+                
+            case BRACE_CONTAINER:
+                BraceContainerToken braceToken = (BraceContainerToken) token;
+                if (isBuildingMathMLIsland()) {
+                    Element mrow = appendMathMLElement(parentElement, "mrow");
+                    handleTokens(mrow, braceToken.getContents(), true);
+                }
+                else {
+                    throw new SnuggleLogicException("BraceContainerTokens should not be present outside Math islands");
+                }
                 break;
                 
             case ERROR:

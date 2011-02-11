@@ -224,11 +224,6 @@ public final class StylesheetManager {
         boolean supportsXSLT20 = supportsXSLT20();
         boolean requiresXSLT20 = false;
         if (serializationOptions!=null) {
-            if (serializationOptions.isUsingNamedEntities() && supportsXSLT20) {
-                /* We will perform character mapping here (which requires XSLT 2.0) */
-                stylesheetUris.add(Globals.MATHML_ENTITIES_MAP_XSL_RESOURCE_NAME);
-                requiresXSLT20 = true;
-            }
             if (serializationOptions.getSerializationMethod()==SerializationMethod.HTML) {
                 /* Move XHTML to no namespace, keep MathML and other namespace intact */
                 stylesheetUris.add(Globals.STRIP_XHTML_NAMESPACE_XSL_RESOURCE_NAME);
@@ -237,16 +232,23 @@ public final class StylesheetManager {
                 /* Move *ALL* XML elements to no namespace */
                 stylesheetUris.add(Globals.STRIP_ALL_NAMESPACES_XSL_RESOURCE_NAME);
             }
+            if (serializationOptions.isUsingNamedEntities() && supportsXSLT20) {
+                /* We will perform character mapping here (which requires XSLT 2.0) */
+                stylesheetUris.add(Globals.MATHML_ENTITIES_MAP_XSL_RESOURCE_NAME);
+                requiresXSLT20 = true;
+            }
         }
-        
         /* Now create serializer */
         Transformer serializer;
         try {
             if (stylesheetUris.isEmpty()) {
                 serializer = getTransformerFactory(false).newTransformer();
             }
+            else if (stylesheetUris.size()==1) {
+                serializer = getStylesheet(stylesheetUris.get(0), requiresXSLT20).newTransformer();
+            }
             else {
-                serializer = cacheImporterStylesheet(requiresXSLT20, stylesheetUris).newTransformer();
+                serializer = cacheImporterStylesheet(stylesheetUris, requiresXSLT20).newTransformer();
             }
         }
         catch (TransformerConfigurationException e) {
@@ -284,18 +286,18 @@ public final class StylesheetManager {
         return serializer;
     }
     
-    private Templates cacheImporterStylesheet(final boolean requireXSLT20, final List<String> importUris) {
+    private Templates cacheImporterStylesheet(final List<String> importUris, final boolean requireXSLT20) {
         Templates result;
         TransformerFactory transformerFactory = getTransformerFactory(requireXSLT20);
         if (stylesheetCache==null) {
-            result = compileImporterStylesheet(transformerFactory, requireXSLT20, importUris);
+            result = compileImporterStylesheet(transformerFactory, importUris, requireXSLT20);
         }
         else {
             String cacheKey = "snuggletex-importer(" + StringUtilities.join(importUris, ",") + ")";
             synchronized(stylesheetCache) {
                 result = stylesheetCache.getStylesheet(cacheKey);
                 if (result==null) {
-                    result = compileImporterStylesheet(transformerFactory, requireXSLT20, importUris);
+                    result = compileImporterStylesheet(transformerFactory, importUris, requireXSLT20);
                     stylesheetCache.putStylesheet(cacheKey, result);
                 }
             }
@@ -311,7 +313,7 @@ public final class StylesheetManager {
      * @param importUris
      */
     private Templates compileImporterStylesheet(final TransformerFactory transformerFactory,
-            boolean requireXSLT20, final List<String> importUris) {
+            final List<String> importUris, boolean requireXSLT20) {
         /* Build up driver XSLT that simply imports the required stylesheets */
         StringBuilder xsltBuilder = new StringBuilder("<stylesheet version='")
             .append(requireXSLT20 ? "2.0" : "1.0")

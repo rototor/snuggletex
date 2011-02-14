@@ -52,13 +52,14 @@ var inputTextByIdMap = {};
  * last call to this.
  */
 function updatePreviewIfChanged(asciiMathInputControlId, mathJaxRenderingContainerId,
-        validatedRenderingContainerId, previewSourceContainerId) {
+        validatedRenderingContainerId, previewSourceContainerId,
+        validatedCMathSourceContainerId) {
     var inputSelector = jQuery("#" + asciiMathInputControlId);
     var newValue = inputSelector.get(0).value;
     var oldValue = inputTextByIdMap[asciiMathInputControlId];
     if (oldValue==null || newValue!=oldValue) {
-        updatePreview(newValue, mathJaxRenderingContainerId,
-            validatedRenderingContainerId, previewSourceContainerId);
+        updatePreview(newValue, mathJaxRenderingContainerId, validatedRenderingContainerId,
+            previewSourceContainerId, validatedCMathSourceContainerId);
     }
     inputTextByIdMap[asciiMathInputControlId] = newValue;
 }
@@ -69,7 +70,7 @@ function updatePreviewIfChanged(asciiMathInputControlId, mathJaxRenderingContain
  * in and where the raw input is going to come from.
  */
 function updatePreview(mathModeInput, mathJaxRenderingContainerId, validatedRenderingContainerId,
-        previewSourceContainerId) {
+        previewSourceContainerId, validatedCMathSourceContainerId) {
     /* Get ASCIIMathML to generate a <math> element */
     var asciiMathElement = callASCIIMath(mathModeInput);
 
@@ -80,11 +81,7 @@ function updatePreview(mathModeInput, mathJaxRenderingContainerId, validatedRend
     }
 
     /* Insert MathML into the DOM */
-    /* FIXME: Work out whether MathJax starts messing around here */
     var mathJaxRenderingContainer = replaceContainerContent(mathJaxRenderingContainerId, asciiMathElement);
-
-    /* Update MathJax. (NB: Don't always seem to need this. Investigate) */
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub, mathJaxRenderingContainer]);
 
     /* Maybe validate the input */
     if (validatedRenderingContainerId!=null) {
@@ -92,28 +89,41 @@ function updatePreview(mathModeInput, mathJaxRenderingContainerId, validatedRend
             { asciiMathML: source.replace(/\r\n/g, '') }, /* FIXME: Hard-coded newlines */
             function(data) {
                 var replacement;
-                if (data['errors']!=null) {
-                    replacement = document.createTextNode("X");
-                }
-                else if (data['pmath']!=null) {
+                if (data['cmath']!=null) {
                     var pmathDoc = jQuery.parseXML(data['pmath']);
-                    replacement = pmathDoc.childNodes[0];
+                    var cmathText = document.createTextNode(data['cmath']);
+                    replaceContainerContent(validatedRenderingContainerId, pmathDoc.childNodes[0]);
+                    replaceContainerContent(validatedCMathSourceContainerId, cmathText);
+                }
+                else if (data['errors']!=null) {
+                    replaceContainerContent(validatedRenderingContainerId, document.createTextNode("?"));
+                    replaceContainerContent(validatedCMathSourceContainerId, null);
                 }
                 else {
-                    replacement = document.createTextNode("?");
+                    replaceContainerContent(validatedRenderingContainerId, document.createTextNode("UNEXPECTED ERROR"));
+                    replaceContainerContent(validatedCMathSourceContainerId, null);
                 }
-                replaceContainerContent(validatedRenderingContainerId, replacement);
             }
         );
     }
 }
 
 function replaceContainerContent(containerId, node) {
-    var container = document.getElementById(containerId);
-    for (var i=container.childNodes.length-1; i>=0; i--) {
-        container.removeChild(container.childNodes[i]);
+    var container = null;
+    if (containerId!=null) {
+        container = document.getElementById(containerId);
+        for (var i=container.childNodes.length-1; i>=0; i--) {
+            container.removeChild(container.childNodes[i]);
+        }
+        if (node!=null) {
+            container.appendChild(node);
+
+            /* Schedule MathJax update if this is a MathML Node */
+            if (node.nodeType==1 && node.nodeName=="math") {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, container]);
+            }
+        }
     }
-    container.appendChild(node);
     return container;
 }
 
@@ -128,11 +138,8 @@ function callASCIIMath(mathModeInput) {
 }
 
 /**
- * Extracts the source MathML contained within the ASCIIMath preview element
- * having the given ID
- *
- * @param {String} mathJaxRenderingContainerId ID of the XHTML parent element
- *   containing the MathML to be extracted.
+ * Extracts the source MathML contained within the ASCIIMath-generated
+ * <math> element.
  */
 function extractMathML(asciiMathElement) {
     return AMnode2string(asciiMathElement, "").substring(newline.length); /* Trim off leading newline */
@@ -206,25 +213,29 @@ function AMescapeValue(value) {
  *   behaviour.
  */
 function setupASCIIMathMLInputWidget(asciiMathInputControlId, asciiMathOutputControlId,
-        mathJaxRenderingContainerId, validatedRenderingContainerId, previewSourceContainerId) {
+        mathJaxRenderingContainerId, validatedRenderingContainerId, previewSourceContainerId,
+        validatedCMathSourceContainerId) {
     /* Set up submit handler for the form */
     jQuery("#" + asciiMathInputControlId).closest("form").bind("submit", function(evt) {
         /* We'll redo the ASCIIMathML process, just in case we want to allow auto-preview to be disabled in future */
-        var asciiMathElement = callASCIIMath(asciiMathInputControlId);
+        var asciiMathInput = jQuery("#" + asciiMathInputControlId).get(0).value;
+        var asciiMathElement = callASCIIMath(asciiMathInput);
         var asciiMathSource = extractMathML(asciiMathElement);
         var mathmlResultControl = document.getElementById(asciiMathOutputControlId);
         mathmlResultControl.value = asciiMathSource;
         return true;
     });
-    var inputSelector = jQuery("#" + asciiMathInputControlId);
-    var initialInput = inputSelector.get(0).value;
 
     /* Set up initial preview */
-    updatePreview(initialInput, mathJaxRenderingContainerId, validatedRenderingContainerId, previewSourceContainerId);
+    var inputSelector = jQuery("#" + asciiMathInputControlId);
+    var initialInput = inputSelector.get(0).value;
+    updatePreview(initialInput, mathJaxRenderingContainerId, validatedRenderingContainerId,
+        previewSourceContainerId, validatedCMathSourceContainerId);
 
     /* Set up handler to update preview when required */
     inputSelector.bind("change keyup keydown", function() {
-        updatePreviewIfChanged(asciiMathInputControlId, mathJaxRenderingContainerId, validatedRenderingContainerId, previewSourceContainerId);
+        updatePreviewIfChanged(asciiMathInputControlId, mathJaxRenderingContainerId,
+            validatedRenderingContainerId, previewSourceContainerId, validatedCMathSourceContainerId);
     });
 
     /* TODO: Do we want to set up a timer as well? If so, we probably want
@@ -247,11 +258,15 @@ function setupASCIIMathMLInputWidget(asciiMathInputControlId, asciiMathOutputCon
  * @param {String} previewSourceContainerId optional ID of the XHTML element that will show
  *   the generated MathML source as it is built. This may be null to suppress this
  *   behaviour.
+ * @param {String} validatedCMathSourceContainerId optional ID of the XHTML element that
+ *   will show the source of the validated Content MathML as it is built.
  */
 function registerASCIIMathMLInputWidget(asciiMathInputControlId, asciiMathOutputControlId,
-        mathJaxRenderingContainerId, validatedRenderingContainerId, previewSourceContainerId) {
+        mathJaxRenderingContainerId, validatedRenderingContainerId, previewSourceContainerId,
+        validatedCMathSourceContainerId) {
     jQuery(document).ready(function() {
         setupASCIIMathMLInputWidget(asciiMathInputControlId, asciiMathOutputControlId,
-            mathJaxRenderingContainerId, validatedRenderingContainerId, previewSourceContainerId);
+            mathJaxRenderingContainerId, validatedRenderingContainerId,
+            previewSourceContainerId, validatedCMathSourceContainerId);
     });
 }

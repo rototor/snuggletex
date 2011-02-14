@@ -84,6 +84,7 @@ public final class ASCIIMathMLUpConversionService extends HttpServlet {
     private void maybeAppendJson(StringBuilder stringBuilder, String key, Document valueDocument) {
         if (valueDocument!=null) {
             SerializationSpecifier options = new SerializationOptions();
+            options.setIndenting(true);
             maybeAppendJson(stringBuilder, key, MathMLUtilities.serializeDocument(valueDocument, options));
         }
     }

@@ -57,7 +57,7 @@ public final class NewASCIIMathMLDemoServlet extends BaseServlet {
          * JavaScript code.
          */
         String asciiMathInput = request.getParameter("asciiMathInput");
-        String asciiMathOutput = request.getParameter("asciiMathML");
+        String asciiMathOutput = request.getParameter("asciiMathOutput");
         if (asciiMathInput==null || asciiMathOutput==null) {
             logger.warn("Could not extract data from ASCIIMath: asciiMathInput={}, asciiMathOutput={}", asciiMathInput, asciiMathOutput);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not extract data passed by ASCIIMathML");
@@ -111,13 +111,13 @@ public final class NewASCIIMathMLDemoServlet extends BaseServlet {
         		+ "      });\n" 
         		+ "    </script>\n" 
         		+ "    <script type=\"text/javascript\">//<![CDATA[\n" 
-        		+ "      registerASCIIMathMLInputWidget('asciiMathInputControl', 'asciiMathOutputControl', 'mathJaxRendering', 'validatedRendering', 'previewSource');\n" 
+        		+ "      registerASCIIMathMLInputWidget('asciiMathInputControl', 'asciiMathOutputControl', 'mathJaxRendering', 'validatedRendering', 'previewSource', 'cmathSource');\n" 
         		+ "    //]]></script>\n" 
         		+ "  </head>\n" 
         		+ "  <body>\n" 
         		+ "    <form action=\"" + contextPath + "/NewASCIIMathMLDemo\" method=\"post\">\n" 
-        		+ "      <input id=\"asciiMathInputControl\" name=\"asciiMathInputControl\" type=\"text\" value=\"" + asciiMathInput + "\">\n" /* NB: Need to escape input in future */ 
-        		+ "      <input id=\"asciiMathOutputControl\" name=\"asciiMathOutputControl\" type=\"hidden\">\n" 
+        		+ "      <input id=\"asciiMathInputControl\" name=\"asciiMathInput\" type=\"text\" value=\"" + asciiMathInput + "\">\n" /* NB: Need to escape input in future */ 
+        		+ "      <input id=\"asciiMathOutputControl\" name=\"asciiMathOutput\" type=\"hidden\">\n" 
         		+ "      <input type=\"submit\" value=\"Go!\">\n" 
         		+ "    </form>\n"
         		+ "    <h3>ASCIIMathML rendered by MathJax</h3>\n" 
@@ -125,7 +125,9 @@ public final class NewASCIIMathMLDemoServlet extends BaseServlet {
                 + "    <h3>Verified MathML</h3>"
                 + "    <div id=\"validatedRendering\"></div>\n"
         		+ "    <h3>ASCIIMathML source</h3>\n"
-        		+ "    <pre id=\"previewSource\"></div>\n"
+        		+ "    <pre id=\"previewSource\"></pre>\n"
+        		+ "    <h3>Content MathML source</h3>\n"
+        		+ "    <pre id=\"cmathSource\"></pre>\n"
         		+ "  </body>\n" 
         		+ "</html>");
         writer.flush();

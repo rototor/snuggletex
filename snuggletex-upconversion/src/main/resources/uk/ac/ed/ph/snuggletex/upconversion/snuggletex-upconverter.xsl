@@ -35,6 +35,7 @@ All Rights Reserved
   <xsl:import href="snuggletex-utilities.xsl"/>
   <xsl:import href="pmathml-utilities.xsl"/>
   <xsl:import href="pmathml-enhancer.xsl"/>
+  <xsl:import href="pmathml-bracketer.xsl"/>
   <xsl:import href="pmathml-to-cmathml.xsl"/>
   <xsl:import href="cmathml-to-maxima.xsl"/>
   <xsl:import href="upconversion-options.xsl"/>
@@ -54,6 +55,7 @@ All Rights Reserved
   -->
   <xsl:param name="s:global-upconversion-options" as="element(s:upconversion-options)">
     <s:upconversion-options>
+      <s:option name="doBracketedPresentationMathML" value="true"/>
       <s:option name="doContentMathML" value="true"/>
       <s:option name="doMaxima" value="true"/>
       <s:option name="addOptionsAnnotation" value="false"/>
@@ -83,6 +85,7 @@ All Rights Reserved
   <xsl:variable name="s:snuggletex-annotation" as="xs:string" select="'SnuggleTeX'"/>
   <xsl:variable name="s:snuggletex-upconversion-options-annotation" as="xs:string" select="'SnuggleTeX-upconversion-options'"/>
   <xsl:variable name="s:latex-annotation" as="xs:string" select="'LaTeX'"/>
+  <xsl:variable name="s:bracketed-pmathml-annotation" as="xs:string" select="'MathML-Presentation-Bracketed'"/>
   <xsl:variable name="s:content-mathml-annotation" as="xs:string" select="'MathML-Content'"/>
   <xsl:variable name="s:content-failures-annotation" as="xs:string" select="'MathML-Content-upconversion-failures'"/>
   <xsl:variable name="s:maxima-annotation" as="xs:string" select="'Maxima'"/>
@@ -159,6 +162,7 @@ All Rights Reserved
 
     <!-- Merge these options with global ones passed from Java -->
     <xsl:variable name="effective-options" select="local:compute-effective-upconversion-options($current-upconversion-options)" as="element(s:upconversion-options)"/>
+    <xsl:variable name="do-bracketed-pmathml" select="s:get-boolean-option($effective-options, 'doBracketedPresentationMathML')" as="xs:boolean"/>
     <xsl:variable name="do-content-mathml" select="s:get-boolean-option($effective-options, 'doContentMathML')" as="xs:boolean"/>
     <xsl:variable name="do-maxima" select="s:get-boolean-option($effective-options, 'doMaxima')" as="xs:boolean"/>
     <xsl:variable name="add-options-annotation" select="s:get-boolean-option($effective-options, 'addOptionsAnnotation')" as="xs:boolean"/>
@@ -175,6 +179,15 @@ All Rights Reserved
         <xsl:with-param name="elements" select="$presentation-mathml"/>
         <xsl:with-param name="upconversion-options" select="$effective-options"/>
       </xsl:call-template>
+    </xsl:variable>
+
+    <!-- Maybe create bracketed version of the PMathML -->
+    <xsl:variable name="bracketed-pmathml">
+      <xsl:if test="$do-bracketed-pmathml">
+        <xsl:call-template name="s:bracket-pmathml">
+          <xsl:with-param name="elements" select="$enhanced-pmathml/*"/>
+        </xsl:call-template>
+      </xsl:if>
     </xsl:variable>
 
     <!-- Maybe convert Presentation MathML to Content MathML, creating another new Document Node -->
@@ -229,13 +242,23 @@ All Rights Reserved
       <math>
         <xsl:copy-of select="@*"/>
         <xsl:choose>
-          <xsl:when test="$add-options-annotation or $do-content-mathml or $do-maxima or exists($annotations)">
+          <xsl:when test="$add-options-annotation
+              or $do-bracketed-pmathml
+              or $do-content-mathml
+              or $do-maxima
+              or exists($annotations)">
             <!-- We're definitely going to be doing annotations here! -->
             <semantics>
               <!-- Put in the enhanced Presentation MathML first -->
               <xsl:call-template name="s:maybe-wrap-in-mrow">
                 <xsl:with-param name="elements" select="$enhanced-pmathml/*"/>
               </xsl:call-template>
+              <!-- Maybe put in bracketed PMathML -->
+              <xsl:if test="$do-bracketed-pmathml">
+                <annotation-xml encoding="{$s:bracketed-pmathml-annotation}">
+                  <xsl:copy-of select="$bracketed-pmathml"/>
+                </annotation-xml>
+              </xsl:if>
               <!-- Maybe add Content MathML or failure annotation -->
               <xsl:choose>
                 <xsl:when test="exists($cmathml-failures)">

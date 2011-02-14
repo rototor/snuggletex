@@ -78,6 +78,7 @@ public class MathMLUpConverter {
     
     public static final String SNUGGLETEX_ANNOTATION_NAME = "SnuggleTeX";
     public static final String LATEX_ANNOTATION_NAME = "LaTeX";
+    public static final String BRACKETED_PRESENTATION_MATHML_ANNOTATION_NAME = "MathML-Presentation-Bracketed";
     public static final String CONTENT_MATHML_ANNOTATION_NAME = "MathML-Content";
     public static final String CONTENT_FAILURES_ANNOTATION_NAME = "MathML-Content-upconversion-failures";
     public static final String MAXIMA_ANNOTATION_NAME = "Maxima";

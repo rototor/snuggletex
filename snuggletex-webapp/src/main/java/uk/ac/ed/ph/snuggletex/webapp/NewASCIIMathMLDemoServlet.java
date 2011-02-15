@@ -100,6 +100,7 @@ public final class NewASCIIMathMLDemoServlet extends BaseServlet {
         		+ "  <head>\n" 
         		+ "    <meta charset='UTF-8'>"
         		+ "    <title>Well, Hello!</title>\n" 
+        		+ "    <link rel=\"stylesheet\" href=\"" + contextPath + "/includes/asciimath-input-widget.css\">\n"
         		+ "    <script type=\"text/javascript\" src=\"" + contextPath + "/includes/jquery/jquery-1.5.0.min.js\"></script>\n"
         		+ "    <script type=\"text/javascript\" src=\"" + contextPath + "/includes/ASCIIMathML.js\"></script>\n"
         		+ "    <script type=\"text/javascript\" src=\"" + contextPath + "/includes/ASCIIMathInputWidget.js\"></script>\n"

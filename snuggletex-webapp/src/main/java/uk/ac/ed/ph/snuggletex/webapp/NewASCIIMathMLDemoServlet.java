@@ -58,6 +58,7 @@ public final class NewASCIIMathMLDemoServlet extends BaseServlet {
          */
         String asciiMathInput = request.getParameter("asciiMathInput");
         String asciiMathOutput = request.getParameter("asciiMathOutput");
+        
         if (asciiMathInput==null || asciiMathOutput==null) {
             logger.warn("Could not extract data from ASCIIMath: asciiMathInput={}, asciiMathOutput={}", asciiMathInput, asciiMathOutput);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not extract data passed by ASCIIMathML");
@@ -98,10 +99,10 @@ public final class NewASCIIMathMLDemoServlet extends BaseServlet {
         		+ "  <html lang=\"en\">\n"
         		+ "  <head>\n" 
         		+ "    <meta charset='UTF-8'>"
-        		+ "    <title>Hello</title>\n" 
+        		+ "    <title>Well, Hello!</title>\n" 
         		+ "    <script type=\"text/javascript\" src=\"" + contextPath + "/includes/jquery/jquery-1.5.0.min.js\"></script>\n"
         		+ "    <script type=\"text/javascript\" src=\"" + contextPath + "/includes/ASCIIMathML.js\"></script>\n"
-        		+ "    <script type=\"text/javascript\" src=\"" + contextPath + "/includes/NewASCIIMathMLWidget.js\"></script>\n"
+        		+ "    <script type=\"text/javascript\" src=\"" + contextPath + "/includes/ASCIIMathInputWidget.js\"></script>\n"
         		+ "    <script type=\"text/javascript\" src=\"" + contextPath + "/lib/MathJax/MathJax.js\">\n" 
         		+ "      MathJax.Hub.Config({\n" 
         		+ "        /* MathML input, or sort of SnuggleTeX output */\n" 
@@ -110,8 +111,18 @@ public final class NewASCIIMathMLDemoServlet extends BaseServlet {
         		+ "        jax: [\"input/MathML\"]\n" 
         		+ "      });\n" 
         		+ "    </script>\n" 
-        		+ "    <script type=\"text/javascript\">//<![CDATA[\n" 
-        		+ "      registerASCIIMathMLInputWidget('asciiMathInputControl', 'asciiMathOutputControl', 'mathJaxRendering', 'validatedRendering', 'previewSource', 'cmathSource');\n" 
+        		+ "    <script type=\"text/javascript\">//<![CDATA[\n"
+        		+ "      jQuery(document).ready(function() {\n"
+        		+ "        ASCIIMathInputController.setValidatorServiceUrl('" + contextPath + "/ASCIIMathMLUpConversionService');\n"
+        		+ "        ASCIIMathInputController.setDelay(500);\n"
+        		+ "        var widget = ASCIIMathInputController.createInputWidget('asciiMathInputControl', 'asciiMathOutputControl');\n"
+        		+ "        widget.setMathJaxRenderingContainerId('mathJaxRendering');\n"
+        		+ "        widget.validatedRenderingContainerId = 'validatedRendering';\n"
+        		+ "        widget.pmathSourceContainerId = 'pmathSource';\n"
+        		+ "        widget.cmathSourceContainerId = 'cmathSource';\n"
+        		+ "        widget.maximaSourceContainerId = 'maximaSource';\n"
+        		+ "        widget.init();\n"
+        		+ "      });\n"
         		+ "    //]]></script>\n" 
         		+ "  </head>\n" 
         		+ "  <body>\n" 
@@ -125,9 +136,11 @@ public final class NewASCIIMathMLDemoServlet extends BaseServlet {
                 + "    <h3>Verified MathML</h3>"
                 + "    <div id=\"validatedRendering\"></div>\n"
         		+ "    <h3>ASCIIMathML source</h3>\n"
-        		+ "    <pre id=\"previewSource\"></pre>\n"
+        		+ "    <pre id=\"pmathSource\"></pre>\n"
         		+ "    <h3>Content MathML source</h3>\n"
         		+ "    <pre id=\"cmathSource\"></pre>\n"
+        		+ "    <h3>Maxima source</h3>\n"
+                + "    <pre id=\"maximaSource\"></pre>\n"
         		+ "  </body>\n" 
         		+ "</html>");
         writer.flush();

@@ -57,22 +57,24 @@ public final class ASCIIMathMLUpConversionService extends HttpServlet {
         upConversionOptions.setSpecifiedOption(UpConversionOptionDefinitions.DO_BRACKETED_PRESENTATION_MATHML, "true");
         Document upConvertedMathDocument = upConverter.upConvertASCIIMathML(asciiMathML, upConversionOptions);
         Element mathElement = upConvertedMathDocument.getDocumentElement(); /* NB: Document is <math/> here */
-        
-        /* Extract just (content) errors & up-converted PMathML for the time being.
-         * 
-         * TODO: Might be best to flag up things that can't get as far as Maxima
-         * TODO: Would be nice to return PMathML with brackets added in for readability!
-         */
+
+        /* Isolate various annotations from the result */
+        Document pmathDocument = MathMLUtilities.isolateFirstSemanticsBranch(mathElement);
         Document pmathBracketedDocument = MathMLUtilities.isolateAnnotationXML(mathElement, MathMLUpConverter.BRACKETED_PRESENTATION_MATHML_ANNOTATION_NAME);
         Document cmathDocument = MathMLUtilities.isolateAnnotationXML(mathElement, MathMLUpConverter.CONTENT_MATHML_ANNOTATION_NAME);
-        Document failureAnnotation = MathMLUtilities.isolateAnnotationXML(mathElement, MathMLUpConverter.CONTENT_FAILURES_ANNOTATION_NAME);
+        String maximaAnnotation = MathMLUtilities.extractAnnotationString(mathElement, MathMLUpConverter.MAXIMA_ANNOTATION_NAME);
+        Document contentFailuresAnnotation = MathMLUtilities.isolateAnnotationXML(mathElement, MathMLUpConverter.CONTENT_FAILURES_ANNOTATION_NAME);
+        Document maximaFailuresAnnotation = MathMLUtilities.isolateAnnotationXML(mathElement, MathMLUpConverter.MAXIMA_ANNOTATION_NAME);
 
         /* Create JSON Object encapsulating result */
         StringBuilder jsonBuilder = new StringBuilder();
         maybeAppendJson(jsonBuilder, "asciiMathML", asciiMathML);
-        maybeAppendJson(jsonBuilder, "pmath", pmathBracketedDocument);
+        maybeAppendJson(jsonBuilder, "pmath", pmathDocument);
+        maybeAppendJson(jsonBuilder, "pmathBracketed", pmathBracketedDocument);
         maybeAppendJson(jsonBuilder, "cmath", cmathDocument);
-        maybeAppendJson(jsonBuilder, "errors", failureAnnotation);
+        maybeAppendJson(jsonBuilder, "maxima", maximaAnnotation);
+        maybeAppendJson(jsonBuilder, "cmathFailures", contentFailuresAnnotation);
+        maybeAppendJson(jsonBuilder, "maximaFailures", maximaFailuresAnnotation);
         endJson(jsonBuilder);
         
         response.setContentType("text/json; charset=UTF-8");

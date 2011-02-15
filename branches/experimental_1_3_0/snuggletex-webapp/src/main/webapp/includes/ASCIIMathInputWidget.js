@@ -160,14 +160,16 @@ var ASCIIMathInputController = (function() {
             if (lastInput==null || asciiMathInput!=lastInput) {
                 /* Something has changed */
                 lastInput = asciiMathInput;
-                if (this.validatedRenderingContainerId!=null) {
-                    jQuery("#" + this.validatedRenderingContainerId).html("<img src='/snuggletex/includes/spinner.gif'>");
-                }
                 if (currentTimeoutId!=null) {
                     window.clearTimeout(currentTimeoutId);
                 }
-                currentTimeoutId = window.setTimeout(function() { widget.updatePreview() },
-                    delay);
+                else {
+                    updateValidationContainer(0); /* Show waiting animation */
+                }
+                currentTimeoutId = window.setTimeout(function() {
+                    widget.updatePreview();
+                    currentTimeoutId = null;
+                }, delay);
             }
         };
 
@@ -215,14 +217,13 @@ var ASCIIMathInputController = (function() {
             /* We consider "valid" to mean "getting as far as CMathML" here */
             var cmath = jsonData['cmath'];
             if (cmath!=null) {
-                var pmathDoc = jQuery.parseXML(jsonData['pmathBracketed']);
-                replaceContainerContent(validatedRenderingContainer, pmathDoc.childNodes[0]);
+                updateValidationContainer(Widget.STATUS_SUCCESS, jsonData['pmathBracketed']);
             }
             else if (jsonData['cmathFailures']!=null) {
-                validatedRenderingContainer.text("I could not understand your input!");
+                updateValidationContainer(Widget.STATUS_FAILURE);
             }
             else {
-                validatedRenderingContainer.text("Unexpected Error");
+                updateValidationContainer(Widget.STATUS_ERROR);
             }
 
             /* Maybe show CMath source */
@@ -232,6 +233,46 @@ var ASCIIMathInputController = (function() {
             /* Maybe show Maxima is we got it */
             if (widget.maximaSourceContainerId!=null) {
                 jQuery("#" + widget.maximaSourceContainerId).text(jsonData['maxima'] || 'Could not get Maxima');
+            }
+        };
+
+        var updateValidationContainer = function(status, mathmlString) {
+            if (widget.validatedRenderingContainerId!=null) {
+                var validatedRenderingContainer = jQuery("#" + widget.validatedRenderingContainerId);
+                /* Set up children if not done already */
+                if (validatedRenderingContainer.children().size()==0) {
+                    validatedRenderingContainer.html("<div class='asciiMathWidgetStatus'></div>"
+                        + "<div class='asciiMathWidgetMessage'></div>"
+                        + "<div class='asciiMathWidgetResult'></div>");
+                }
+                var statusContainer = validatedRenderingContainer.children().first();
+                var messageContainer = statusContainer.next();
+                var resultContainer = messageContainer.next();
+                switch(status) {
+                    case Widget.STATUS_WAITING:
+                        statusContainer.attr('class', 'asciiMathWidgetStatus waiting');
+                        replaceContainerContent(messageContainer, "Checking...");
+                        replaceContainerContent(resultContainer, "\xa0");
+                        break;
+
+                    case Widget.STATUS_SUCCESS:
+                        statusContainer.attr('class', 'asciiMathWidgetStatus success');
+                        replaceContainerContent(messageContainer, "Your input makes sense. It has been interpreted as:");
+                        replaceContainerContent(resultContainer, jQuery.parseXML(mathmlString).childNodes[0]);
+                        break;
+
+                    case Widget.STATUS_FAILURE:
+                        statusContainer.attr('class', 'asciiMathWidgetStatus failure');
+                        replaceContainerContent(messageContainer, "I could not understand your input");
+                        replaceContainerContent(resultContainer, "\xa0");
+                        break;
+
+                    case Widget.STATUS_ERROR:
+                        statusContainer.attr('class', 'asciiMathWidgetStatus error');
+                        replaceContainerContent(messageContainer, "Unexpected error");
+                        replaceContainerContent(resultContainer, "\xa0");
+                        break;
+                }
             }
         };
 
@@ -266,6 +307,11 @@ var ASCIIMathInputController = (function() {
     Widget.prototype.init = function() {
         this.doInit();
     };
+
+    Widget.STATUS_WAITING = 0;
+    Widget.STATUS_SUCCESS = 1;
+    Widget.STATUS_FAILURE = 2;
+    Widget.STATUS_ERROR = 3;
 
     return {
         createInputWidget: function(inputId, outputId) {

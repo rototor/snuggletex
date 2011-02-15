@@ -38,6 +38,14 @@ var mathfontfamily = "";
 
 var newline = "\r\n";
 
+var delay = 500;
+
+var A = (function() {
+})();
+alert(typeof A);
+
+/************************************************************/
+
 /**
  * Simple hash that will keep track of the current value of each
  * ASCIIMathML input box, keyed on its ID. This is used by
@@ -45,6 +53,8 @@ var newline = "\r\n";
  * should be updated or not.
  */
 var inputTextByIdMap = {};
+var currentXHRByIdMap = {};
+var timeoutByIdMap = {};
 
 /**
  * Checks the content of the <input/> element having the given asciiMathInputControlId,
@@ -58,8 +68,16 @@ function updatePreviewIfChanged(asciiMathInputControlId, mathJaxRenderingContain
     var newValue = inputSelector.get(0).value;
     var oldValue = inputTextByIdMap[asciiMathInputControlId];
     if (oldValue==null || newValue!=oldValue) {
-        updatePreview(newValue, mathJaxRenderingContainerId, validatedRenderingContainerId,
-            previewSourceContainerId, validatedCMathSourceContainerId);
+        /* Something has changed */
+        jQuery("#" + validatedRenderingContainerId).html("<img src='/snuggletex/includes/spinner.gif'>");
+        var existingTimeoutId = timeoutByIdMap[asciiMathInputControlId];
+        if (existingTimeoutId!=null) {
+            window.clearTimeout(existingTimeoutId);
+        }
+        timeoutByIdMap[asciiMathInputControlId] = window.setTimeout(function() {
+            updatePreview(asciiMathInputControlId, newValue, mathJaxRenderingContainerId, validatedRenderingContainerId,
+                previewSourceContainerId, validatedCMathSourceContainerId);
+        }, delay);
     }
     inputTextByIdMap[asciiMathInputControlId] = newValue;
 }
@@ -69,69 +87,68 @@ function updatePreviewIfChanged(asciiMathInputControlId, mathJaxRenderingContain
  * us to specify which element to display the resulting MathML
  * in and where the raw input is going to come from.
  */
-function updatePreview(mathModeInput, mathJaxRenderingContainerId, validatedRenderingContainerId,
-        previewSourceContainerId, validatedCMathSourceContainerId) {
+function updatePreview(asciiMathInputControlId, asciiMathInput, mathJaxRenderingContainerId,
+        validatedRenderingContainerId, previewSourceContainerId, validatedCMathSourceContainerId) {
     /* Get ASCIIMathML to generate a <math> element */
-    var asciiMathElement = callASCIIMath(mathModeInput);
+    var asciiMathElement = callASCIIMath(asciiMathInput);
+    var source = extractMathML(asciiMathElement);
 
     /* Maybe update preview source box */
     if (previewSourceContainerId!=null) {
-        var source = extractMathML(asciiMathElement);
         jQuery("#" + previewSourceContainerId).text(source);
     }
 
     /* Insert MathML into the DOM */
-    var mathJaxRenderingContainer = replaceContainerContent(mathJaxRenderingContainerId, asciiMathElement);
+    replaceContainerContent(jQuery("#" + mathJaxRenderingContainerId), asciiMathElement);
 
     /* Maybe validate the input */
     if (validatedRenderingContainerId!=null) {
-        var verified = jQuery.getJSON("/snuggletex/ASCIIMathMLUpConversionService",
-            { asciiMathML: source.replace(/\r\n/g, '') }, /* FIXME: Hard-coded newlines */
-            function(data) {
-                var replacement;
-                if (data['cmath']!=null) {
-                    var pmathDoc = jQuery.parseXML(data['pmath']);
-                    var cmathText = document.createTextNode(data['cmath']);
-                    replaceContainerContent(validatedRenderingContainerId, pmathDoc.childNodes[0]);
-                    replaceContainerContent(validatedCMathSourceContainerId, cmathText);
-                }
-                else if (data['errors']!=null) {
-                    replaceContainerContent(validatedRenderingContainerId, document.createTextNode("?"));
-                    replaceContainerContent(validatedCMathSourceContainerId, null);
-                }
-                else {
-                    replaceContainerContent(validatedRenderingContainerId, document.createTextNode("UNEXPECTED ERROR"));
-                    replaceContainerContent(validatedCMathSourceContainerId, null);
+        var validatedRenderingContainer = jQuery("#" + validatedRenderingContainerId);
+        currentXHRByIdMap[asciiMathInputControlId] = jQuery.ajax({
+            type: 'POST',
+            url: '/snuggletex/ASCIIMathMLUpConversionService',
+            dataType: 'json',
+            data: source,
+            success: function(data, textStatus, jqXHR) {
+                if (currentXHRByIdMap[asciiMathInputControlId]==jqXHR) {
+                    var replacement;
+                    var cmath = data['cmath'];
+                    if (cmath!=null) {
+                        var pmathDoc = jQuery.parseXML(data['pmath']);
+                        replaceContainerContent(validatedRenderingContainer, pmathDoc.childNodes[0]);
+                    }
+                    else if (data['errors']!=null) {
+                        validatedRenderingContainer.text("Sorry");
+                    }
+                    else {
+                        validatedRenderingContainer.text("Unexpected Error");
+                    }
+                    if (validatedCMathSourceContainerId!=null) {
+                        jQuery("#" + validatedCMathSourceContainerId).text(cmath);
+                    }
                 }
             }
-        );
+        });
     }
 }
 
-function replaceContainerContent(containerId, node) {
-    var container = null;
-    if (containerId!=null) {
-        container = document.getElementById(containerId);
-        for (var i=container.childNodes.length-1; i>=0; i--) {
-            container.removeChild(container.childNodes[i]);
-        }
-        if (node!=null) {
-            container.appendChild(node);
+function replaceContainerContent(containerQuery, content) {
+    containerQuery.empty();
+    if (content!=null) {
+        containerQuery.append(content);
 
-            /* Schedule MathJax update if this is a MathML Node */
-            if (node.nodeType==1 && node.nodeName=="math") {
-                MathJax.Hub.Queue(["Typeset", MathJax.Hub, container]);
-            }
+        /* Schedule MathJax update if this is a MathML Element */
+        if (content instanceof Element && content.nodeType==1 && content.nodeName=="math") {
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, containerQuery.get(0)]);
         }
     }
-    return container;
 }
 
 /************************************************************/
 
 function callASCIIMath(mathModeInput) {
     /* Escape use of backquote symbol to prevent exiting math mode */
-    mathModeInput = mathModeInput.replace(/`/, "\\`");
+    mathModeInput = mathModeInput.replace(/`/g, "\\`");
 
     var span = AMparseMath(mathModeInput); // This is <span><math>...</math></span>
     return span.childNodes[0]; /* This is <math>...</math> */
@@ -229,8 +246,8 @@ function setupASCIIMathMLInputWidget(asciiMathInputControlId, asciiMathOutputCon
     /* Set up initial preview */
     var inputSelector = jQuery("#" + asciiMathInputControlId);
     var initialInput = inputSelector.get(0).value;
-    updatePreview(initialInput, mathJaxRenderingContainerId, validatedRenderingContainerId,
-        previewSourceContainerId, validatedCMathSourceContainerId);
+    updatePreview(asciiMathInputControlId, initialInput, mathJaxRenderingContainerId,
+        validatedRenderingContainerId, previewSourceContainerId, validatedCMathSourceContainerId);
 
     /* Set up handler to update preview when required */
     inputSelector.bind("change keyup keydown", function() {

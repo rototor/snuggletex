@@ -26,29 +26,71 @@ All Rights Reserved
   <xsl:import href="upconversion-options.xsl"/>
   <xsl:strip-space elements="m:*"/>
 
+  <xsl:variable name="s:function-colours" select="('blue','green','red')" as="xs:string+"/>
+
+  <xsl:function name="s:get-function-colour" as="xs:string">
+    <xsl:param name="level" as="xs:integer"/>
+    <xsl:sequence select="$s:function-colours[min(($level, count($s:function-colours)))]"/>
+  </xsl:function>
+
+  <xsl:variable name="s:grey" select="'#cccccc'" as="xs:string"/>
+
   <!-- ************************************************************ -->
 
   <!-- Entry point -->
   <xsl:template name="s:bracket-pmathml">
     <xsl:param name="elements" as="element()*"/>
-    <xsl:apply-templates select="$elements"/>
+    <xsl:apply-templates select="$elements">
+      <xsl:with-param name="level" select="1" as="xs:integer"/>
+    </xsl:apply-templates>
   </xsl:template>
 
   <!-- ************************************************************ -->
 
-  <xsl:template match="*[preceding-sibling::*[1][self::mo[.='&#x2061;']]]">
-    <mfenced open='(' close=')'>
-      <xsl:copy>
-        <xsl:copy-of select="@*"/>
-        <xsl:apply-templates/>
-      </xsl:copy>
-    </mfenced>
+  <!-- Function applications -->
+  <xsl:template match="*[following-sibling::*[1][self::mo[.='&#x2061;']]]">
+    <xsl:param name="level" select="1" as="xs:integer"/>
+    <!--<mstyle color="{s:get-function-colour($level)}">-->
+      <xsl:copy-of select="."/>
+      <!-- We won't copy the apply function operator, as it uses up too much whitespace -->
+      <mfenced open="(" close=")">
+        <xsl:apply-templates select="following-sibling::*[2]" mode="function-argument">
+          <xsl:with-param name="level" select="$level + 1"/>
+        </xsl:apply-templates>
+      </mfenced>
+    <!--</mstyle>-->
   </xsl:template>
 
-  <xsl:template match="*">
+  <xsl:template match="mfenced" mode="function-argument">
+    <xsl:param name="level" select="1" as="xs:integer"/>
+    <xsl:apply-templates select="*">
+      <xsl:with-param name="level" select="$level"/>
+    </xsl:apply-templates>
+  </xsl:template>
+
+  <xsl:template match="*" mode="function-argument">
+    <xsl:param name="level" select="1" as="xs:integer"/>
+    <xsl:call-template name="copy">
+      <xsl:with-param name="level" select="$level"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="mo[.='&#x2061;'] | *[preceding-sibling::*[1][self::mo[.='&#x2061;']]]">
+    <!-- Handled in above template -->
+  </xsl:template>
+
+  <!-- Implicit multiplication made explicit -->
+  <xsl:template match="mo[.='&#x2062;']">
+    <mo color="{$s:grey}">&#x22c5;</mo>
+  </xsl:template>
+
+  <xsl:template match="*" name="copy">
+    <xsl:param name="level" select="1" as="xs:integer"/>
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:apply-templates/>
+      <xsl:apply-templates>
+        <xsl:with-param name="level" select="$level"/>
+      </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>
 

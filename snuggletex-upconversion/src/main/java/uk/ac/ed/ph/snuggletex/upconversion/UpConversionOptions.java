@@ -27,7 +27,7 @@ import org.w3c.dom.Element;
  * @author  David McKain
  * @version $Revision$
  */
-public final class UpConversionOptions {
+public final class UpConversionOptions implements Cloneable {
     
     private final Map<String, String> specifiedOptionMap;
     
@@ -124,5 +124,15 @@ public final class UpConversionOptions {
         else {
             throw new IllegalUpconversionOptionException(UpConversionErrorCode.UAESY2);
         }
+    }
+    
+    //-------------------------------------------------------------
+    
+    @Override
+    public Object clone() {
+        UpConversionOptions result = new UpConversionOptions();
+        result.specifiedOptionMap.putAll(specifiedOptionMap);
+        result.symbolAssumptions.putAll(symbolAssumptions);
+        return result;
     }
 }

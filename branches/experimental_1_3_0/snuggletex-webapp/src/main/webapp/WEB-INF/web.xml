@@ -111,14 +111,6 @@ All Rights Reserved
     <servlet-name>ASCIIMathMLUpConversionDemoServlet</servlet-name>
     <servlet-class>uk.ac.ed.ph.snuggletex.webapp.ASCIIMathMLUpConversionDemoServlet</servlet-class>
   </servlet>
-  <servlet>
-    <servlet-name>NewASCIIMathMLDemoServlet</servlet-name>
-    <servlet-class>uk.ac.ed.ph.snuggletex.webapp.NewASCIIMathMLDemoServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>ASCIIMathMLUpConversionService</servlet-name>
-    <servlet-class>uk.ac.ed.ph.snuggletex.webapp.ASCIIMathMLUpConversionService</servlet-class>
-  </servlet>
   <servlet-mapping>
     <servlet-name>DocumentationServlet</servlet-name>
     <url-pattern>/documentation/*</url-pattern>
@@ -146,13 +138,5 @@ All Rights Reserved
   <servlet-mapping>
     <servlet-name>ASCIIMathMLUpConversionDemoServlet</servlet-name>
     <url-pattern>/ASCIIMathMLUpConversionDemo</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>NewASCIIMathMLDemoServlet</servlet-name>
-    <url-pattern>/NewASCIIMathMLDemo</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>ASCIIMathMLUpConversionService</servlet-name>
-    <url-pattern>/ASCIIMathMLUpConversionService</url-pattern>
   </servlet-mapping>
 </web-app>

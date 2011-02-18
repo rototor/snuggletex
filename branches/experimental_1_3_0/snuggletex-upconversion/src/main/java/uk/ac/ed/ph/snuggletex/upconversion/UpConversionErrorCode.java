@@ -26,6 +26,7 @@ public enum UpConversionErrorCode implements ErrorCode {
     UCFG01(UpConversionErrorGroup.UCF),
     UCFG02(UpConversionErrorGroup.UCF),
     UCFG03(UpConversionErrorGroup.UCF),
+    UCFG04(UpConversionErrorGroup.UCF),
     UCFOP0(UpConversionErrorGroup.UCF),
     UCFOP1(UpConversionErrorGroup.UCF),
     UCFOP2(UpConversionErrorGroup.UCF),

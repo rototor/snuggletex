@@ -225,6 +225,7 @@ public final class UpConversionUtilities {
                 Element assumeElement = appendSnuggleElement(document, optionsContainer, "symbol");
                 assumeElement.setAttribute("assume", assumptionType);
                 Node assumptionTargetCopy = elementWrapper.getSymbolElement().cloneNode(true);
+                document.adoptNode(assumptionTargetCopy);
                 assumeElement.appendChild(assumptionTargetCopy);
             }
         }

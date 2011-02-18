@@ -455,7 +455,6 @@ All Rights Reserved
     </xsl:choose>
   </xsl:template>
 
-
   <!--
   Mix of (positive) relation operators, such as '=', '<', '>'.
 
@@ -1035,6 +1034,11 @@ All Rights Reserved
   </xsl:template>
 
   <!-- ************************************************************ -->
+
+  <xsl:template match="mrow[not(*)]" mode="pmathml-to-cmathml" as="element()*">
+    <!-- Fail: empty grouping -->
+    <xsl:copy-of select="s:make-error('UCFG04', (.), ())"/>
+  </xsl:template>
 
   <xsl:template match="mrow" mode="pmathml-to-cmathml" as="element()*">
     <xsl:call-template name="local:process-group">

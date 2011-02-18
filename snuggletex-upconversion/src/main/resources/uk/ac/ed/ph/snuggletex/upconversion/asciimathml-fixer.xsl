@@ -55,11 +55,10 @@ All Rights Reserved
 
   <!--
   ASCIIMath often outputs empty operators when it expects input that
-  never actually occurs. I'm going to strip this off, even though there
-  may be hidden nasties lurking behind this approach...
+  never actually occurs. I'm going to convert this to an empty <mrow/>
   -->
   <xsl:template match="mo[.='']">
-    <!-- Remove -->
+    <mrow/>
   </xsl:template>
 
   <!-- ***************************************************************

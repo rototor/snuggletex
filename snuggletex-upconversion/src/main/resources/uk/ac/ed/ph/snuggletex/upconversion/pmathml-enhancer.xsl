@@ -866,7 +866,23 @@ All Rights Reserved
     </xsl:copy>
   </xsl:template>
 
-  <!-- Default template for other MathML elements -->
+  <!-- MathML elements where each child is a standalone sub-expression -->
+  <xsl:template match="mfrac|mfenced" mode="enhance-pmathml" as="element()">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:for-each select="*">
+        <xsl:call-template name="s:maybe-wrap-in-mrow">
+          <xsl:with-param name="elements" as="element()*">
+            <xsl:call-template name="local:process-group">
+              <xsl:with-param name="elements" select="."/>
+            </xsl:call-template>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:for-each>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- Default template for other MathML elements, assumed to have free child content -->
   <xsl:template match="*" mode="enhance-pmathml" as="element()">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
@@ -879,4 +895,3 @@ All Rights Reserved
   </xsl:template>
 
 </xsl:stylesheet>
-

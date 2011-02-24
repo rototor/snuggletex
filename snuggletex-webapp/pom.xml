@@ -63,6 +63,7 @@ All Rights Reserved
       <groupId>org.mathjax</groupId>
       <artifactId>MathJax</artifactId>
       <version>1.0.1a-dec10</version>
+      <type>zip</type>
       <scope>runtime</scope>
     </dependency>
   </dependencies>

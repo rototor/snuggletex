@@ -181,6 +181,16 @@ public final class SnuggleEngine {
 
     //-------------------------------------------------
     
+    public SnuggleSimpleMathRunner createSimpleMathRunner() {
+        return new SnuggleSimpleMathRunner(createSession());
+    }
+    
+    public SnuggleSimpleMathRunner createSimpleMathRunner(SessionConfiguration sessionConfiguration) {
+        return new SnuggleSimpleMathRunner(createSession(sessionConfiguration));
+    }
+    
+    //-------------------------------------------------
+    
     /**
      * Returns the {@link BuiltinCommand} corresponding to LaTeX command called
      * <tt>\texName</tt>, or null if this command is not defined.

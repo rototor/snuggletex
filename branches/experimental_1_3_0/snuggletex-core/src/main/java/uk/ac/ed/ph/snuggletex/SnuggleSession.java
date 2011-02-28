@@ -117,10 +117,10 @@ public final class SnuggleSession implements SessionContext {
     private final SessionConfiguration configuration;
     
     /** Default {@link DOMOutputOptions}, copied from the owning {@link SnuggleEngine} during creation */
-    private final DOMOutputOptions defaultDOMOutputOptions;
+    final DOMOutputOptions defaultDOMOutputOptions;
     
     /** Default {@link XMLStringOutputOptions}, copied from the owning {@link SnuggleEngine} during creation */
-    private final XMLStringOutputOptions defaultXMLStringOutputOptions;
+    final XMLStringOutputOptions defaultXMLStringOutputOptions;
     
     //-------------------------------------------------
     // Stateful stuff

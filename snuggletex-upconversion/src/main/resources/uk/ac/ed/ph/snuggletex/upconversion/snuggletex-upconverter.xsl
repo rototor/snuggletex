@@ -75,7 +75,11 @@ All Rights Reserved
       -->
       <!--
       <s:symbol assume="function"><mi>f</mi></s:symbol>
+      <s:symbol assume="function"><mi>g</mi></s:symbol>
       <s:symbol assume="exponentialNumber"><mi>e</mi></s:symbol>
+      <s:symbol assume="imaginaryNumber"><mi>i</mi></s:symbol>
+      <s:symbol assume="constantPi"><mi>&#x3c0;</mi></s:symbol>
+      <s:symbol assume="eulerGamma"><mi>&#x3b3;</mi></s:symbol>
       -->
     </s:upconversion-options>
   </xsl:param>

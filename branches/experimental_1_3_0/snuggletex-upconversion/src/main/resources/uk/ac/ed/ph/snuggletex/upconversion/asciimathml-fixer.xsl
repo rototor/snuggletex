@@ -32,14 +32,15 @@ All Rights Reserved
   <!-- ************************************************************ -->
 
   <xsl:template match="math">
-    <!-- Move the @title to an annotation -->
     <math>
+      <xsl:copy-of select="@*[not(name()='title')]"/>
       <semantics>
         <xsl:call-template name="s:maybe-wrap-in-mrow">
           <xsl:with-param name="elements" as="element()*">
             <xsl:apply-templates/>
           </xsl:with-param>
         </xsl:call-template>
+        <!-- Move the @title to an annotation -->
         <annotation encoding="{$s:asciimath-input-annotation}">
           <xsl:value-of select="normalize-space(@title)"/>
         </annotation>

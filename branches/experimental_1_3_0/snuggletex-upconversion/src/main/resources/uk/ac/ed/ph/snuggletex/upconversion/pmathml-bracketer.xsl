@@ -26,72 +26,102 @@ All Rights Reserved
   <xsl:import href="upconversion-options.xsl"/>
   <xsl:strip-space elements="m:*"/>
 
-  <xsl:variable name="s:function-colours" select="('blue','green','red')" as="xs:string+"/>
-
-  <xsl:function name="s:get-function-colour" as="xs:string">
-    <xsl:param name="level" as="xs:integer"/>
-    <xsl:sequence select="$s:function-colours[min(($level, count($s:function-colours)))]"/>
-  </xsl:function>
-
   <xsl:variable name="s:grey" select="'#cccccc'" as="xs:string"/>
+
+  <xsl:variable name="s:colours" select="('#660000', '#006600', '#000099', '#666600', 'black')"
+    as="xs:string+"/>
+
+  <xsl:function name="s:get-colour" as="xs:string">
+    <xsl:param name="level" as="xs:integer"/>
+    <xsl:sequence select="$s:colours[min(($level, count($s:colours)))]"/>
+  </xsl:function>
 
   <!-- ************************************************************ -->
 
   <!-- Entry point -->
   <xsl:template name="s:bracket-pmathml">
     <xsl:param name="elements" as="element()*"/>
-    <xsl:apply-templates select="$elements">
-      <xsl:with-param name="level" select="1" as="xs:integer"/>
+    <xsl:param name="without-outer-mrow" select="if (count($elements)=1 and $elements[1][self::mrow]) then $elements[1]/* else $elements" as="element()*"/>
+    <xsl:apply-templates select="$elements" mode="bracket-pmathml">
+      <xsl:with-param name="elements" select="$without-outer-mrow"/>
+      <xsl:with-param name="implicit-level" select="1" as="xs:integer" tunnel="yes"/>
+      <xsl:with-param name="fence-level" select="1" as="xs:integer" tunnel="yes"/>
     </xsl:apply-templates>
   </xsl:template>
 
   <!-- ************************************************************ -->
 
-  <!-- Function applications -->
-  <xsl:template match="*[following-sibling::*[1][self::mo[.='&#x2061;']]]">
-    <xsl:param name="level" select="1" as="xs:integer"/>
-    <!--<mstyle color="{s:get-function-colour($level)}">-->
-      <xsl:copy-of select="."/>
-      <!-- We won't copy the apply function operator, as it uses up too much whitespace -->
-      <mfenced open="(" close=")">
-        <xsl:apply-templates select="following-sibling::*[2]" mode="function-argument">
-          <xsl:with-param name="level" select="$level + 1"/>
-        </xsl:apply-templates>
-      </mfenced>
-    <!--</mstyle>-->
-  </xsl:template>
-
-  <xsl:template match="mfenced" mode="function-argument">
-    <xsl:param name="level" select="1" as="xs:integer"/>
-    <xsl:apply-templates select="*">
-      <xsl:with-param name="level" select="$level"/>
-    </xsl:apply-templates>
-  </xsl:template>
-
-  <xsl:template match="*" mode="function-argument">
-    <xsl:param name="level" select="1" as="xs:integer"/>
-    <xsl:call-template name="copy">
-      <xsl:with-param name="level" select="$level"/>
-    </xsl:call-template>
-  </xsl:template>
-
-  <xsl:template match="mo[.='&#x2061;'] | *[preceding-sibling::*[1][self::mo[.='&#x2061;']]]">
-    <!-- Handled in above template -->
+  <!-- Function application -->
+  <xsl:template match="mrow[count(*)=3 and *[2][self::mo[.='&#x2061;']]]" mode="bracket-pmathml">
+    <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <xsl:param name="arg" as="element()" select="*[3]"/>
+    <!-- Copy function -->
+    <mrow>
+      <xsl:copy-of select="*[1]"/>
+      <!-- We strip out the &ApplyFunction; as it uses too much space -->
+      <xsl:call-template name="local:make-fence">
+        <xsl:with-param name="fence-level" select="$fence-level" tunnel="yes"/>
+        <xsl:with-param name="next" select="if ($arg[self::mfenced] and count($arg/*)=1) then $arg/* else $arg"/>
+      </xsl:call-template>
+    </mrow>
   </xsl:template>
 
   <!-- Implicit multiplication made explicit -->
-  <xsl:template match="mo[.='&#x2062;']">
+  <xsl:template match="mo[.='&#x2062;']" mode="bracket-pmathml">
+    <mspace width="-0.15em"/>
     <mo color="{$s:grey}">&#x22c5;</mo>
+    <mspace width="-0.15em"/>
   </xsl:template>
 
-  <xsl:template match="*" name="copy">
-    <xsl:param name="level" select="1" as="xs:integer"/>
+  <!-- Other operators get a bit of space -->
+  <xsl:template match="mo" mode="bracket-pmathml">
+    <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <mspace width="{0.3 div $implicit-level}em"/>
+    <xsl:copy-of select="."/>
+    <mspace width="{0.3 div $implicit-level}em"/>
+  </xsl:template>
+
+  <!-- Explicit fence -->
+  <xsl:template match="mfenced[count(*)=1]" mode="bracket-pmathml">
+    <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <xsl:call-template name="local:make-fence">
+      <xsl:with-param name="fence-level" select="$fence-level" tunnel="yes"/>
+      <xsl:with-param name="next" as="element()" select="*"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- Implicit grouping -->
+  <xsl:template match="mrow" mode="bracket-pmathml">
+    <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
-      <xsl:apply-templates>
-        <xsl:with-param name="level" select="$level"/>
+      <xsl:apply-templates mode="bracket-pmathml">
+        <xsl:with-param name="implicit-level" select="$implicit-level + 1" tunnel="yes"/>
       </xsl:apply-templates>
     </xsl:copy>
+  </xsl:template>
+
+  <!-- Default -->
+  <xsl:template match="*" mode="bracket-pmathml">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates mode="bracket-pmathml"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- ************************************************************ -->
+
+  <xsl:template name="local:make-fence">
+    <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <xsl:param name="next" as="element()" required="yes"/>
+    <mstyle color="{s:get-colour($fence-level)}">
+      <mfenced open="(" close=")">
+        <mstyle color="black">
+          <xsl:apply-templates select="$next" mode="bracket-pmathml">
+            <xsl:with-param name="fence-level" select="$fence-level + 1" tunnel="yes"/>
+          </xsl:apply-templates>
+        </mstyle>
+      </mfenced>
+    </mstyle>
   </xsl:template>
 
 </xsl:stylesheet>

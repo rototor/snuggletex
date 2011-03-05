@@ -178,6 +178,21 @@ All Rights Reserved
     <!-- This has been handled above -->
   </xsl:template>
 
+  <!-- ***********************************************************
+
+  f and g are treated as functions by default, but done in an odd
+  way. This fixes them back up.
+
+  **************************************************************** -->
+
+  <xsl:template match="mrow[*[1][self::mi[.=('f','g')]] and *[2][self::mo[.='']]]" priority="1">
+    <xsl:copy-of select="*[1]"/>
+  </xsl:template>
+
+  <xsl:template match="mrow[*[1][self::mi[.=('f','g')]]]">
+    <xsl:apply-templates select="*"/>
+  </xsl:template>
+
   <!-- *********************************************************** -->
 
   <!-- Strip off redundant <mrow/> elements -->

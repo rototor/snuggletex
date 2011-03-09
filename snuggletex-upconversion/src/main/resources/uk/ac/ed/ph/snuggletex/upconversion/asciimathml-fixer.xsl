@@ -31,7 +31,8 @@ All Rights Reserved
 
   <!-- ************************************************************ -->
 
-  <xsl:template match="math">
+  <!-- This is the entry point for the traditional ASCIIMathML output -->
+  <xsl:template match="math[@title]">
     <math>
       <xsl:copy-of select="@*[not(name()='title')]"/>
       <semantics>
@@ -49,10 +50,38 @@ All Rights Reserved
   </xsl:template>
 
   <!-- Skip over pointless top-level <mstyle/> -->
-  <xsl:template match="math/mstyle">
+  <xsl:template match="math[@title]/mstyle">
     <!-- Descend down -->
     <xsl:apply-templates/>
   </xsl:template>
+
+  <!-- ************************************************************ -->
+
+  <!-- This is the entry point for the newer ASCIIMathParser.js output -->
+  <xsl:template match="math[not(@title)]">
+    <math>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates/>
+    </math>
+  </xsl:template>
+
+  <xsl:template match="semantics">
+    <semantics>
+      <!-- (Make sure first child maps to a single child) -->
+      <xsl:call-template name="s:maybe-wrap-in-mrow">
+        <xsl:with-param name="elements" as="element()*">
+          <xsl:apply-templates select="*[1]"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:apply-templates select="*[position()!=1]"/>
+    </semantics>
+  </xsl:template>
+
+  <xsl:template match="annotation|annotation-xml">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+
+  <!-- ************************************************************ -->
 
   <!--
   ASCIIMath often outputs empty operators when it expects input that

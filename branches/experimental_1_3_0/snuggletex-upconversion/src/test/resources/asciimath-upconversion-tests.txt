@@ -1,0 +1,14 @@
+# Defines tests for the ASCIIMathML -> Semantic PMathML up-conversion process
+#
+# Input format is:
+#
+# ASCIIMathInput
+# enriched PMathML
+# ==== (divider)
+#
+# Lines starting with '#' are documentation and are stripped out when running tests
+#
+## Normal tests
+1
+<mn>1</mn>
+====

@@ -36,6 +36,12 @@ All Rights Reserved
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>uk.ac.ed.ph.asciimath</groupId>
+      <artifactId>asciimath-parser</artifactId>
+      <version>${asciimath-parser.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>

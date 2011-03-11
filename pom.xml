@@ -23,6 +23,7 @@ All Rights Reserved
     <junit.version>4.8.2</junit.version>
     <easymock.version>3.0</easymock.version>
     <jeuclid.version>3.1.9</jeuclid.version>
+    <asciimath-parser.version>1.0-SNAPSHOT</asciimath-parser.version>
     <saxon9.version>9.1.0.8</saxon9.version>
     <slf4j.version>1.5.11</slf4j.version>
     <log4j.version>1.2.16</log4j.version>

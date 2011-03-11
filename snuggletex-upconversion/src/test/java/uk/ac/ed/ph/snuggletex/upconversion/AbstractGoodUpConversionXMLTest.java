@@ -5,57 +5,69 @@
  */
 package uk.ac.ed.ph.snuggletex.upconversion;
 
-import uk.ac.ed.ph.snuggletex.AbstractGoodMathTest;
-import uk.ac.ed.ph.snuggletex.AbstractGoodXMLTest;
+import uk.ac.ed.ph.snuggletex.MathTests;
 import uk.ac.ed.ph.snuggletex.SnuggleEngine;
-import uk.ac.ed.ph.snuggletex.SnuggleSession;
+import uk.ac.ed.ph.snuggletex.SnuggleTeXCaller;
+import uk.ac.ed.ph.snuggletex.SnuggleTeXCaller.DOMFixupCallback;
+import uk.ac.ed.ph.snuggletex.SnuggleTeXCaller.DOMVerifyCallback;
+import uk.ac.ed.ph.snuggletex.TestUtilities;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.upconversion.internal.UpConversionPackageDefinitions;
 
 import java.util.List;
-
-import javax.xml.transform.TransformerFactory;
 
 import junit.framework.Assert;
 
 import org.w3c.dom.Document;
 
 /**
- * Base class for up-conversion tests. This is pretty much the same as {@link AbstractGoodMathTest}
+ * Base class for up-conversion tests. This is pretty much the same as {@link MathTests}
  * but only wraps the input in "$...$" delimiters if they don't already end with one of these.
  * This allows assumptions to be set up in advance.
  * 
  * @author  David McKain
  * @version $Revision:179 $
  */
-public abstract class AbstractGoodUpConversionXMLTest extends AbstractGoodXMLTest {
+public abstract class AbstractGoodUpConversionXMLTest implements DOMFixupCallback, DOMVerifyCallback {
+
+    private final String inputLaTeX;
+    private final String expectedOutput;
+    private final String expectedMathML;
     
     public AbstractGoodUpConversionXMLTest(final String inputFragment, final String expectedMathMLContent) {
-        super(inputFragment.endsWith("$") ? inputFragment : "$" + inputFragment + "$",
-            "<math xmlns='" + W3CConstants.MATHML_NAMESPACE + "'>"
-            + expectedMathMLContent.replaceAll("(?m)^\\s+", "").replaceAll("(?m)\\s+$", "").replace("\n", "")
-            + "</math>");
+        this.inputLaTeX = inputFragment.endsWith("$") ? inputFragment : "$" + inputFragment + "$";
+        this.expectedOutput = expectedMathMLContent;
+        this.expectedMathML = "<math xmlns='" + W3CConstants.MATHML_NAMESPACE + "'>"
+                + expectedMathMLContent.replaceAll("(?m)^\\s+", "").replaceAll("(?m)\\s+$", "").replace("\n", "")
+                + "</math>";
     }
     
-    @Override
-    protected void fixupDocument(Document document) {
-        AbstractGoodMathTest.extractMathElement(document);
+    public void runTest(UpConversionOptions upConversionOptions) throws Throwable {
+        SnuggleEngine engine = new SnuggleEngine();
+        engine.addPackage(UpConversionPackageDefinitions.getPackage());
+        
+        SnuggleTeXCaller snuggleTeXCaller = new SnuggleTeXCaller(engine);
+        snuggleTeXCaller.setShowTokensOnFailure(false);
+        snuggleTeXCaller.setDomFixupCallback(this);
+        snuggleTeXCaller.setDomVerifyCallback(this);
+        snuggleTeXCaller.setDomPostProcessor(new UpConvertingPostProcessor(upConversionOptions));
+        
+        snuggleTeXCaller.run(inputLaTeX, expectedOutput);
     }
     
-
-    /**
-     * Overridden to cope with up-conversion failures, checking them against the given error code.
-     */
-    @Override
-    protected void verifyResultDocument(TransformerFactory transformerFactory, Document resultDocument) throws Throwable {
-        List<UpConversionFailure> upConversionFailures = UpConversionUtilities.extractUpConversionFailures(resultDocument);
+    public void fixupDOM(Document document) throws Throwable {
+        TestUtilities.extractMathElement(document);
+    }
+    
+    public void verifyDOM(Document document) throws Throwable {
+        List<UpConversionFailure> upConversionFailures = UpConversionUtilities.extractUpConversionFailures(document);
         if (upConversionFailures.isEmpty()) {
-            /* Should have succeeded, so verify as normal */
-            super.verifyResultDocument(transformerFactory, resultDocument);
+            /* Check XML verifies against what we expect */
+            TestUtilities.verifyXML(expectedMathML, document);
         }
         else {
             /* Make sure we get the correct error code(s) */
-            String result = expectedXML.replaceAll("<.+?>", ""); /* (Yes, it's not really XML in this case!) */
+            String result = expectedOutput;
             if (result.length()==0 || result.charAt(0)!='!') {
                 Assert.fail("Did not expect up-conversion errors!");
             }
@@ -65,18 +77,5 @@ public abstract class AbstractGoodUpConversionXMLTest extends AbstractGoodXMLTes
                 Assert.assertEquals(expectedErrorCodes[i], upConversionFailures.get(i).getErrorCode().toString());
             }
         }
-    }
-    
-    @Override
-    protected SnuggleSession createSnuggleSession() {
-        SnuggleEngine engine = new SnuggleEngine();
-        engine.addPackage(UpConversionPackageDefinitions.getPackage());
-        
-        return engine.createSession();
-    }
-    
-    @Override
-    protected boolean showTokensOnFailure() {
-        return false;
     }
 }

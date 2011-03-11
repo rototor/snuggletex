@@ -6,7 +6,7 @@
 package uk.ac.ed.ph.snuggletex.upconversion;
 
 import uk.ac.ed.ph.snuggletex.AbstractGoodMathTest;
-import uk.ac.ed.ph.snuggletex.AbstractGoodTest;
+import uk.ac.ed.ph.snuggletex.AbstractGoodParsingTest;
 import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
 import uk.ac.ed.ph.snuggletex.MathTests;
 import uk.ac.ed.ph.snuggletex.SnuggleEngine;
@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
  * @version $Revision:179 $
  */
 @RunWith(Parameterized.class)
-public class MathUpConversionToMaximaTests extends AbstractGoodTest {
+public class MathUpConversionToMaximaTests extends AbstractGoodParsingTest {
     
     public static final String TEST_RESOURCE_NAME = "math-upconversion-maxima-tests.txt";
     
@@ -118,13 +118,5 @@ public class MathUpConversionToMaximaTests extends AbstractGoodTest {
         DOMOutputOptions result = super.createDOMOutputOptions();
         result.setDOMPostProcessors(upconverter);
         return result;
-    }
-    
-    @Override
-    protected SnuggleSession createSnuggleSession() {
-        SnuggleEngine engine = new SnuggleEngine();
-        engine.addPackage(UpConversionPackageDefinitions.getPackage());
-        
-        return engine.createSession();
     }
 }

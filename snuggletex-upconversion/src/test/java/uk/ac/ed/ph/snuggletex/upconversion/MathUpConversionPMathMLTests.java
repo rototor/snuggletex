@@ -5,7 +5,6 @@
  */
 package uk.ac.ed.ph.snuggletex.upconversion;
 
-import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
 import uk.ac.ed.ph.snuggletex.MathTests;
 import uk.ac.ed.ph.snuggletex.testutil.TestFileHelper;
 
@@ -33,31 +32,17 @@ public class MathUpConversionPMathMLTests extends AbstractGoodUpConversionXMLTes
         return TestFileHelper.readAndParseSingleLineInputTestResource(TEST_RESOURCE_NAME);
     }
     
-    private final UpConvertingPostProcessor upconverter;
-    
     public MathUpConversionPMathMLTests(final String inputLaTeXMaths, final String expectedMathMLContent) {
         super(inputLaTeXMaths, expectedMathMLContent);
-        
+    }
+    
+    @Test
+    public void runTest() throws Throwable {
         /* Set up up-converter so that it only generates fixed up Presentation MathML */
         UpConversionOptions upConversionOptions = new UpConversionOptions();
         upConversionOptions.setSpecifiedOption(UpConversionOptionDefinitions.DO_CONTENT_MATHML_NAME, "false");
         upConversionOptions.setSpecifiedOption(UpConversionOptionDefinitions.DO_MAXIMA_NAME, "false");
-        upconverter = new UpConvertingPostProcessor(upConversionOptions);
+        super.runTest(upConversionOptions);
     }
 
-    /**
-     * We add in the up-converter, only going as far as Presentation MathML this time.
-     */
-    @Override
-    protected DOMOutputOptions createDOMOutputOptions() {
-        DOMOutputOptions result = super.createDOMOutputOptions();
-        result.setDOMPostProcessors(upconverter);
-        return result;
-    }
-    
-    @Override
-    @Test
-    public void runTest() throws Throwable {
-        super.runTest();
-    }
 }

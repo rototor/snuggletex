@@ -5,32 +5,18 @@
  */
 package uk.ac.ed.ph.snuggletex;
 
-import uk.ac.ed.ph.snuggletex.testutil.ClassPathResolver;
+import uk.ac.ed.ph.snuggletex.SnuggleTeXCaller.DOMFixupCallback;
+import uk.ac.ed.ph.snuggletex.SnuggleTeXCaller.DOMVerifyCallback;
+import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.testutil.TestFileHelper;
-import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 
-import java.io.StringReader;
 import java.util.Collection;
-
-import junit.framework.Assert;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-
-import com.thaiopensource.util.PropertyMap;
-import com.thaiopensource.util.PropertyMapBuilder;
-import com.thaiopensource.validate.Schema;
-import com.thaiopensource.validate.SchemaReader;
-import com.thaiopensource.validate.ValidateProperty;
-import com.thaiopensource.validate.Validator;
-import com.thaiopensource.validate.rng.CompactSchemaReader;
-import com.thaiopensource.xml.sax.CountingErrorHandler;
 
 /**
  * Set of simple maths-based tests that read their data in from <tt>{@link #TEST_RESOURCE_NAME}</tt>.
@@ -44,54 +30,47 @@ import com.thaiopensource.xml.sax.CountingErrorHandler;
  * @version $Revision:179 $
  */
 @RunWith(Parameterized.class)
-public class MathTests extends AbstractGoodMathTest {
+public class MathTests implements DOMFixupCallback, DOMVerifyCallback {
     
     public static final String TEST_RESOURCE_NAME = "math-tests.txt";
-    
-    public static final String MATHML_30_SCHEMA_LOCATION = "classpath:/mathml3.rnc";
     
     @Parameters
     public static Collection<String[]> data() throws Exception {
         return TestFileHelper.readAndParseSingleLineInputTestResource(TEST_RESOURCE_NAME);
     }
     
+    private final String inputLaTeXMaths;
+    private final String expectedMathML;
+    
     public MathTests(final String inputLaTeXMaths, final String expectedMathMLContent) {
-        super(inputLaTeXMaths, expectedMathMLContent);
+        this.inputLaTeXMaths = inputLaTeXMaths;
+        this.expectedMathML = "<math xmlns='" + W3CConstants.MATHML_NAMESPACE + "'>"
+            + expectedMathMLContent.replaceAll("(?m)^\\s+", "").replaceAll("(?m)\\s+$", "").replace("\n", "")
+            + "</math>";
     }
     
-    @Override
     @Test
     public void runTest() throws Throwable {
-        super.runTest();
+        SnuggleEngine engine = new SnuggleEngine();
+        
+        SnuggleTeXCaller caller = new SnuggleTeXCaller(engine);
+        caller.setShowTokensOnFailure(true);
+        caller.setDomFixupCallback(this);
+        caller.setDomVerifyCallback(this);
+        
+        String inputLaTeX = "$" + inputLaTeXMaths + "$";
+        caller.run(inputLaTeX, expectedMathML);
     }
-
-    /**
-     * Overridden to perform RELAX-NG validation against the MathML 3.0 schema
-     * to ensure that there are no warning, errors or fatal errors in the resulting XML.
-     */
-    @Override
-    protected void validateResultDocument(Document resultDocument) throws Throwable {
-        ClassPathResolver resolver = new ClassPathResolver();
-        PropertyMapBuilder builder = new PropertyMapBuilder();
-        builder.put(ValidateProperty.RESOLVER, resolver);
-        PropertyMap schemaProperties = builder.toPropertyMap();
+    
+    public void fixupDOM(Document document) throws Throwable {
+        TestUtilities.extractMathElement(document);
+    }
+    
+    public void verifyDOM(Document document) throws Throwable {
+        /* Check XML verifies against what we expect */
+        TestUtilities.verifyXML(expectedMathML, document);
         
-        CountingErrorHandler errorHandler = new CountingErrorHandler();
-        builder = new PropertyMapBuilder();
-        builder.put(ValidateProperty.ERROR_HANDLER, errorHandler);
-        PropertyMap validationProperties = builder.toPropertyMap();
-        
-        SchemaReader sr = CompactSchemaReader.getInstance();
-        InputSource schemaSource = new InputSource(MATHML_30_SCHEMA_LOCATION);
-        Schema schema = sr.createSchema(schemaSource, schemaProperties);
-        Validator validator = schema.createValidator(validationProperties);
-        
-        XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-        xmlReader.setContentHandler(validator.getContentHandler());
-        xmlReader.parse(new InputSource(new StringReader(MathMLUtilities.serializeDocument(resultDocument))));
-        
-        Assert.assertEquals(0, errorHandler.getWarningCount());
-        Assert.assertEquals(0, errorHandler.getErrorCount());
-        Assert.assertEquals(0, errorHandler.getFatalErrorCount());
+        /* Additionally do RELAX-NG validation on the MathML */
+        TestUtilities.assertMathMLValid(document);
     }
 }

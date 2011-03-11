@@ -5,8 +5,9 @@
  */
 package uk.ac.ed.ph.snuggletex.upconversion;
 
-import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
 import uk.ac.ed.ph.snuggletex.MathTests;
+import uk.ac.ed.ph.snuggletex.SnuggleTeXCaller.DOMFixupCallback;
+import uk.ac.ed.ph.snuggletex.TestUtilities;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.testutil.TestFileHelper;
 import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
@@ -32,7 +33,7 @@ import org.w3c.dom.NodeList;
  * @version $Revision:179 $
  */
 @RunWith(Parameterized.class)
-public class MathUpConversionCMathMLTests extends AbstractGoodUpConversionXMLTest {
+public class MathUpConversionCMathMLTests extends AbstractGoodUpConversionXMLTest implements DOMFixupCallback {
     
     public static final String TEST_RESOURCE_NAME = "math-upconversion-cmathml-tests.txt";
     
@@ -41,25 +42,26 @@ public class MathUpConversionCMathMLTests extends AbstractGoodUpConversionXMLTes
         return TestFileHelper.readAndParseSingleLineInputTestResource(TEST_RESOURCE_NAME);
     }
     
-    private final UpConvertingPostProcessor upconverter;
-    
     public MathUpConversionCMathMLTests(final String inputLaTeXMaths, final String expectedMathMLContent) {
         super(inputLaTeXMaths, expectedMathMLContent);
-        
-        /* Set up up-converter */
+    }
+    
+    @Test
+    public void runTest() throws Throwable {
+        /* Set up up-converter so that it only generates fixed up Presentation MathML */
         UpConversionOptions upConversionOptions = new UpConversionOptions();
         upConversionOptions.setSpecifiedOption(UpConversionOptionDefinitions.DO_CONTENT_MATHML_NAME, "true");
         upConversionOptions.setSpecifiedOption(UpConversionOptionDefinitions.DO_MAXIMA_NAME, "false");
-        upconverter = new UpConvertingPostProcessor(upConversionOptions);
+        super.runTest(upConversionOptions);
     }
-
+    
     /**
      * Overridden to tear the resulting MathML document apart and just leave the Content MathML.
      */
     @Override
-    protected void fixupDocument(Document document) {
-        /* Let superclass make a MathML document */
-        super.fixupDocument(document);
+    public void fixupDOM(Document document) throws Throwable {
+        /* First extract the MathML element */
+        TestUtilities.extractMathElement(document);
         
         /* Extract CMathML annotation if present, which should be a single element */
         Element mathML = document.getDocumentElement();
@@ -77,18 +79,5 @@ public class MathUpConversionCMathMLTests extends AbstractGoodUpConversionXMLTes
         else {
             /* Just leave alone, this will be checked later */
         }
-    }
-
-    @Override
-    protected DOMOutputOptions createDOMOutputOptions() {
-        DOMOutputOptions result = super.createDOMOutputOptions();
-        result.setDOMPostProcessors(upconverter);
-        return result;
-    }
-    
-    @Override
-    @Test
-    public void runTest() throws Throwable {
-        super.runTest();
     }
 }

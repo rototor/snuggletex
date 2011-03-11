@@ -5,33 +5,18 @@
  */
 package uk.ac.ed.ph.snuggletex.upconversion;
 
-import static org.easymock.EasyMock.createStrictControl;
-
 import uk.ac.ed.ph.asciimath.parser.ASCIIMathParser;
+import uk.ac.ed.ph.snuggletex.TestUtilities;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
-import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
-import uk.ac.ed.ph.snuggletex.testutil.EasyMockContentHandler;
 import uk.ac.ed.ph.snuggletex.testutil.TestFileHelper;
 
-import java.io.StringReader;
 import java.util.Collection;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.sax.SAXResult;
-
-import org.easymock.IMocksControl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 
 /**
  * This does the same kind of thing as {@link MathUpConversionPMathMLTests}, but uses
@@ -76,32 +61,6 @@ public class ASCIIMathUpConversionTests {
         Document upConvertedDocument = upConverter.upConvertASCIIMathML(mathDocument, upConversionOptions);
         
         /* Verify the document */
-        verifyResultDocument(XMLUtilities.createSaxonTransformerFactory(), upConvertedDocument, expectedMathML);
-    }
-    
-    protected static void verifyResultDocument(TransformerFactory transformerFactory, Document resultDocument, String expectedXML) throws Throwable {
-        /* Create mock to handle the SAX streams */
-        IMocksControl control = createStrictControl();
-        EasyMockContentHandler saxControl = new EasyMockContentHandler(control);
-        
-        /* Fire expected output at handler */
-        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-        parserFactory.setNamespaceAware(true);
-        SAXParser parser = parserFactory.newSAXParser();
-        XMLReader reader = parser.getXMLReader();
-        InputSource inputSource = new InputSource(new StringReader(expectedXML));
-        reader.setContentHandler(saxControl);
-        reader.parse(inputSource);
-        
-        /* Now replay and fire actual resulting XML to mock as SAX stream */
-        control.replay();
-        saxControl.replay();
-        
-        /* Finally verify everything */
-        Transformer serializer = transformerFactory.newTransformer();
-        serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        serializer.transform(new DOMSource(resultDocument), new SAXResult(saxControl));
-        control.verify();
-        saxControl.verify();
+        TestUtilities.verifyXML(expectedMathML, upConvertedDocument);
     }
 }

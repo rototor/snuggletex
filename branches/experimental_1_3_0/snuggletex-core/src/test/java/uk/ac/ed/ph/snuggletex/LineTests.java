@@ -5,6 +5,7 @@
  */
 package uk.ac.ed.ph.snuggletex;
 
+import uk.ac.ed.ph.snuggletex.SnuggleTeXCaller.DOMVerifyCallback;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.testutil.TestFileHelper;
 
@@ -25,7 +26,7 @@ import org.w3c.dom.Document;
  * @version $Revision:179 $
  */
 @RunWith(Parameterized.class)
-public class LineTests extends AbstractGoodXMLTest {
+public class LineTests implements DOMVerifyCallback {
     
     public static final String TEST_RESOURCE_NAME = "line-tests.txt";
     
@@ -34,22 +35,30 @@ public class LineTests extends AbstractGoodXMLTest {
         return TestFileHelper.readAndParseSingleLineInputTestResource(TEST_RESOURCE_NAME);
     }
     
-    public LineTests(final String inputLaTeX, final String expectedXML) {
-        super(inputLaTeX,
-                "<body xmlns='" + W3CConstants.XHTML_NAMESPACE + "'>"
-                + expectedXML.replaceAll("(?m)^ +", "").replaceAll("(?m) +$", "").replace("\n", "")
-                + "</body>"
-        );
+    private final String inputLaTeX;
+    private final String expectedXML;
+    
+    public LineTests(final String inputLaTeX, final String expectedXMLContent) {
+        this.inputLaTeX = inputLaTeX;
+        this.expectedXML = "<body xmlns='" + W3CConstants.XHTML_NAMESPACE + "'>"
+                + expectedXMLContent.replaceAll("(?m)^ +", "").replaceAll("(?m) +$", "").replace("\n", "")
+                + "</body>";
     }
     
-    @Override
-    protected void fixupDocument(Document document) {
-        /* Nothing to do */
-    }
-    
-    @Override
     @Test
     public void runTest() throws Throwable {
-        super.runTest();
+        SnuggleEngine engine = new SnuggleEngine();
+        
+        SnuggleTeXCaller caller = new SnuggleTeXCaller(engine);
+        caller.setShowTokensOnFailure(true);
+        caller.setDomVerifyCallback(this);
+        
+        caller.run(inputLaTeX, expectedXML);
     }
+    
+    public void verifyDOM(Document document) throws Throwable {
+        /* Check XML verifies against what we expect */
+        TestUtilities.verifyXML(expectedXML, document);
+    }
+    
 }

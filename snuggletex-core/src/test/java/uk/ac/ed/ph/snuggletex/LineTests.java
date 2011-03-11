@@ -5,7 +5,7 @@
  */
 package uk.ac.ed.ph.snuggletex;
 
-import uk.ac.ed.ph.snuggletex.SnuggleTeXCaller.DOMVerifyCallback;
+import uk.ac.ed.ph.snuggletex.SnuggleTeXTestDriver.DOMVerifyCallback;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.testutil.TestFileHelper;
 
@@ -49,7 +49,7 @@ public class LineTests implements DOMVerifyCallback {
     public void runTest() throws Throwable {
         SnuggleEngine engine = new SnuggleEngine();
         
-        SnuggleTeXCaller caller = new SnuggleTeXCaller(engine);
+        SnuggleTeXTestDriver caller = new SnuggleTeXTestDriver(engine);
         caller.setShowTokensOnFailure(true);
         caller.setDomVerifyCallback(this);
         

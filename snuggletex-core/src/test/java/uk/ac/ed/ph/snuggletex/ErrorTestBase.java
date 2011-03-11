@@ -22,14 +22,14 @@ import org.junit.Test;
  * @author  David McKain
  * @version $Revision$
  */
-public abstract class AbstractErrorTest {
+public abstract class ErrorTestBase {
     
-    private static final Logger logger = Logger.getLogger(AbstractErrorTest.class.getName());
+    private static final Logger logger = Logger.getLogger(ErrorTestBase.class.getName());
     
     private final String inputLaTeX;
     private final String expectedErrorCodeStrings;
     
-    protected AbstractErrorTest(final String inputLaTeX, final String expectedErrorCodeStrings) {
+    protected ErrorTestBase(final String inputLaTeX, final String expectedErrorCodeStrings) {
         this.inputLaTeX = inputLaTeX;
         this.expectedErrorCodeStrings = expectedErrorCodeStrings;
     }

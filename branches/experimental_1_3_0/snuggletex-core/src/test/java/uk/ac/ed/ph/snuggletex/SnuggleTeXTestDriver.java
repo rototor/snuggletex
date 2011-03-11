@@ -17,18 +17,12 @@ import uk.ac.ed.ph.snuggletex.internal.util.DumpMode;
 import uk.ac.ed.ph.snuggletex.internal.util.ObjectDumper;
 import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
 import uk.ac.ed.ph.snuggletex.tokens.RootToken;
+import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 import uk.ac.ed.ph.snuggletex.utilities.MessageFormatter;
 
-import java.io.StringWriter;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import junit.framework.Assert;
 
@@ -36,14 +30,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * FIXME: Document this type!
+ * Helper class to drive tests that expect successful parsing and DOM Building,
+ * carefull logging things if they go wrong.
  *
  * @author  David McKain
  * @version $Revision$
  */
-public final class SnuggleTeXCaller {
+public final class SnuggleTeXTestDriver {
     
-    private static final Logger log = Logger.getLogger(SnuggleTeXCaller.class.getName());
+    private static final Logger log = Logger.getLogger(SnuggleTeXTestDriver.class.getName());
     
     public static interface DOMFixupCallback {
         void fixupDOM(Document document) throws Throwable;
@@ -60,7 +55,7 @@ public final class SnuggleTeXCaller {
     private boolean showTokensOnFailure;
     
     
-    public SnuggleTeXCaller(final SnuggleEngine snuggleEngine) {
+    public SnuggleTeXTestDriver(final SnuggleEngine snuggleEngine) {
         this.snuggleEngine = snuggleEngine;
     }
     
@@ -159,12 +154,7 @@ public final class SnuggleTeXCaller {
             }
             
             /* Serialize the output */
-            StringWriter outputWriter = new StringWriter();
-            TransformerFactory transformerFactory = XMLUtilities.createJAXPTransformerFactory();
-            Transformer serializer = transformerFactory.newTransformer();
-            serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            serializer.transform(new DOMSource(resultDocument), new StreamResult(outputWriter));
-            output = outputWriter.toString();
+            output = MathMLUtilities.serializeDocument(resultDocument);
             
             /* Now maybe verify */
             if (domVerifyCallback!=null) {

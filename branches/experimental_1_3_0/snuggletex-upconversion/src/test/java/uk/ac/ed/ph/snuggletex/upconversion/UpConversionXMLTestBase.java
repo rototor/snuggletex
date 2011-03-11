@@ -7,9 +7,9 @@ package uk.ac.ed.ph.snuggletex.upconversion;
 
 import uk.ac.ed.ph.snuggletex.MathTests;
 import uk.ac.ed.ph.snuggletex.SnuggleEngine;
-import uk.ac.ed.ph.snuggletex.SnuggleTeXCaller;
-import uk.ac.ed.ph.snuggletex.SnuggleTeXCaller.DOMFixupCallback;
-import uk.ac.ed.ph.snuggletex.SnuggleTeXCaller.DOMVerifyCallback;
+import uk.ac.ed.ph.snuggletex.SnuggleTeXTestDriver;
+import uk.ac.ed.ph.snuggletex.SnuggleTeXTestDriver.DOMFixupCallback;
+import uk.ac.ed.ph.snuggletex.SnuggleTeXTestDriver.DOMVerifyCallback;
 import uk.ac.ed.ph.snuggletex.TestUtilities;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.upconversion.internal.UpConversionPackageDefinitions;
@@ -28,13 +28,13 @@ import org.w3c.dom.Document;
  * @author  David McKain
  * @version $Revision:179 $
  */
-public abstract class AbstractGoodUpConversionXMLTest implements DOMFixupCallback, DOMVerifyCallback {
+public abstract class UpConversionXMLTestBase implements DOMFixupCallback, DOMVerifyCallback {
 
     private final String inputLaTeX;
     private final String expectedOutput;
     private final String expectedMathML;
     
-    public AbstractGoodUpConversionXMLTest(final String inputFragment, final String expectedMathMLContent) {
+    public UpConversionXMLTestBase(final String inputFragment, final String expectedMathMLContent) {
         this.inputLaTeX = inputFragment.endsWith("$") ? inputFragment : "$" + inputFragment + "$";
         this.expectedOutput = expectedMathMLContent;
         this.expectedMathML = "<math xmlns='" + W3CConstants.MATHML_NAMESPACE + "'>"
@@ -46,13 +46,13 @@ public abstract class AbstractGoodUpConversionXMLTest implements DOMFixupCallbac
         SnuggleEngine engine = new SnuggleEngine();
         engine.addPackage(UpConversionPackageDefinitions.getPackage());
         
-        SnuggleTeXCaller snuggleTeXCaller = new SnuggleTeXCaller(engine);
-        snuggleTeXCaller.setShowTokensOnFailure(false);
-        snuggleTeXCaller.setDomFixupCallback(this);
-        snuggleTeXCaller.setDomVerifyCallback(this);
-        snuggleTeXCaller.setDomPostProcessor(new UpConvertingPostProcessor(upConversionOptions));
+        SnuggleTeXTestDriver driver = new SnuggleTeXTestDriver(engine);
+        driver.setShowTokensOnFailure(false);
+        driver.setDomFixupCallback(this);
+        driver.setDomVerifyCallback(this);
+        driver.setDomPostProcessor(new UpConvertingPostProcessor(upConversionOptions));
         
-        snuggleTeXCaller.run(inputLaTeX, expectedOutput);
+        driver.run(inputLaTeX, expectedOutput);
     }
     
     public void fixupDOM(Document document) throws Throwable {

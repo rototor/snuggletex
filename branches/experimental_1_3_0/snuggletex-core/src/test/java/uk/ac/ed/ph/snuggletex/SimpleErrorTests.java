@@ -22,7 +22,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @version $Revision$
  */
 @RunWith(Parameterized.class)
-public class SimpleErrorTests extends AbstractErrorTest {
+public class SimpleErrorTests extends ErrorTestBase {
     
     public static final String TEST_RESOURCE_NAME = "simple-error-tests.txt";
     

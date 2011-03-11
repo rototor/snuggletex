@@ -6,7 +6,7 @@
 package uk.ac.ed.ph.snuggletex.upconversion;
 
 import uk.ac.ed.ph.snuggletex.MathTests;
-import uk.ac.ed.ph.snuggletex.SnuggleTeXCaller.DOMFixupCallback;
+import uk.ac.ed.ph.snuggletex.SnuggleTeXTestDriver.DOMFixupCallback;
 import uk.ac.ed.ph.snuggletex.TestUtilities;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.testutil.TestFileHelper;
@@ -33,7 +33,7 @@ import org.w3c.dom.NodeList;
  * @version $Revision:179 $
  */
 @RunWith(Parameterized.class)
-public class MathUpConversionCMathMLTests extends AbstractGoodUpConversionXMLTest implements DOMFixupCallback {
+public class MathUpConversionCMathMLTests extends UpConversionXMLTestBase implements DOMFixupCallback {
     
     public static final String TEST_RESOURCE_NAME = "math-upconversion-cmathml-tests.txt";
     

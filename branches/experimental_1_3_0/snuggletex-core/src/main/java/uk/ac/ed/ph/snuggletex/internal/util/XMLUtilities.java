@@ -15,6 +15,7 @@ import java.io.StringWriter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -117,6 +118,30 @@ public final class XMLUtilities {
     
     public static boolean supportsXSLT20(final Transformer tranformer) {
         return tranformer.getClass().getName().startsWith("net.sf.saxon.");
+    }
+    
+    /**
+     * Helper to turn on indentation for a {@link Transformer} that works correctly for
+     * both Saxon and Xalan.
+     * 
+     * @param transformer {@link Transformer} to configure
+     * @param indent required indentation, where 0 or more provides indentation and negative
+     *   numbers turns indentation off.
+     */
+    public static void setIndentation(Transformer transformer, int indent) {
+        if (indent>=0) {
+            String indentString = String.valueOf(indent);
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            
+            /* Set custom properties for both Saxon and Xalan at once.
+             * This appears safe to do without having to check the underlying processor.
+             */
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", indentString);
+            transformer.setOutputProperty("{http://saxon.sf.net/}indent-spaces", indentString);
+        }
+        else {
+            transformer.setOutputProperty(OutputKeys.INDENT, "no");
+        }
     }
     
     //------------------------------------------------------------------

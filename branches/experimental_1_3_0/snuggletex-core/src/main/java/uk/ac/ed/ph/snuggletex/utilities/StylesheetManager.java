@@ -11,6 +11,7 @@ import uk.ac.ed.ph.snuggletex.SnuggleRuntimeException;
 import uk.ac.ed.ph.snuggletex.definitions.Globals;
 import uk.ac.ed.ph.snuggletex.internal.util.ConstraintUtilities;
 import uk.ac.ed.ph.snuggletex.internal.util.StringUtilities;
+import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -267,12 +268,7 @@ public final class StylesheetManager {
             serializer.setOutputProperty(OutputKeys.METHOD, serializationMethod.getName());
             serializer.setOutputProperty(OutputKeys.INDENT, StringUtilities.toYesNo(serializationOptions.isIndenting()));
             if (serializationOptions.isIndenting()) {
-                String indent = Integer.toString(serializationOptions.getIndent());
-                /* Set custom properties for both Saxon and Xalan. This appears safe to do without
-                 * having to check the underlying processor.
-                 */
-                serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", indent);
-                serializer.setOutputProperty("{http://saxon.sf.net/}indent-spaces", indent);
+                XMLUtilities.setIndentation(serializer, serializationOptions.getIndent());
             }
             serializer.setOutputProperty(OutputKeys.ENCODING, serializationOptions.getEncoding());
             serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, StringUtilities.toYesNo(!serializationOptions.isIncludingXMLDeclaration()));

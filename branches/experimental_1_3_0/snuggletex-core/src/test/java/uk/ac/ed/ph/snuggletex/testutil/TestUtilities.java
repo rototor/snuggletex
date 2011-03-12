@@ -3,20 +3,27 @@
  * Copyright (c) 2008-2011, The University of Edinburgh.
  * All Rights Reserved
  */
-package uk.ac.ed.ph.snuggletex;
+package uk.ac.ed.ph.snuggletex.testutil;
 
 import static org.easymock.EasyMock.createStrictControl;
 
+import uk.ac.ed.ph.snuggletex.InputError;
+import uk.ac.ed.ph.snuggletex.SnuggleEngine;
+import uk.ac.ed.ph.snuggletex.SnuggleInput;
+import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
+import uk.ac.ed.ph.snuggletex.internal.SessionContext;
 import uk.ac.ed.ph.snuggletex.internal.SnuggleInputReader;
 import uk.ac.ed.ph.snuggletex.internal.SnuggleParseException;
 import uk.ac.ed.ph.snuggletex.internal.WorkingDocument;
 import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
-import uk.ac.ed.ph.snuggletex.testutil.ClassPathResolver;
-import uk.ac.ed.ph.snuggletex.testutil.EasyMockContentHandler;
 import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
+import uk.ac.ed.ph.snuggletex.utilities.MessageFormatter;
+import uk.ac.ed.ph.snuggletex.utilities.SerializationOptions;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,32 +63,43 @@ import com.thaiopensource.xml.sax.CountingErrorHandler;
  */
 public final class TestUtilities {
     
+    private static final Logger log = Logger.getLogger(TestUtilities.class.getName());
+    
     public static final String MATHML_30_SCHEMA_LOCATION = "classpath:/mathml3.rnc";
     
-    public static void verifyXML(String expectedXML, Document resultDocument) throws Throwable {
-        /* Create mock to handle the SAX streams */
-        IMocksControl control = createStrictControl();
-        EasyMockContentHandler saxControl = new EasyMockContentHandler(control);
-        
-        /* Fire expected output at handler */
-        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-        parserFactory.setNamespaceAware(true);
-        SAXParser parser = parserFactory.newSAXParser();
-        XMLReader reader = parser.getXMLReader();
-        InputSource inputSource = new InputSource(new StringReader(expectedXML));
-        reader.setContentHandler(saxControl);
-        reader.parse(inputSource);
-        
-        /* Now replay and fire actual resulting XML to mock as SAX stream */
-        control.replay();
-        saxControl.replay();
-        
-        /* Finally verify everything */
-        Transformer serializer = XMLUtilities.createJAXPTransformerFactory().newTransformer();
-        serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        serializer.transform(new DOMSource(resultDocument), new SAXResult(saxControl));
-        control.verify();
-        saxControl.verify();
+    public static void verifyXML(String expectedXML, Document document) throws Throwable {
+        try {
+            /* Create mock to handle the SAX streams */
+            IMocksControl control = createStrictControl();
+            EasyMockContentHandler saxControl = new EasyMockContentHandler(control);
+            
+            /* Fire expected output at handler */
+            SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+            parserFactory.setNamespaceAware(true);
+            SAXParser parser = parserFactory.newSAXParser();
+            XMLReader reader = parser.getXMLReader();
+            InputSource inputSource = new InputSource(new StringReader(expectedXML));
+            reader.setContentHandler(saxControl);
+            reader.parse(inputSource);
+            
+            /* Now replay and fire actual resulting XML to mock as SAX stream */
+            control.replay();
+            saxControl.replay();
+            
+            /* Finally verify everything */
+            Transformer serializer = XMLUtilities.createJAXPTransformerFactory().newTransformer();
+            serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            serializer.transform(new DOMSource(document), new SAXResult(saxControl));
+            control.verify();
+            saxControl.verify();
+        }
+        catch (Throwable e) {
+            log.severe("XML Verification failed");
+            log.severe("Expected output: " + expectedXML);
+            log.severe("Actual output:   " + MathMLUtilities.serializeDocument(document, new SerializationOptions()));
+            throw e;
+        }
+
     }
     
     /* (NB: Does fix-in-place!) */
@@ -112,6 +130,17 @@ public final class TestUtilities {
         }
         document.removeChild(rootElement);
         document.appendChild(firstMathElement);
+    }
+    
+    public static void assertNoErrors(SessionContext sessionContext) {
+        List<InputError> errors = sessionContext.getErrors();
+        if (!errors.isEmpty()) {
+            SnuggleTeXTestDriver.log.warning("Got " + errors.size() + " unexpected error(s). Details following...");
+            for (InputError error : errors) {
+                SnuggleTeXTestDriver.log.warning(MessageFormatter.formatErrorAsString(error));
+            }
+        }
+        Assert.assertTrue(errors.isEmpty());
     }
     
     /**
@@ -168,6 +197,14 @@ public final class TestUtilities {
         matcher.appendTail(resultBuilder);
         return resultBuilder.toString();
     }
-    
 
+    /**
+     * Wraps in the MathML test input data, by adding in the enclosing <tt>math</tt>
+     * element in the correct namespace. It also removes indentation whitespace.
+     */
+    public static String wrapMathMLTestData(String mathmlTestData) {
+        return "<math xmlns='" + W3CConstants.MATHML_NAMESPACE + "'>"
+            + mathmlTestData.replaceAll("(?m)^\\s+", "").replaceAll("(?m)\\s+$", "").replace("\n", "")
+            + "</math>";
+    }
 }

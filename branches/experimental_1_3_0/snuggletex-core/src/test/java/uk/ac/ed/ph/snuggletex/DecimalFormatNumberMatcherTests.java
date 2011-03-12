@@ -6,6 +6,7 @@
 package uk.ac.ed.ph.snuggletex;
 
 import uk.ac.ed.ph.snuggletex.internal.WorkingDocument;
+import uk.ac.ed.ph.snuggletex.testutil.TestUtilities;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;

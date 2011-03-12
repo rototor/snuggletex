@@ -7,6 +7,8 @@ package uk.ac.ed.ph.snuggletex.upconversion;
 
 import uk.ac.ed.ph.snuggletex.MathTests;
 import uk.ac.ed.ph.snuggletex.testutil.TestFileHelper;
+import uk.ac.ed.ph.snuggletex.testutil.TestUtilities;
+import uk.ac.ed.ph.snuggletex.upconversion.SnuggleTeXUpConversionTestDriver.DriverCallback;
 
 import java.util.Collection;
 
@@ -14,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.w3c.dom.Document;
 
 /**
  * Same idea as {@link MathTests}, but tests the up-conversion to Content
@@ -23,7 +26,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @version $Revision:179 $
  */
 @RunWith(Parameterized.class)
-public class MathUpConversionPMathMLTests extends UpConversionXMLTestBase {
+public class MathUpConversionPMathMLTests implements DriverCallback {
     
     public static final String TEST_RESOURCE_NAME = "math-upconversion-pmathml-tests.txt";
     
@@ -32,8 +35,14 @@ public class MathUpConversionPMathMLTests extends UpConversionXMLTestBase {
         return TestFileHelper.readAndParseSingleLineInputTestResource(TEST_RESOURCE_NAME);
     }
     
-    public MathUpConversionPMathMLTests(final String inputLaTeXMaths, final String expectedMathMLContent) {
-        super(inputLaTeXMaths, expectedMathMLContent);
+    private final String inputLaTeX;
+    private final String expectedResult;
+    private final String expectedMathML;
+    
+    public MathUpConversionPMathMLTests(final String inputFragment, final String expectedMathMLContent) {
+        this.inputLaTeX = inputFragment;
+        this.expectedResult = expectedMathMLContent;
+        this.expectedMathML = TestUtilities.wrapMathMLTestData(expectedMathMLContent);
     }
     
     @Test
@@ -42,7 +51,12 @@ public class MathUpConversionPMathMLTests extends UpConversionXMLTestBase {
         UpConversionOptions upConversionOptions = new UpConversionOptions();
         upConversionOptions.setSpecifiedOption(UpConversionOptionDefinitions.DO_CONTENT_MATHML_NAME, "false");
         upConversionOptions.setSpecifiedOption(UpConversionOptionDefinitions.DO_MAXIMA_NAME, "false");
-        super.runTest(upConversionOptions);
+        
+        SnuggleTeXUpConversionTestDriver driver = new SnuggleTeXUpConversionTestDriver(upConversionOptions, this);
+        driver.run(inputLaTeX, expectedResult);        
     }
-
+    
+    public void verifyErrorFreeDOM(Document document) throws Throwable {
+        TestUtilities.verifyXML(expectedMathML, document);
+    }
 }

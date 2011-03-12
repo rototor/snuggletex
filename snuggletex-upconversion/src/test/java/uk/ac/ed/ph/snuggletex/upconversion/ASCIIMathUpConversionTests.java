@@ -6,9 +6,9 @@
 package uk.ac.ed.ph.snuggletex.upconversion;
 
 import uk.ac.ed.ph.asciimath.parser.ASCIIMathParser;
-import uk.ac.ed.ph.snuggletex.TestUtilities;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.testutil.TestFileHelper;
+import uk.ac.ed.ph.snuggletex.testutil.TestUtilities;
 
 import java.util.Collection;
 

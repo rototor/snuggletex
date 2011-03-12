@@ -5,10 +5,10 @@
  */
 package uk.ac.ed.ph.snuggletex;
 
-import uk.ac.ed.ph.snuggletex.SnuggleTeXTestDriver.DOMFixupCallback;
-import uk.ac.ed.ph.snuggletex.SnuggleTeXTestDriver.DOMVerifyCallback;
-import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
+import uk.ac.ed.ph.snuggletex.testutil.SnuggleTeXTestDriver;
+import uk.ac.ed.ph.snuggletex.testutil.SnuggleTeXTestDriver.DriverCallback;
 import uk.ac.ed.ph.snuggletex.testutil.TestFileHelper;
+import uk.ac.ed.ph.snuggletex.testutil.TestUtilities;
 
 import java.util.Collection;
 
@@ -30,7 +30,7 @@ import org.w3c.dom.Document;
  * @version $Revision:179 $
  */
 @RunWith(Parameterized.class)
-public class MathTests implements DOMFixupCallback, DOMVerifyCallback {
+public class MathTests implements DriverCallback {
     
     public static final String TEST_RESOURCE_NAME = "math-tests.txt";
     
@@ -44,29 +44,23 @@ public class MathTests implements DOMFixupCallback, DOMVerifyCallback {
     
     public MathTests(final String inputLaTeXMaths, final String expectedMathMLContent) {
         this.inputLaTeXMaths = inputLaTeXMaths;
-        this.expectedMathML = "<math xmlns='" + W3CConstants.MATHML_NAMESPACE + "'>"
-            + expectedMathMLContent.replaceAll("(?m)^\\s+", "").replaceAll("(?m)\\s+$", "").replace("\n", "")
-            + "</math>";
+        this.expectedMathML = TestUtilities.wrapMathMLTestData(expectedMathMLContent);
     }
     
     @Test
     public void runTest() throws Throwable {
         SnuggleEngine engine = new SnuggleEngine();
         
-        SnuggleTeXTestDriver caller = new SnuggleTeXTestDriver(engine);
-        caller.setShowTokensOnFailure(true);
-        caller.setDomFixupCallback(this);
-        caller.setDomVerifyCallback(this);
+        SnuggleTeXTestDriver caller = new SnuggleTeXTestDriver(engine, this);
         
         String inputLaTeX = "$" + inputLaTeXMaths + "$";
-        caller.run(inputLaTeX, expectedMathML);
-    }
-    
-    public void fixupDOM(Document document) throws Throwable {
-        TestUtilities.extractMathElement(document);
+        caller.run(inputLaTeX);
     }
     
     public void verifyDOM(Document document) throws Throwable {
+        /* Promote <math> element */
+        TestUtilities.extractMathElement(document);
+        
         /* Check XML verifies against what we expect */
         TestUtilities.verifyXML(expectedMathML, document);
         

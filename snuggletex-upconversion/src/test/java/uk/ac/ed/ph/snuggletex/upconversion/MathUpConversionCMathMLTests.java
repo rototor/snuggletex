@@ -6,10 +6,10 @@
 package uk.ac.ed.ph.snuggletex.upconversion;
 
 import uk.ac.ed.ph.snuggletex.MathTests;
-import uk.ac.ed.ph.snuggletex.SnuggleTeXTestDriver.DOMFixupCallback;
-import uk.ac.ed.ph.snuggletex.TestUtilities;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.testutil.TestFileHelper;
+import uk.ac.ed.ph.snuggletex.testutil.TestUtilities;
+import uk.ac.ed.ph.snuggletex.upconversion.SnuggleTeXUpConversionTestDriver.DriverCallback;
 import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 
 import java.util.Collection;
@@ -33,7 +33,7 @@ import org.w3c.dom.NodeList;
  * @version $Revision:179 $
  */
 @RunWith(Parameterized.class)
-public class MathUpConversionCMathMLTests extends UpConversionXMLTestBase implements DOMFixupCallback {
+public class MathUpConversionCMathMLTests implements DriverCallback {
     
     public static final String TEST_RESOURCE_NAME = "math-upconversion-cmathml-tests.txt";
     
@@ -42,8 +42,14 @@ public class MathUpConversionCMathMLTests extends UpConversionXMLTestBase implem
         return TestFileHelper.readAndParseSingleLineInputTestResource(TEST_RESOURCE_NAME);
     }
     
-    public MathUpConversionCMathMLTests(final String inputLaTeXMaths, final String expectedMathMLContent) {
-        super(inputLaTeXMaths, expectedMathMLContent);
+    private final String inputLaTeX;
+    private final String expectedResult;
+    private final String expectedMathML;
+    
+    public MathUpConversionCMathMLTests(final String inputFragment, final String expectedMathMLContent) {
+        this.inputLaTeX = inputFragment;
+        this.expectedResult = expectedMathMLContent;
+        this.expectedMathML = TestUtilities.wrapMathMLTestData(expectedMathMLContent);
     }
     
     @Test
@@ -52,32 +58,26 @@ public class MathUpConversionCMathMLTests extends UpConversionXMLTestBase implem
         UpConversionOptions upConversionOptions = new UpConversionOptions();
         upConversionOptions.setSpecifiedOption(UpConversionOptionDefinitions.DO_CONTENT_MATHML_NAME, "true");
         upConversionOptions.setSpecifiedOption(UpConversionOptionDefinitions.DO_MAXIMA_NAME, "false");
-        super.runTest(upConversionOptions);
+        
+        SnuggleTeXUpConversionTestDriver driver = new SnuggleTeXUpConversionTestDriver(upConversionOptions, this);
+        driver.run(inputLaTeX, expectedResult);        
     }
     
-    /**
-     * Overridden to tear the resulting MathML document apart and just leave the Content MathML.
-     */
-    @Override
-    public void fixupDOM(Document document) throws Throwable {
-        /* First extract the MathML element */
-        TestUtilities.extractMathElement(document);
-        
-        /* Extract CMathML annotation if present, which should be a single element */
+    public void verifyErrorFreeDOM(Document document) throws Throwable {
+        /* Promote CMathML annotation if present, which should be a single element */
         Element mathML = document.getDocumentElement();
         NodeList cmathMLList = MathMLUtilities.extractAnnotationXML(mathML, MathMLUpConverter.CONTENT_MATHML_ANNOTATION_NAME);
-        if (cmathMLList!=null) {
-            Assert.assertEquals(1, cmathMLList.getLength());
-            Node cmathML = cmathMLList.item(0);
+        Assert.assertNotNull(cmathMLList);
+        
+        Assert.assertEquals(1, cmathMLList.getLength());
+        Node cmathML = cmathMLList.item(0);
 
-            Assert.assertEquals(Node.ELEMENT_NODE, cmathML.getNodeType());
-            Assert.assertEquals(W3CConstants.MATHML_NAMESPACE, cmathML.getNamespaceURI());
-            
-            mathML.removeChild(mathML.getFirstChild()); /* Removes <semantics/> */
-            mathML.appendChild(cmathML); /* Moves CMathML element to child of <math/> */
-        }
-        else {
-            /* Just leave alone, this will be checked later */
-        }
+        Assert.assertEquals(Node.ELEMENT_NODE, cmathML.getNodeType());
+        Assert.assertEquals(W3CConstants.MATHML_NAMESPACE, cmathML.getNamespaceURI());
+        
+        mathML.removeChild(mathML.getFirstChild()); /* Removes <semantics/> */
+        mathML.appendChild(cmathML); /* Moves CMathML element to child of <math/> */
+        
+        TestUtilities.verifyXML(expectedMathML, document);
     }
 }

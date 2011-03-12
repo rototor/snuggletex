@@ -5,9 +5,11 @@
  */
 package uk.ac.ed.ph.snuggletex;
 
-import uk.ac.ed.ph.snuggletex.SnuggleTeXTestDriver.DOMVerifyCallback;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
+import uk.ac.ed.ph.snuggletex.testutil.SnuggleTeXTestDriver;
+import uk.ac.ed.ph.snuggletex.testutil.SnuggleTeXTestDriver.DriverCallback;
 import uk.ac.ed.ph.snuggletex.testutil.TestFileHelper;
+import uk.ac.ed.ph.snuggletex.testutil.TestUtilities;
 
 import java.util.Collection;
 
@@ -26,7 +28,7 @@ import org.w3c.dom.Document;
  * @version $Revision:179 $
  */
 @RunWith(Parameterized.class)
-public class LineTests implements DOMVerifyCallback {
+public class LineTests implements DriverCallback {
     
     public static final String TEST_RESOURCE_NAME = "line-tests.txt";
     
@@ -49,11 +51,9 @@ public class LineTests implements DOMVerifyCallback {
     public void runTest() throws Throwable {
         SnuggleEngine engine = new SnuggleEngine();
         
-        SnuggleTeXTestDriver caller = new SnuggleTeXTestDriver(engine);
-        caller.setShowTokensOnFailure(true);
-        caller.setDomVerifyCallback(this);
+        SnuggleTeXTestDriver caller = new SnuggleTeXTestDriver(engine, this);
         
-        caller.run(inputLaTeX, expectedXML);
+        caller.run(inputLaTeX);
     }
     
     public void verifyDOM(Document document) throws Throwable {

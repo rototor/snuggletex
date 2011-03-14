@@ -53,6 +53,12 @@ All Rights Reserved
       <version>${easymock.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>thaiopensource</groupId>
+      <artifactId>jing</artifactId>
+      <version>20091111</version>
+      <scope>test</scope>
+    </dependency>
     <!-- (Pull in test classes from core module, which contain some useful base classes) -->
     <dependency>
       <groupId>${project.groupId}</groupId>

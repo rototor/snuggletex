@@ -13,6 +13,7 @@ import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
 import uk.ac.ed.ph.snuggletex.testutil.TestUtilities;
 import uk.ac.ed.ph.snuggletex.upconversion.internal.UpConversionPackageDefinitions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -47,43 +48,53 @@ public final class SnuggleTeXUpConversionTestDriver {
     }
     
     public void run(String inputMathFragment, String expectedResult) throws Throwable {
-        String inputLaTeX = inputMathFragment.endsWith("$") ? inputMathFragment : "$" + inputMathFragment + "$";
-        Document document;
         try {
-            /* We're going to assume that the input parses OK, so don't need to go into
-             * as much detail as the driver for the core tests.
-             */
-            SnuggleEngine engine = new SnuggleEngine();
-            engine.addPackage(UpConversionPackageDefinitions.getPackage());
-            
-            SnuggleSession session = engine.createSession();
-            session.parseInput(new SnuggleInput(TestUtilities.massageInputLaTeX(inputLaTeX)));
-            
-            DOMOutputOptions domOutputOptions = new DOMOutputOptions();
-            domOutputOptions.setMathVariantMapping(true);
-            domOutputOptions.setPrefixingSnuggleXML(true);
-            domOutputOptions.setDOMPostProcessors(new UpConvertingPostProcessor(upConversionOptions));
-            
-            /* Build DOM under a fake <temp/> element */
-            document = XMLUtilities.createNSAwareDocumentBuilder().newDocument();
-            Element rootElement = document.createElement("temp");
-            document.appendChild(rootElement);
-            session.buildDOMSubtree(rootElement, domOutputOptions);
-            
-            /* Make sure nothing went wrong during parsing or DOM Building */
-            TestUtilities.assertNoErrors(session);
-            
-            /* Replace <temp/> with the single <math/> element we should have got */
-            TestUtilities.extractMathElement(document);
+            doRun(inputMathFragment, expectedResult);
         }
         catch (Throwable e) {
-            log.severe(getClass().getName() + " run early failure on input: " + inputLaTeX);
-            log.log(Level.SEVERE, "Error was: ", e);
+            log.severe("^^^ Failure on input " + inputMathFragment);
+            log.log(Level.SEVERE, "Error thrown was: ", e);
+            log.severe("-------------------------------------------");
             throw e;
         }
+    }
+    
+    private void doRun(String inputMathFragment, String expectedResult) throws Throwable {
+        String inputLaTeX = inputMathFragment.endsWith("$") ? inputMathFragment : "$" + inputMathFragment + "$";
+        Document document;
+        
+        /* We're going to assume that the input parses OK, so don't need to go into
+         * as much detail as the driver for the core tests.
+         */
+        SnuggleEngine engine = new SnuggleEngine();
+        engine.addPackage(UpConversionPackageDefinitions.getPackage());
+        
+        SnuggleSession session = engine.createSession();
+        session.parseInput(new SnuggleInput(TestUtilities.massageInputLaTeX(inputLaTeX)));
+        
+        DOMOutputOptions domOutputOptions = new DOMOutputOptions();
+        domOutputOptions.setMathVariantMapping(true);
+        domOutputOptions.setPrefixingSnuggleXML(true);
+        domOutputOptions.setDOMPostProcessors(new UpConvertingPostProcessor(upConversionOptions));
+        
+        /* Build DOM under a fake <temp/> element */
+        document = XMLUtilities.createNSAwareDocumentBuilder().newDocument();
+        Element rootElement = document.createElement("temp");
+        document.appendChild(rootElement);
+        session.buildDOMSubtree(rootElement, domOutputOptions);
+        
+        /* Make sure nothing went wrong during parsing or DOM Building */
+        TestUtilities.assertNoErrors(session);
+        
+        /* Replace <temp/> with the single <math/> element we should have got */
+        TestUtilities.promoteMathElement(document);
         
         /* Extract any up-conversion failures */
         List<UpConversionFailure> upConversionFailures = UpConversionUtilities.extractUpConversionFailures(document);
+        List<String> upConversionFailureCodes = new ArrayList<String>();
+        for (UpConversionFailure failure : upConversionFailures) {
+            upConversionFailureCodes.add(failure.getErrorCode().toString());
+        }
 
         /* See if caller expected errors by specifying output of the form !CODE, CODE, ... */
         String[] expectedFailureCodes = new String[0];
@@ -91,34 +102,20 @@ public final class SnuggleTeXUpConversionTestDriver {
             expectedFailureCodes = expectedResult.substring(1).split(",\\s*");
         }
         
-        /* Make sure things agree */
-        try {
-            Assert.assertEquals(expectedFailureCodes.length==0, upConversionFailures.isEmpty());
-        }
-        catch (Throwable e) {
-            log.severe(getClass().getName() + " run failure on input: " + inputLaTeX);
-            log.severe("Expected " + expectedFailureCodes.length + " up-conversion failures but got " + upConversionFailures.size());
-            log.severe("Expected failure codes were: " + Arrays.toString(expectedFailureCodes));
-            log.severe("Actual failure codes were:   " + upConversionFailures);
-            log.log(Level.SEVERE, "Error was: ", e);
-            throw e;
-        }
-        
         /* Now handle each case as appropriate */
         if (expectedFailureCodes.length==0) {
             /* Expected success */
+            if (!upConversionFailures.isEmpty()) {
+                log.severe("Expected no up-conversion failures but got " + upConversionFailures.size());
+                log.severe("Actual failure codes were:   " + upConversionFailureCodes);
+                Assert.assertTrue(upConversionFailures.isEmpty());            
+            }
             
             /* Do RELAX-NG validation on the MathML */
             TestUtilities.assertMathMLValid(document);
-            try {
-                /* Now get caller to do verification */
-                driverCallback.verifyErrorFreeDOM(document);
-            }
-            catch (Throwable e) {
-                log.severe(getClass().getName() + " run failure on input: " + inputLaTeX);
-                log.log(Level.SEVERE, "Error was: ", e);
-                throw e;
-            }
+            
+            /* Now get caller to do verification */
+            driverCallback.verifyErrorFreeDOM(document);
         }
         else {
             /* Expected failure */
@@ -129,11 +126,9 @@ public final class SnuggleTeXUpConversionTestDriver {
                 }
             }
             catch (Throwable e) {
-                log.severe(getClass().getName() + " run failure on input: " + inputLaTeX);
                 log.severe("Expected " + expectedFailureCodes.length + " up-conversion failures but got " + upConversionFailures.size());
                 log.severe("Expected failure codes were: " + Arrays.toString(expectedFailureCodes));
-                log.severe("Actual failure codes were:   " + upConversionFailures);
-                log.log(Level.SEVERE, "Error was: ", e);
+                log.severe("Actual failure codes were:   " + upConversionFailureCodes);
                 throw e;
             }
         }

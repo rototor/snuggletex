@@ -102,8 +102,55 @@ public final class TestUtilities {
 
     }
     
+    public static void assertNoErrors(SessionContext sessionContext) {
+        List<InputError> errors = sessionContext.getErrors();
+        if (!errors.isEmpty()) {
+            log.warning("Got " + errors.size() + " unexpected error(s). Details following...");
+            for (InputError error : errors) {
+                log.warning(MessageFormatter.formatErrorAsString(error));
+            }
+        }
+        Assert.assertTrue(errors.isEmpty());
+    }
+
+    /**
+     * Overridden to perform RELAX-NG validation against the MathML 3.0 schema
+     * to ensure that there are no warning, errors or fatal errors in the resulting XML.
+     */
+    public static void assertMathMLValid(Document mathmlDocument) throws Throwable {
+        ClassPathResolver resolver = new ClassPathResolver();
+        PropertyMapBuilder builder = new PropertyMapBuilder();
+        builder.put(ValidateProperty.RESOLVER, resolver);
+        PropertyMap schemaProperties = builder.toPropertyMap();
+        
+        CountingErrorHandler errorHandler = new CountingErrorHandler();
+        builder = new PropertyMapBuilder();
+        builder.put(ValidateProperty.ERROR_HANDLER, errorHandler);
+        PropertyMap validationProperties = builder.toPropertyMap();
+        
+        SchemaReader sr = CompactSchemaReader.getInstance();
+        InputSource schemaSource = new InputSource(MATHML_30_SCHEMA_LOCATION);
+        Schema schema = sr.createSchema(schemaSource, schemaProperties);
+        Validator validator = schema.createValidator(validationProperties);
+        
+        XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+        xmlReader.setContentHandler(validator.getContentHandler());
+        xmlReader.parse(new InputSource(new StringReader(MathMLUtilities.serializeDocument(mathmlDocument))));
+        
+        try {
+            Assert.assertEquals("Warning count", 0, errorHandler.getWarningCount());
+            Assert.assertEquals("Error count", 0, errorHandler.getErrorCount());
+            Assert.assertEquals("Fatal error count", 0, errorHandler.getFatalErrorCount());
+        }
+        catch (Throwable e) {
+            log.severe("Relax NG validation failed - see error details");
+            log.severe("Output was: " + MathMLUtilities.serializeDocument(mathmlDocument, new SerializationOptions()));
+            throw e;
+        }
+    }
+
     /* (NB: Does fix-in-place!) */
-    public static void extractMathElement(Document document) {
+    public static void promoteMathElement(Document document) {
         /* Should only have 1 child of doc root (<body/>) element here, which should be <math/>.
          * We'll make that the new root Node */
         Node rootElement = document.getChildNodes().item(0);
@@ -131,48 +178,6 @@ public final class TestUtilities {
         document.removeChild(rootElement);
         document.appendChild(firstMathElement);
     }
-    
-    public static void assertNoErrors(SessionContext sessionContext) {
-        List<InputError> errors = sessionContext.getErrors();
-        if (!errors.isEmpty()) {
-            SnuggleTeXTestDriver.log.warning("Got " + errors.size() + " unexpected error(s). Details following...");
-            for (InputError error : errors) {
-                SnuggleTeXTestDriver.log.warning(MessageFormatter.formatErrorAsString(error));
-            }
-        }
-        Assert.assertTrue(errors.isEmpty());
-    }
-    
-    /**
-     * Overridden to perform RELAX-NG validation against the MathML 3.0 schema
-     * to ensure that there are no warning, errors or fatal errors in the resulting XML.
-     */
-    public static void assertMathMLValid(Document mathmlDocument) throws Throwable {
-        ClassPathResolver resolver = new ClassPathResolver();
-        PropertyMapBuilder builder = new PropertyMapBuilder();
-        builder.put(ValidateProperty.RESOLVER, resolver);
-        PropertyMap schemaProperties = builder.toPropertyMap();
-        
-        CountingErrorHandler errorHandler = new CountingErrorHandler();
-        builder = new PropertyMapBuilder();
-        builder.put(ValidateProperty.ERROR_HANDLER, errorHandler);
-        PropertyMap validationProperties = builder.toPropertyMap();
-        
-        SchemaReader sr = CompactSchemaReader.getInstance();
-        InputSource schemaSource = new InputSource(MATHML_30_SCHEMA_LOCATION);
-        Schema schema = sr.createSchema(schemaSource, schemaProperties);
-        Validator validator = schema.createValidator(validationProperties);
-        
-        XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-        xmlReader.setContentHandler(validator.getContentHandler());
-        xmlReader.parse(new InputSource(new StringReader(MathMLUtilities.serializeDocument(mathmlDocument))));
-        
-        Assert.assertEquals(0, errorHandler.getWarningCount());
-        Assert.assertEquals(0, errorHandler.getErrorCount());
-        Assert.assertEquals(0, errorHandler.getFatalErrorCount());
-    }
-    
-    //-------------------------------------------------------------------
     
     public static final WorkingDocument createWorkingDocument(String input)
             throws IOException, SnuggleParseException {

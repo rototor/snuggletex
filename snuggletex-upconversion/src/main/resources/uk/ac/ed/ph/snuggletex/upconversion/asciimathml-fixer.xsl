@@ -228,16 +228,19 @@ All Rights Reserved
 
   The ASCIIMath parser treats f and g as functions by default, but does
   so in a rather odd way. This fixes them back up. (Further steps in the
-  SnuggleTeX up-conversion can handle them as functions correctly if required.)
+  SnuggleTeX up-conversion can handle them as functions correctly if required.) -->
 
-  **************************************************************** -->
-
+  <!-- Unapplied function needs fixed -->
   <xsl:template match="mrow[*[1][self::mi[.=('f','g')]] and *[2][self::mo[.='']]]" priority="1">
     <xsl:copy-of select="*[1]"/>
   </xsl:template>
 
+  <!-- Applied function is OK -->
   <xsl:template match="mrow[*[1][self::mi[.=('f','g')]]]">
-    <xsl:apply-templates select="*"/>
+    <mrow>
+      <xsl:copy-of select="*[1]"/>
+      <xsl:apply-templates select="*[position()!=1]"/>
+    </mrow>
   </xsl:template>
 
   <!-- *********************************************************** -->

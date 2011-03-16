@@ -656,6 +656,18 @@ f^2(x)
 </mfenced>
 ====
 ###### NB: Special ASCIIMath tests start here
+1/f(x)
+<mfrac>
+  <mn>1</mn>
+  <mrow>
+    <mi>f</mi>
+    <mo>&#x2061;</mo>
+    <mfenced open='(' close=')'>
+      <mi>x</mi>
+    </mfenced>
+  </mrow>
+</mfrac>
+====
 ###### ASCIIMath Oddities to note for future...
 #
 #frac{}{} doesn't parse well at all

@@ -16,8 +16,9 @@ All Rights Reserved
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:m="http://www.w3.org/1998/Math/MathML"
   xmlns:s="http://www.ph.ed.ac.uk/snuggletex"
+  xmlns:local="http://www.ph.ed.ac.uk/snuggletex/asciimath-fixer"
   xmlns="http://www.w3.org/1998/Math/MathML"
-  exclude-result-prefixes="xs m s"
+  exclude-result-prefixes="xs m s local"
   xpath-default-namespace="http://www.w3.org/1998/Math/MathML">
 
   <xsl:import href="pmathml-utilities.xsl"/>
@@ -104,24 +105,24 @@ All Rights Reserved
 
   **************************************************************** -->
 
-  <xsl:variable name="s:parentheses" as="element()+">
+  <xsl:variable name="local:parentheses" as="element()+">
     <s:pair open='(' close=')'/>
     <s:pair open='[' close=']'/>
     <s:pair open='{{' close='}}'/>
     <s:pair open='&lt;' close='&gt;'/>
   </xsl:variable>
 
-  <xsl:function name="s:is-open-parenthesis" as="xs:boolean">
+  <xsl:function name="local:is-open-parenthesis" as="xs:boolean">
     <xsl:param name="element" as="element()"/>
-    <xsl:sequence select="boolean($element[self::mo and $s:parentheses[@open=$element]])"/>
+    <xsl:sequence select="boolean($element[self::mo and $local:parentheses[@open=$element]])"/>
   </xsl:function>
 
-  <xsl:function name="s:is-close-parenthesis" as="xs:boolean">
+  <xsl:function name="local:is-close-parenthesis" as="xs:boolean">
     <xsl:param name="element" as="element()"/>
-    <xsl:sequence select="boolean($element[self::mo and $s:parentheses[@close=$element]])"/>
+    <xsl:sequence select="boolean($element[self::mo and $local:parentheses[@close=$element]])"/>
   </xsl:function>
 
-  <xsl:function name="s:is-separator" as="xs:boolean">
+  <xsl:function name="local:is-separator" as="xs:boolean">
     <xsl:param name="element" as="element()"/>
     <xsl:sequence select="boolean($element[self::mo and .=','])"/>
   </xsl:function>
@@ -129,15 +130,15 @@ All Rights Reserved
   <!-- (This is no longer used as we're not forcing parentheses to match) -->
   <xsl:function name="s:get-matching-closer-value" as="xs:string">
     <xsl:param name="element" as="element()"/>
-    <xsl:sequence select="$s:parentheses[@open=$element]/@close"/>
+    <xsl:sequence select="$local:parentheses[@open=$element]/@close"/>
   </xsl:function>
 
-  <xsl:template match="mrow[*[1][self::mo and s:is-open-parenthesis(.)] and *[position()=last()][self::mo and s:is-close-parenthesis(.)]]">
+  <xsl:template match="mrow[*[1][self::mo and local:is-open-parenthesis(.)] and *[position()=last()][self::mo and local:is-close-parenthesis(.)]]">
     <xsl:variable name="opener" select="*[1]" as="element()"/>
     <xsl:variable name="contents" select="*[position() &gt; 1 and position() &lt; last()]" as="element()*"/>
     <xsl:variable name="closer" select="*[position()=last()]" as="element()"/>
     <mfenced open="{$opener}" close="{$closer}">
-      <xsl:for-each-group select="$contents" group-adjacent="s:is-separator(.)">
+      <xsl:for-each-group select="$contents" group-adjacent="local:is-separator(.)">
         <xsl:choose>
           <xsl:when test="current-grouping-key()">
             <!-- Separator => ignore -->
@@ -168,28 +169,44 @@ All Rights Reserved
   (This is one area where ASCIIMathML deviates from SnuggleTeX.)
 
   FIXME: This goes horribly wrong if the <mrow/> represents the num/dom of
-  a fraction or somrthing!!
+  a fraction or something!!
 
   **************************************************************** -->
 
-  <xsl:variable name="invertible-elementary-functions" as="xs:string+"
+  <xsl:variable name="local:invertible-elementary-functions" as="xs:string+"
     select="('sin', 'cos', 'tan',
              'sec', 'csc' ,'cot',
              'sinh', 'cosh', 'tanh',
              'sech', 'csch', 'coth')"/>
 
-  <xsl:variable name="elementary-functions" as="xs:string+"
-    select="($invertible-elementary-functions,
+  <xsl:variable name="local:elementary-functions" as="xs:string+"
+    select="($local:invertible-elementary-functions,
             'ln', 'log', 'exp')"/>
 
-  <xsl:function name="s:is-elementary-function" as="xs:boolean">
+  <xsl:variable name="local:standard-functions" as="xs:string+"
+    select="($local:elementary-functions,
+            'det', 'dim', 'lim', 'mod',
+            'gcd', 'lcm', 'min', 'max')"/>
+
+  <xsl:function name="local:is-standard-function" as="xs:boolean">
     <xsl:param name="element" as="element()"/>
-    <xsl:sequence select="boolean($element[self::mo and $elementary-functions=string(.)])"/>
+    <xsl:sequence select="boolean($element[self::mo and $local:standard-functions=string(.)])"/>
   </xsl:function>
 
-  <xsl:template match="mo[s:is-elementary-function(.)]">
+  <xsl:template match="mo[local:is-standard-function(.)]">
     <mi>
       <xsl:value-of select="."/>
+    </mi>
+  </xsl:template>
+
+  <!--
+  ASCIIMath is a bit quick to try to apply functions that ultimately never get applied,
+  so we get things like <mrow><mi>sin</mi><mo/></mrow> for an unapplied 'sin' operator.
+  This template fixes things.
+  -->
+  <xsl:template match="mrow[count(*)=2 and local:is-standard-function(*[1]) and *[2][self::mo and .='']]">
+    <mi>
+      <xsl:value-of select="*[1]"/>
     </mi>
   </xsl:template>
 
@@ -209,8 +226,9 @@ All Rights Reserved
 
   <!-- ***********************************************************
 
-  f and g are treated as functions by default, but done in an odd
-  way. This fixes them back up.
+  The ASCIIMath parser treats f and g as functions by default, but does
+  so in a rather odd way. This fixes them back up. (Further steps in the
+  SnuggleTeX up-conversion can handle them as functions correctly if required.)
 
   **************************************************************** -->
 

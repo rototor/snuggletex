@@ -29,7 +29,14 @@ All Rights Reserved
   <!-- ************************************************************ -->
 
   <xsl:variable name="local:operators-to-bracket" as="xs:string+"
-    select="('&#x2228;', '&#x2227;', '&#x222a;', '&#x2229;', '&#x2216;', '&#x29f5;')"/>
+    select="('&#x2228;', (: \vee :)
+             '&#x2227;', (: \wedge :)
+             '&#x222a;', (: \cup :)
+             '&#x2229;', (: \cap :)
+             '&#x2216;', (: \smallsetminus :)
+             '&#x29f5;', (: \setminus :)
+             '!'
+    )"/>
 
   <xsl:variable name="local:grey" select="'#cccccc'" as="xs:string"/>
 
@@ -106,14 +113,14 @@ All Rights Reserved
   </xsl:template>
 
   <!-- Implicit multiplication made explicit -->
-  <xsl:template match="mo[.='&#x2062;']" mode="local:bracket-pmathml">
+  <xsl:template match="mo[.='&#x2062;']" mode="local:bracket-pmathml" priority="2">
     <mspace width="-0.15em"/>
     <mo color="{$local:grey}">&#x22c5;</mo>
     <mspace width="-0.15em"/>
   </xsl:template>
 
-  <!-- Other operators get a bit of space round them depending on the current level -->
-  <xsl:template match="mo" mode="local:bracket-pmathml">
+  <!-- Other unary operators get a bit of space round them depending on the current level -->
+  <xsl:template match="mo[preceding-sibling::* and following-sibling::*]" mode="local:bracket-pmathml">
     <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
     <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
     <xsl:variable name="level" as="xs:integer" select="$fence-level + $implicit-level"/>
@@ -146,10 +153,12 @@ All Rights Reserved
   <!-- Other groupings aren't fenced, but cause a level increase -->
   <xsl:template match="mrow" mode="local:bracket-pmathml">
     <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
-    <xsl:call-template name="local:process-group">
-      <xsl:with-param name="elements" select="*"/>
-      <xsl:with-param name="implicit-level" select="$implicit-level + 1" tunnel="yes"/>
-    </xsl:call-template>
+    <mrow>
+      <xsl:call-template name="local:process-group">
+        <xsl:with-param name="elements" select="*"/>
+        <xsl:with-param name="implicit-level" select="$implicit-level + 1" tunnel="yes"/>
+      </xsl:call-template>
+    </mrow>
   </xsl:template>
 
   <!-- All other elements are copied as-is -->

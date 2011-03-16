@@ -59,7 +59,7 @@ public class MathTests implements DriverCallback {
     
     public void verifyDOM(Document document) throws Throwable {
         /* Promote <math> element */
-        TestUtilities.extractMathElement(document);
+        TestUtilities.promoteMathElement(document);
         
         /* Check XML verifies against what we expect */
         TestUtilities.verifyXML(expectedMathML, document);

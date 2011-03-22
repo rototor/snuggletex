@@ -42,120 +42,125 @@ All Rights Reserved
   <!-- ************************************************************ -->
 
   <!-- Entry point -->
-  <xsl:template name="s:bracket-pmathml" as="element()*">
+  <xsl:template name="s:bracket-pmathml" as="element()">
     <xsl:param name="elements" as="element()*"/>
-    <xsl:message>
-      <xsl:copy-of select="$elements"/>
-    </xsl:message>
-    <xsl:call-template name="local:process-group">
-      <xsl:with-param name="elements" select="$elements"/>
-      <xsl:with-param name="implicit-level" select="1" as="xs:integer" tunnel="yes"/>
-      <xsl:with-param name="fence-level" select="1" as="xs:integer" tunnel="yes"/>
-    </xsl:call-template>
+    <xsl:variable name="elements-wrapped" as="element()">
+      <xsl:call-template name="s:maybe-wrap-in-mrow">
+        <xsl:with-param name="elements" select="$elements"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:apply-templates select="$elements-wrapped" mode="local:make-new-context"/>
   </xsl:template>
 
   <!-- ************************************************************ -->
 
-  <xsl:template name="local:process-group" as="element()*">
-    <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
-    <xsl:param name="elements" as="element()*" required="yes"/>
-    <xsl:choose>
-      <xsl:when test="false() and count($elements)=1 and $elements[1][self::mrow]">
-        <!-- Unwrap <mrow/> containers so we enter everything in the same way -->
-        <xsl:call-template name="local:process-group">
-          <xsl:with-param name="elements" select="$elements[1]/*"/>
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:when test="count($elements)=3 and $elements[2][self::mo[.=('/', '&#xf7;')]]">
-        <!-- Convert divisions to fractions for readability -->
-        <mfrac>
-          <xsl:call-template name="s:maybe-wrap-in-mrow">
-            <xsl:with-param name="elements" as="element()*">
-              <xsl:call-template name="local:process-group">
-                <xsl:with-param name="elements" select="$elements[1]"/>
-              </xsl:call-template>
-            </xsl:with-param>
-          </xsl:call-template>
-          <xsl:call-template name="s:maybe-wrap-in-mrow">
-            <xsl:with-param name="elements" as="element()*">
-              <xsl:call-template name="local:process-group">
-                <xsl:with-param name="elements" select="$elements[3]"/>
-              </xsl:call-template>
-            </xsl:with-param>
-          </xsl:call-template>
-        </mfrac>
-      </xsl:when>
-      <xsl:when test="count($elements)=3 and $elements[2][self::mo[.='&#x2061;']]">
-        <!-- Function application -->
-        <!-- Copy function -->
-        <xsl:copy-of select="$elements[1]"/>
-        <!-- We strip out the &ApplyFunction; as it uses too much space -->
-        <!-- Now fence up the argument -->
-        <xsl:variable name="arg" as="element()" select="$elements[3]"/>
-        <xsl:call-template name="local:make-fence">
-          <xsl:with-param name="fence-level" select="$fence-level" tunnel="yes"/>
-          <xsl:with-param name="next" select="if ($arg[self::mfenced] and count($arg/*)=1) then $arg/* else $arg"/>
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates select="$elements" mode="local:bracket-pmathml"/>
-      </xsl:otherwise>
-    </xsl:choose>
+  <!-- Fractions reset the "context" of rendering -->
+  <xsl:template match="mfrac" mode="local:bracket-pmathml">
+    <mfrac>
+      <xsl:for-each select="*">
+        <xsl:apply-templates select="." mode="local:make-new-context"/>
+      </xsl:for-each>
+    </mfrac>
   </xsl:template>
 
-  <!-- ************************************************************ -->
+  <!-- Convert divisions to fractions for readability -->
+  <xsl:template match="mrow[count(*)=3 and *[2][self::mo[.=('/', '&#xf7;')]]]" mode="local:bracket-pmathml">
+    <mfrac>
+      <xsl:apply-templates select="*[1]" mode="local:make-new-context"/>
+      <xsl:apply-templates select="*[3]" mode="local:make-new-context"/>
+    </mfrac>
+  </xsl:template>
 
   <!-- Explicit fence gets decorated -->
   <xsl:template match="mfenced[count(*)=1]" mode="local:bracket-pmathml">
-    <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
     <xsl:call-template name="local:make-fence">
-      <xsl:with-param name="fence-level" select="$fence-level" tunnel="yes"/>
-      <xsl:with-param name="next" select="if (count(*)=1 and mrow) then *[1]/* else *"/>
+      <xsl:with-param name="next" select="*"/>
     </xsl:call-template>
+  </xsl:template>
+
+  <!-- Don't fence operator containers that were explcitly fenced on input -->
+  <xsl:template match="mfenced[count(*)=1]/mrow[mo]" mode="local:bracket-pmathml" priority="5">
+    <xsl:param name="operator-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <mrow>
+      <xsl:apply-templates mode="local:bracket-pmathml">
+        <xsl:with-param name="operator-level" select="$operator-level + 1" tunnel="yes"/>
+      </xsl:apply-templates>
+    </mrow>
+  </xsl:template>
+
+  <!-- Function application -->
+  <xsl:template match="mrow[count(*)=3 and *[2][self::mo[.='&#x2061;']]]" mode="local:bracket-pmathml" priority="5">
+    <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <mrow>
+      <!-- (1) Copy function -->
+      <xsl:copy-of select="*[1]"/>
+      <!-- (2) We strip out the &ApplyFunction; as it uses too much space -->
+      <!-- (3) Then we fence up the argument -->
+      <xsl:variable name="arg" select="*[3]" as="element()"/>
+      <xsl:call-template name="local:make-fence">
+        <xsl:with-param name="next" select="if ($arg/self::mfenced[count(*)=1]) then $arg/*[1] else $arg"/>
+      </xsl:call-template>
+    </mrow>
   </xsl:template>
 
   <!-- Implicit multiplication will be displayed with \cdot but no brackets -->
   <xsl:template match="mrow[mo[.='&#x2062;']]" mode="local:bracket-pmathml" priority="2">
-    <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <xsl:param name="operator-level" as="xs:integer" required="yes" tunnel="yes"/>
     <mrow>
-      <xsl:call-template name="local:process-group">
-        <xsl:with-param name="elements" select="*"/>
-        <xsl:with-param name="implicit-level" select="$implicit-level + 1" tunnel="yes"/>
-      </xsl:call-template>
+      <xsl:apply-templates mode="local:bracket-pmathml">
+        <xsl:with-param name="operator-level" select="$operator-level + 1" tunnel="yes"/>
+      </xsl:apply-templates>
     </mrow>
   </xsl:template>
 
   <!-- Unary minus container will be fenced for clarity -->
   <xsl:template match="mrow[*[1][self::mo and .='-']]" mode="local:bracket-pmathml" priority="3">
-    <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
-    <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
     <xsl:call-template name="local:make-fence">
-      <xsl:with-param name="fence-level" select="$fence-level" tunnel="yes"/>
       <xsl:with-param name="next" select="*"/>
     </xsl:call-template>
   </xsl:template>
 
-  <!-- Don't fence standard addition, subtraction or function application -->
-  <xsl:template match="mrow[mo[.= ('+', '-', '&#x2061;')]]" mode="local:bracket-pmathml" priority="2">
-    <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
+  <!-- Don't fence standard addition or subtraction -->
+  <xsl:template match="mrow[mo[.= ('+', '-')]]" mode="local:bracket-pmathml" priority="2">
+    <xsl:param name="operator-level" as="xs:integer" required="yes" tunnel="yes"/>
     <mrow>
-      <xsl:call-template name="local:process-group">
-        <xsl:with-param name="elements" select="*"/>
-        <xsl:with-param name="implicit-level" select="$implicit-level + 1" tunnel="yes"/>
-      </xsl:call-template>
+      <xsl:apply-templates select="*" mode="local:bracket-pmathml">
+        <xsl:with-param name="operator-level" select="$operator-level + 1" tunnel="yes"/>
+      </xsl:apply-templates>
     </mrow>
   </xsl:template>
 
-  <!-- Turn all other operators (not at the top level) into fences -->
-  <xsl:template match="mrow[mo]" mode="local:bracket-pmathml">
-    <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
-    <xsl:call-template name="local:make-fence">
-      <xsl:with-param name="fence-level" select="$fence-level" tunnel="yes"/>
-      <xsl:with-param name="next" select="*"/>
-    </xsl:call-template>
+  <!-- Fence non-trivial postfix operators, e.g. (x^2)! -->
+  <xsl:template match="mrow[count(*)=2 and *[2][self::mo] and *[1][not(self::mi or self::mn)]]" mode="local:bracket-pmathml" priority="2">
+    <mrow>
+      <xsl:call-template name="local:make-fence">
+        <xsl:with-param name="next" select="*[1]"/>
+      </xsl:call-template>
+      <xsl:copy-of select="*[2]"/>
+    </mrow>
   </xsl:template>
 
-  <!-- ************************************************************ -->
+  <!-- Turn all other operators into simple fences, unless they're at top level -->
+  <xsl:template match="mrow[mo]" mode="local:bracket-pmathml">
+    <xsl:param name="is-outer-group" as="xs:boolean" select="false()"/>
+    <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <xsl:param name="operator-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <xsl:choose>
+      <xsl:when test="$is-outer-group">
+        <mrow>
+          <xsl:apply-templates select="*" mode="local:bracket-pmathml">
+            <xsl:with-param name="operator-level" select="$operator-level + 1" tunnel="yes"/>
+          </xsl:apply-templates>
+        </mrow>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="local:make-fence">
+          <xsl:with-param name="fence-level" select="$fence-level" tunnel="yes"/>
+          <xsl:with-param name="next" select="*"/>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
 
   <!-- Implicit multiplication displayed as \cdot -->
   <xsl:template match="mo[.='&#x2062;']" mode="local:bracket-pmathml" priority="2">
@@ -167,28 +172,11 @@ All Rights Reserved
   <!-- Other unary operators get a bit of space round them depending on the current level -->
   <xsl:template match="mo[preceding-sibling::* and following-sibling::*]" mode="local:bracket-pmathml">
     <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
-    <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
-    <xsl:variable name="level" as="xs:integer" select="$fence-level + $implicit-level - 1"/>
+    <xsl:param name="operator-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <xsl:variable name="level" as="xs:integer" select="$fence-level + $operator-level - 1"/>
     <mspace width="{0.3 div $level}em"/>
     <xsl:copy-of select="."/>
     <mspace width="{0.3 div $level}em"/>
-  </xsl:template>
-
-  <!-- ************************************************************ -->
-
-  <!-- Handle top and bottom of fractions as groups in normal way -->
-  <xsl:template match="mfrac" mode="local:bracket-pmathml">
-    <mfrac>
-      <xsl:for-each select="*">
-        <xsl:call-template name="s:maybe-wrap-in-mrow">
-          <xsl:with-param name="elements" as="element()*">
-            <xsl:call-template name="local:process-group">
-              <xsl:with-param name="elements" select="."/>
-            </xsl:call-template>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:for-each>
-    </mfrac>
   </xsl:template>
 
   <!-- Sups/subs similar to fractions, but we'll wrap complex args in extra brackets -->
@@ -209,10 +197,9 @@ All Rights Reserved
               </xsl:when>
               <xsl:otherwise>
                 <!-- Simple argument, so just keep it -->
-                <xsl:call-template name="local:process-group">
-                  <xsl:with-param name="elements" select="."/>
+                <xsl:apply-templates select="." mode="local:bracket-pmathml">
                   <xsl:with-param name="fence-level" select="$fence-level" tunnel="yes"/>
-                </xsl:call-template>
+                </xsl:apply-templates>
               </xsl:otherwise>
             </xsl:choose>
           </xsl:with-param>
@@ -228,7 +215,19 @@ All Rights Reserved
 
   <!-- ************************************************************ -->
 
-  <xsl:template name="local:make-fence" as="element(mstyle)">
+  <xsl:template match="*" mode="local:make-new-context" as="element()">
+    <xsl:call-template name="s:maybe-wrap-in-mrow">
+      <xsl:with-param name="elements" as="element()*">
+        <xsl:apply-templates select="." mode="local:bracket-pmathml">
+          <xsl:with-param name="is-outer-group" select="true()" as="xs:boolean"/>
+          <xsl:with-param name="operator-level" select="1" as="xs:integer" tunnel="yes"/>
+          <xsl:with-param name="fence-level" select="1" as="xs:integer" tunnel="yes"/>
+        </xsl:apply-templates>
+      </xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template name="local:make-fence" as="element()">
     <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
     <xsl:param name="next" as="element()*" required="yes"/>
     <mstyle color="{local:get-bracket-colour($fence-level)}">
@@ -236,10 +235,9 @@ All Rights Reserved
         <mstyle color="black">
           <xsl:call-template name="s:maybe-wrap-in-mrow">
             <xsl:with-param name="elements" as="element()*">
-              <xsl:call-template name="local:process-group">
+              <xsl:apply-templates select="$next" mode="local:bracket-pmathml">
                 <xsl:with-param name="fence-level" select="$fence-level + 1" tunnel="yes"/>
-                <xsl:with-param name="elements" select="$next"/>
-              </xsl:call-template>
+              </xsl:apply-templates>
             </xsl:with-param>
           </xsl:call-template>
         </mstyle>

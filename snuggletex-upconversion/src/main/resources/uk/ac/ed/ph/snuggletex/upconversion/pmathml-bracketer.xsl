@@ -28,24 +28,15 @@ All Rights Reserved
 
   <!-- ************************************************************ -->
 
-  <xsl:variable name="local:operators-to-bracket" as="xs:string+"
-    select="('&#x2228;', (: \vee :)
-             '&#x2227;', (: \wedge :)
-             '&#x222a;', (: \cup :)
-             '&#x2229;', (: \cap :)
-             '&#x2216;', (: \smallsetminus :)
-             '&#x29f5;', (: \setminus :)
-             '!'
-    )"/>
-
   <xsl:variable name="local:grey" select="'#cccccc'" as="xs:string"/>
 
-  <xsl:variable name="local:colours" select="('#660000', '#006600', '#000099', '#666600', 'black')"
+  <xsl:variable name="local:bracket-colours"
+    select="('#660000', '#006600', '#000099', '#666600', 'black')"
     as="xs:string+"/>
 
-  <xsl:function name="local:get-colour" as="xs:string">
+  <xsl:function name="local:get-bracket-colour" as="xs:string">
     <xsl:param name="level" as="xs:integer"/>
-    <xsl:sequence select="$local:colours[min(($level, count($local:colours)))]"/>
+    <xsl:sequence select="$local:bracket-colours[min(($level, count($local:bracket-colours)))]"/>
   </xsl:function>
 
   <!-- ************************************************************ -->
@@ -53,6 +44,9 @@ All Rights Reserved
   <!-- Entry point -->
   <xsl:template name="s:bracket-pmathml" as="element()*">
     <xsl:param name="elements" as="element()*"/>
+    <xsl:message>
+      <xsl:copy-of select="$elements"/>
+    </xsl:message>
     <xsl:call-template name="local:process-group">
       <xsl:with-param name="elements" select="$elements"/>
       <xsl:with-param name="implicit-level" select="1" as="xs:integer" tunnel="yes"/>
@@ -66,6 +60,12 @@ All Rights Reserved
     <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
     <xsl:param name="elements" as="element()*" required="yes"/>
     <xsl:choose>
+      <xsl:when test="false() and count($elements)=1 and $elements[1][self::mrow]">
+        <!-- Unwrap <mrow/> containers so we enter everything in the same way -->
+        <xsl:call-template name="local:process-group">
+          <xsl:with-param name="elements" select="$elements[1]/*"/>
+        </xsl:call-template>
+      </xsl:when>
       <xsl:when test="count($elements)=3 and $elements[2][self::mo[.=('/', '&#xf7;')]]">
         <!-- Convert divisions to fractions for readability -->
         <mfrac>
@@ -103,7 +103,9 @@ All Rights Reserved
     </xsl:choose>
   </xsl:template>
 
-  <!-- Explicit fence -->
+  <!-- ************************************************************ -->
+
+  <!-- Explicit fence gets decorated -->
   <xsl:template match="mfenced[count(*)=1]" mode="local:bracket-pmathml">
     <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
     <xsl:call-template name="local:make-fence">
@@ -112,7 +114,50 @@ All Rights Reserved
     </xsl:call-template>
   </xsl:template>
 
-  <!-- Implicit multiplication made explicit -->
+  <!-- Implicit multiplication will be displayed with \cdot but no brackets -->
+  <xsl:template match="mrow[mo[.='&#x2062;']]" mode="local:bracket-pmathml" priority="2">
+    <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <mrow>
+      <xsl:call-template name="local:process-group">
+        <xsl:with-param name="elements" select="*"/>
+        <xsl:with-param name="implicit-level" select="$implicit-level + 1" tunnel="yes"/>
+      </xsl:call-template>
+    </mrow>
+  </xsl:template>
+
+  <!-- Unary minus container will be fenced for clarity -->
+  <xsl:template match="mrow[*[1][self::mo and .='-']]" mode="local:bracket-pmathml" priority="3">
+    <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <xsl:call-template name="local:make-fence">
+      <xsl:with-param name="fence-level" select="$fence-level" tunnel="yes"/>
+      <xsl:with-param name="next" select="*"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- Don't fence standard addition, subtraction or function application -->
+  <xsl:template match="mrow[mo[.= ('+', '-', '&#x2061;')]]" mode="local:bracket-pmathml" priority="2">
+    <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <mrow>
+      <xsl:call-template name="local:process-group">
+        <xsl:with-param name="elements" select="*"/>
+        <xsl:with-param name="implicit-level" select="$implicit-level + 1" tunnel="yes"/>
+      </xsl:call-template>
+    </mrow>
+  </xsl:template>
+
+  <!-- Turn all other operators (not at the top level) into fences -->
+  <xsl:template match="mrow[mo]" mode="local:bracket-pmathml">
+    <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
+    <xsl:call-template name="local:make-fence">
+      <xsl:with-param name="fence-level" select="$fence-level" tunnel="yes"/>
+      <xsl:with-param name="next" select="*"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- ************************************************************ -->
+
+  <!-- Implicit multiplication displayed as \cdot -->
   <xsl:template match="mo[.='&#x2062;']" mode="local:bracket-pmathml" priority="2">
     <mspace width="-0.15em"/>
     <mo color="{$local:grey}">&#x22c5;</mo>
@@ -123,42 +168,57 @@ All Rights Reserved
   <xsl:template match="mo[preceding-sibling::* and following-sibling::*]" mode="local:bracket-pmathml">
     <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
     <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
-    <xsl:variable name="level" as="xs:integer" select="$fence-level + $implicit-level"/>
+    <xsl:variable name="level" as="xs:integer" select="$fence-level + $implicit-level - 1"/>
     <mspace width="{0.3 div $level}em"/>
     <xsl:copy-of select="."/>
     <mspace width="{0.3 div $level}em"/>
   </xsl:template>
 
-  <!-- Implicit product grouping -->
-  <xsl:template match="mrow[mo[.='&#x2062;']]" mode="local:bracket-pmathml">
-    <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
-    <mrow>
-      <xsl:call-template name="local:process-group">
-        <xsl:with-param name="elements" select="*"/>
-        <xsl:with-param name="implicit-level" select="$implicit-level + 1" tunnel="yes"/>
-      </xsl:call-template>
-    </mrow>
+  <!-- ************************************************************ -->
+
+  <!-- Handle top and bottom of fractions as groups in normal way -->
+  <xsl:template match="mfrac" mode="local:bracket-pmathml">
+    <mfrac>
+      <xsl:for-each select="*">
+        <xsl:call-template name="s:maybe-wrap-in-mrow">
+          <xsl:with-param name="elements" as="element()*">
+            <xsl:call-template name="local:process-group">
+              <xsl:with-param name="elements" select="."/>
+            </xsl:call-template>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:for-each>
+    </mfrac>
   </xsl:template>
 
-  <!-- Certain other Implicit grouping turned into a fence -->
-  <xsl:template match="mrow[mo[.=$local:operators-to-bracket]]" mode="local:bracket-pmathml">
+  <!-- Sups/subs similar to fractions, but we'll wrap complex args in extra brackets -->
+  <xsl:template match="msub|msup|msubsup" mode="local:bracket-pmathml">
     <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
-    <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
-    <xsl:call-template name="local:make-fence">
-      <xsl:with-param name="fence-level" select="$fence-level" tunnel="yes"/>
-      <xsl:with-param name="next" select="*"/>
-    </xsl:call-template>
-  </xsl:template>
-
-  <!-- Other groupings aren't fenced, but cause a level increase -->
-  <xsl:template match="mrow" mode="local:bracket-pmathml">
-    <xsl:param name="implicit-level" as="xs:integer" required="yes" tunnel="yes"/>
-    <mrow>
-      <xsl:call-template name="local:process-group">
-        <xsl:with-param name="elements" select="*"/>
-        <xsl:with-param name="implicit-level" select="$implicit-level + 1" tunnel="yes"/>
-      </xsl:call-template>
-    </mrow>
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:for-each select="*">
+        <xsl:call-template name="s:maybe-wrap-in-mrow">
+          <xsl:with-param name="elements" as="element()*">
+            <xsl:choose>
+              <xsl:when test="self::mrow">
+                <!-- Complex argument, so we'll bracket it up -->
+                <xsl:call-template name="local:make-fence">
+                  <xsl:with-param name="fence-level" select="$fence-level" tunnel="yes"/>
+                  <xsl:with-param name="next" select="."/>
+                </xsl:call-template>
+              </xsl:when>
+              <xsl:otherwise>
+                <!-- Simple argument, so just keep it -->
+                <xsl:call-template name="local:process-group">
+                  <xsl:with-param name="elements" select="."/>
+                  <xsl:with-param name="fence-level" select="$fence-level" tunnel="yes"/>
+                </xsl:call-template>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:for-each>
+    </xsl:copy>
   </xsl:template>
 
   <!-- All other elements are copied as-is -->
@@ -171,7 +231,7 @@ All Rights Reserved
   <xsl:template name="local:make-fence" as="element(mstyle)">
     <xsl:param name="fence-level" as="xs:integer" required="yes" tunnel="yes"/>
     <xsl:param name="next" as="element()*" required="yes"/>
-    <mstyle color="{local:get-colour($fence-level)}">
+    <mstyle color="{local:get-bracket-colour($fence-level)}">
       <mfenced open="(" close=")">
         <mstyle color="black">
           <xsl:call-template name="s:maybe-wrap-in-mrow">

@@ -37,7 +37,7 @@ All Rights Reserved
   <!-- ************************************************************ -->
 
   <!-- Entry point -->
-  <xsl:template name="s:enhance-pmathml">
+  <xsl:template name="s:enhance-pmathml" as="element()*">
     <xsl:param name="elements" as="element()*"/>
     <xsl:param name="upconversion-options" as="element(s:upconversion-options)"/>
     <xsl:call-template name="local:process-group">
@@ -287,7 +287,7 @@ All Rights Reserved
   strict subset of the children of a particular element, so an expression like
   $elements[1]/preceding-sibling::* may actually be non-empty.
   -->
-  <xsl:template name="local:process-group" as="element()*">
+  <xsl:template name="local:process-group">
     <xsl:param name="elements" as="element()*" required="yes"/>
     <xsl:choose>
       <xsl:when test="$elements[local:is-matching-strict-infix-operator(., (','))]">

@@ -64,7 +64,7 @@ All Rights Reserved
   </xsl:template>
 
   <!-- Convert divisions to fractions for readability -->
-  <xsl:template match="mrow[count(*)=3 and *[2][self::mo[.=('/', '&#xf7;')]]]" mode="local:bracket-pmathml">
+  <xsl:template match="mrow[count(*)=3 and *[2][self::mo[.=('/', '&#xf7;')]]]" mode="local:bracket-pmathml" priority="20">
     <mfrac>
       <xsl:apply-templates select="*[1]" mode="local:make-new-context"/>
       <xsl:apply-templates select="*[3]" mode="local:make-new-context"/>
@@ -104,7 +104,7 @@ All Rights Reserved
   </xsl:template>
 
   <!-- Implicit multiplication will be displayed with \cdot but no brackets -->
-  <xsl:template match="mrow[mo[.='&#x2062;']]" mode="local:bracket-pmathml" priority="2">
+  <xsl:template match="mrow[mo[.='&#x2062;']]" mode="local:bracket-pmathml" priority="3">
     <xsl:param name="operator-level" as="xs:integer" required="yes" tunnel="yes"/>
     <mrow>
       <xsl:apply-templates mode="local:bracket-pmathml">
@@ -114,14 +114,14 @@ All Rights Reserved
   </xsl:template>
 
   <!-- Unary minus container will be fenced for clarity -->
-  <xsl:template match="mrow[*[1][self::mo and .='-']]" mode="local:bracket-pmathml" priority="3">
+  <xsl:template match="mrow[*[1][self::mo and .='-']]" mode="local:bracket-pmathml" priority="4">
     <xsl:call-template name="local:make-fence">
       <xsl:with-param name="next" select="*"/>
     </xsl:call-template>
   </xsl:template>
 
   <!-- Don't fence standard addition or subtraction -->
-  <xsl:template match="mrow[mo[.= ('+', '-')]]" mode="local:bracket-pmathml" priority="2">
+  <xsl:template match="mrow[mo[.= ('+', '-')]]" mode="local:bracket-pmathml" priority="3">
     <xsl:param name="operator-level" as="xs:integer" required="yes" tunnel="yes"/>
     <mrow>
       <xsl:apply-templates select="*" mode="local:bracket-pmathml">

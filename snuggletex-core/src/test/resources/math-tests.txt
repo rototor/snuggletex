@@ -490,6 +490,12 @@ x\textrm{}
 \stackrel{a}{+}
 <mover><mo>+</mo><mi>a</mi></mover>
 ====
+\overset{a}{+}
+<mover><mo>+</mo><mi>a</mi></mover>
+====
+\underset{a}{+}
+<munder><mo>+</mo><mi>a</mi></munder>
+====
 x'
 <msup><mi>x</mi><mi>'</mi></msup>
 ====

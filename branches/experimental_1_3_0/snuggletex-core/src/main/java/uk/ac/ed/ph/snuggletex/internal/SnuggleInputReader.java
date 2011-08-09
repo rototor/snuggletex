@@ -108,10 +108,8 @@ public final class SnuggleInputReader implements WorkingDocument.SourceContext {
     private StringBuilder readCharacterStream(Reader reader) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(reader);
         String line;
-        int size = 0;
         StringBuilder result = new StringBuilder();
         while ((line = bufferedReader.readLine()) != null) {
-            size += line.length() + 1;
             result.append(line).append("\n");
         }
         bufferedReader.close();

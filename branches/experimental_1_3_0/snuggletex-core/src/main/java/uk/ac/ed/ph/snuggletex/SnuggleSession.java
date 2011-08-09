@@ -175,18 +175,20 @@ public final class SnuggleSession implements SessionContext {
      * {@link SnuggleSnapshot} via {@link SnuggleSnapshot#createSession()}.)
      */
     SnuggleSession(final SnuggleSnapshot snapshot) {
-        /* Set up main worker Objects */
-        this.tokeniser = new LaTeXTokeniser(this);
-        this.styleEvaluator = new StyleEvaluator(this);
-        this.tokenFixer = new TokenFixer(this);
-        this.styleRebuilder = new StyleRebuilder(this);
-        
         /* Copy stuff from the template */
         this.engine = snapshot.engine;
         this.packages = snapshot.packages;
         this.configuration = snapshot.configuration;
         this.defaultDOMOutputOptions = snapshot.defaultDOMOutputOptions;
         this.defaultXMLStringOutputOptions = snapshot.defaultXMLStringOutputOptions;
+        
+        /* Set up main worker Objects */
+        this.tokeniser = new LaTeXTokeniser(this);
+        this.styleEvaluator = new StyleEvaluator(this);
+        this.tokenFixer = new TokenFixer(this);
+        this.styleRebuilder = new StyleRebuilder(this);
+        
+        /* Re-initialise session state */
         this.errors = new ArrayList<InputError>(snapshot.errors);
         this.userCommandMap = new HashMap<String, UserDefinedCommand>(snapshot.userCommandMap);
         this.userEnvironmentMap = new HashMap<String, UserDefinedEnvironment>(snapshot.userEnvironmentMap);

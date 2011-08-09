@@ -54,6 +54,7 @@ public interface AccentMaps {
             'a', '\u00e2',
             'e', '\u00ea',
             'i', '\u00ee',
+            'j', '\u0135',
             'o', '\u00f4',
             'u', '\u00fb'
         }, "");

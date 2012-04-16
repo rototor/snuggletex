@@ -162,11 +162,7 @@ public final class SnuggleEngine {
      * or a fresh {@link SessionConfiguration} if no default has been set.
      */
     public SnuggleSession createSession() {
-        SessionConfiguration sessionConfiguration = defaultSessionConfiguration;
-        if (sessionConfiguration!=null) {
-            sessionConfiguration = new SessionConfiguration();
-        }
-        return createSession(sessionConfiguration);
+        return createSession(defaultSessionConfiguration);
     }
     
     /**

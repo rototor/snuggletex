@@ -26,7 +26,7 @@ public enum SerializationMethod {
     XHTML("xhtml"),
     
     /** 
-     * "Partial" HTML serialization method. 
+     * Default ("Partial") HTML serialization method. 
      * <p>
      * HTML elements are serialized in NO namespace, XML elements in the MathML and other
      * namespaces are kept as-is
@@ -36,12 +36,14 @@ public enum SerializationMethod {
     HTML("html"),
     
     /** 
-     * Strictly HTML serialization method. 
+     * Pure HTML serialization method. 
      * <p>
-     * All XML elements have their namespaces removed on serialization. (Hence, there's the
+     * All XML elements have their namespaces removed on serialization. (Hence, there is the
      * potential for name clashes if you use something like XLink & XHTML together.)
      * <p>
      * (This is how you would serialize HTML5, for example.)
+     * 
+     * @since 1.3.0
      */
     STRICTLY_HTML("html"),
     

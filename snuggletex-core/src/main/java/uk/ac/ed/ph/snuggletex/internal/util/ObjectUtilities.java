@@ -83,11 +83,11 @@ public final class ObjectUtilities {
         Class<?> beanClass = bean.getClass();
         
         /* Output bean's hashCode and start of property list */
-        StringBuilder result = new StringBuilder(beanClass.getName())
-            .append("@")
-            .append(Integer.toHexString(bean.hashCode()))
-            .append("(");
-        
+        final StringBuilder result = new StringBuilder(beanClass.getName())
+                .append("@")
+                .append(Integer.toHexString(System.identityHashCode(bean)))
+                .append("(");
+
         /* Now show each property by calling relevant methods */
         Method [] methods = beanClass.getMethods();
         boolean outputMade = false;
@@ -139,9 +139,9 @@ public final class ObjectUtilities {
                 continue;
             }
             /* Now print something */
-            if (propertyOption!=null && propertyOption==PropertyOptions.HIDE_VALUE) {
+            if (propertyOption != null && propertyOption == PropertyOptions.HIDE_VALUE) {
                 /* Value is to be hidden */
-                result.append(value!=null ? "[hidden]" : value);
+                result.append("[hidden]");
             }
             else {
                 if (value instanceof Object[]) {

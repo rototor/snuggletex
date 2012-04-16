@@ -9,7 +9,6 @@ import uk.ac.ed.ph.snuggletex.SerializationMethod;
 import uk.ac.ed.ph.snuggletex.SnuggleRuntimeException;
 import uk.ac.ed.ph.snuggletex.SnuggleSession.EndOutputAction;
 import uk.ac.ed.ph.snuggletex.WebPageOutputOptions;
-import uk.ac.ed.ph.snuggletex.WebPageOutputOptions.WebPageType;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.internal.util.ObjectUtilities;
 import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
@@ -19,6 +18,7 @@ import uk.ac.ed.ph.snuggletex.utilities.StylesheetManager;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -43,6 +43,11 @@ import org.w3c.dom.Element;
  * @version $Revision$
  */
 public final class WebPageBuilder {
+    
+    /**
+     * Default URL and config to use when MathJax configuration option has been enabled.
+     */
+    public static final String DEFAULT_MATHJAX_URL = "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML-full";
     
     private final SessionContext sessionContext;
     private final WebPageOutputOptions options;
@@ -83,8 +88,7 @@ public final class WebPageBuilder {
         Element head = createXHTMLElement(document, "head");
         
         /* Do template-y stuff */
-        WebPageType pageType = options.getWebPageType();
-        if (pageType==WebPageType.MATHPLAYER_HTML) {
+        if (options.isAddingMathPlayerImport()) {
             /* To trigger MathPlayer, we must declare the appropriate MathML prefix on the
              * <html/> element. Then add an <object/> followed by the appropriate PI to
              * the <head/> element. Getting any of this in the wrong order will fail
@@ -105,11 +109,12 @@ public final class WebPageBuilder {
         /* Add content type <meta/> element. (The serializer might add another of these but let's
          * be safe as we don't know what's going to happen at this point.) */
         Element meta = createXHTMLElement(document, "meta");
-        if (pageType==WebPageType.HTML5) {
+        if (options.isHtml5()) {
             /* Use 'charset' attribute in HTML5 */
             meta.setAttribute("charset", options.getEncoding());
         }
         else {
+            /* Use traditional approach */
             meta.setAttribute("http-equiv", "Content-Type");
             meta.setAttribute("content", computeMetaContentType());
         }
@@ -148,45 +153,39 @@ public final class WebPageBuilder {
             head.appendChild(style);
         }
         
-        /* Bootstrap MathJax JS if requested */
-        if (pageType==WebPageType.MATHJAX_CROSS_BROWSER_XHTML) {
-            String mathJaxPath = options.getMathJaxPath();
-            if (mathJaxPath!=null) {
-                String scriptContent = "MathJax.Hub.Config({\n"
-                    + "  config: ['MMLorHTML.js'],\n"
-                    + "  extensions: ['mml2jax.js'],\n" 
-                    + "  jax: ['input/MathML']\n"
-                    + "})";
-                Element script = createXHTMLElement(document, "script", scriptContent);
-                script.setAttribute("type", "text/javascript");
-                script.setAttribute("src", mathJaxPath);
-                head.appendChild(script);
+        /* Add JS to bootstrap MathJax if requested */
+        if (options.isMathJax()) {
+            String mathJaxUrl = options.getCustomMathJaxUrl();
+            if (mathJaxUrl==null) {
+                mathJaxUrl = DEFAULT_MATHJAX_URL;
             }
+            Element script = createXHTMLElement(document, "script");
+            script.setAttribute("type", "text/javascript");
+            script.setAttribute("src", mathJaxUrl);
+            head.appendChild(script);
         }
         
         /* Create finished document */
         Element html = createXHTMLElement(document, "html");
         
         /* Add pref:renderer attribute if doing USS */
-        if (pageType==WebPageType.UNIVERSAL_STYLESHEET) {
+        String mathPrefRenderer = options.getMathPrefRenderer();
+        if (mathPrefRenderer!=null) {
             html.setAttributeNS(W3CConstants.MATHML_PREF_NAMESPACE, "pref:renderer", "mathplayer-dl");
         }
         
         String lang = options.getLang();
         if (lang!=null) {
             /* Set language either as 'xml:lang' or plain old 'lang', or maybe both */
-            if (pageType==WebPageType.MATHPLAYER_HTML || pageType==WebPageType.PROCESSED_HTML) {
+            if (options.getSerializationMethod()==SerializationMethod.HTML || options.getSerializationMethod()==SerializationMethod.STRICTLY_HTML) {
                 html.setAttribute("lang", lang);
-                if (options.getSerializationMethod()!=SerializationMethod.HTML) {
-                    html.setAttributeNS(XMLConstants.XML_NS_URI, "xml:lang", lang);
-                }
             }
             else {
                 html.setAttributeNS(XMLConstants.XML_NS_URI, "xml:lang", lang);
             }
         }
 
-        if (options.isPrefixingMathML()) {
+        if (options.isPrefixingMathML() && options.getSerializationMethod()!=SerializationMethod.HTML && options.getSerializationMethod()!=SerializationMethod.STRICTLY_HTML) {
             /* We'll explicitly set the MathML prefix on the root element.
              * (MathPlayer needs it to be declared here too.)
              */
@@ -246,8 +245,12 @@ public final class WebPageBuilder {
         /* Create resulting web page, including any client-specified XSLT */
         Document webPageDocument = buildWebPage(fixedTokens);
         
-        /* Finally serialize */
+        /* Serialize as String */
         StringWriter resultBuilder = new StringWriter();
+        if (options.isHtml5()) {
+            /* Non-legacy HTML5 DOCTYPE can't be output using XSLT, so we add it here */ 
+            resultBuilder.append(W3CConstants.HTML5_DOCTYPE_HEADER);
+        }
         Transformer serializer = createSerializer();
         try {
             serializer.transform(new DOMSource(webPageDocument), new StreamResult(resultBuilder));
@@ -281,6 +284,13 @@ public final class WebPageBuilder {
         /* Set content type, if requested */
         if (contentTypeSettable!=null) {
             setWebPageContentType(contentTypeSettable);
+        }
+        
+        /* Send HTML5 DOCTYPE, if required */
+        if (options.isHtml5()) {
+            OutputStreamWriter doctypeWriter = new OutputStreamWriter(outputStream, options.getEncoding());
+            doctypeWriter.write(W3CConstants.HTML5_DOCTYPE_HEADER);
+            doctypeWriter.flush();
         }
         
         /* Create resulting web page, including any client-specified XSLT */
@@ -344,6 +354,14 @@ public final class WebPageBuilder {
         
         /* Set additional web-related properties */
         serializer.setOutputProperty(OutputKeys.MEDIA_TYPE, options.getContentType());
+        Properties outputProperties = serializer.getOutputProperties();
+        if (options.isHtml5()) {
+            /* For HTML5, we have to add a DOCTYPE manually after serialization as
+             * we can't output the non-legacy DOCTYPE using XSLT.
+             */
+            outputProperties.remove(OutputKeys.DOCTYPE_PUBLIC);
+            outputProperties.remove(OutputKeys.DOCTYPE_SYSTEM);
+        }
         if (supportsXSLT20 && options.getSerializationMethod()!=SerializationMethod.XML) {
             /* XSLT 2.0 allows us to explicitly stop serializer adding Content Type declaration,
              * which is something we've already done here.
@@ -359,8 +377,7 @@ public final class WebPageBuilder {
      */
     private String computeContentTypeHeader() {
         String result;
-        if (options.getWebPageType()==WebPageType.CROSS_BROWSER_XHTML) {
-            /* MathPlayer can only handle application/xhtml+xml without a "charset" clause */
+        if (options.isNoCharsetInContentTypeHeader()) {
             result = options.getContentType();
         }
         else {

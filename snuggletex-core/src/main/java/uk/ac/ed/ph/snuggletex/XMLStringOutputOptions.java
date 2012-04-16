@@ -18,7 +18,7 @@ import javax.xml.transform.TransformerFactory;
  * 
  * @see DOMOutputOptions
  * @see WebPageOutputOptions
- * @see WebPageOutputOptionsTemplates
+ * @see WebPageOutputOptionsBuilder
  * 
  * @since 1.2.0
  *

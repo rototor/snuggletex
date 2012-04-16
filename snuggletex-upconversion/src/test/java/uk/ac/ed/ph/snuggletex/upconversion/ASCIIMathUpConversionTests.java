@@ -5,7 +5,7 @@
  */
 package uk.ac.ed.ph.snuggletex.upconversion;
 
-import uk.ac.ed.ph.asciimath.parser.ASCIIMathParser;
+import uk.ac.ed.ph.asciimath.parser.AsciiMathParser;
 import uk.ac.ed.ph.snuggletex.SnuggleEngine;
 import uk.ac.ed.ph.snuggletex.SnuggleInput;
 import uk.ac.ed.ph.snuggletex.SnuggleSession;
@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
 
 /**
  * This does the same kind of thing as {@link MathUpConversionPMathMLTests}, but uses
- * {@link ASCIIMathParser} to up-convert raw ASCIIMath input instead.
+ * {@link AsciiMathParser} to up-convert raw ASCIIMath input instead.
  * 
  * @author  David McKain
  * @version $Revision:179 $
@@ -55,8 +55,8 @@ public class ASCIIMathUpConversionTests {
     @Test
     public void runTest() throws Throwable {
         /* Do initial ASCIIMath parse */
-        ASCIIMathParser parser = new ASCIIMathParser();
-        Document mathDocument = parser.parseASCIIMath(asciiMathInput);
+        AsciiMathParser parser = new AsciiMathParser();
+        Document mathDocument = parser.parseAsciiMath(asciiMathInput);
         
         /* Set up up-converter so that it only generates fixed up Presentation MathML */
         UpConversionOptions upConversionOptions = new UpConversionOptions();

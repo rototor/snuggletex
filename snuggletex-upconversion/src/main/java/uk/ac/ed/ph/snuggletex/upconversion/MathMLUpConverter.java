@@ -158,7 +158,7 @@ public class MathMLUpConverter {
         Document resultDocument = XMLUtilities.createNSAwareDocumentBuilder().newDocument();
         try {
             /* Create required XSLT */
-            Templates upconverterStylesheet = stylesheetManager.getStylesheet(UPCONVERTER_XSL_LOCATION, true);
+            Templates upconverterStylesheet = stylesheetManager.getCompiledStylesheet(UPCONVERTER_XSL_LOCATION, true);
             Transformer upconverter = upconverterStylesheet.newTransformer();
             
             /* Pass UpConversionOptions, using default as required */
@@ -203,7 +203,7 @@ public class MathMLUpConverter {
         /* First of all we convert the ASCIIMathML into something equivalent to SnuggleTeX output */
         Document fixedDocument = XMLUtilities.createNSAwareDocumentBuilder().newDocument();
         try {
-            Templates fixerStylesheet = stylesheetManager.getStylesheet(ASCIIMATH_FIXER_XSL_LOCATION, true);
+            Templates fixerStylesheet = stylesheetManager.getCompiledStylesheet(ASCIIMATH_FIXER_XSL_LOCATION, true);
             fixerStylesheet.newTransformer().transform(new DOMSource(asciiMathMLDocument), new DOMResult(fixedDocument));
         }
         catch (TransformerConfigurationException e) {

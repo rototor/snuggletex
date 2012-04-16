@@ -295,6 +295,7 @@ public final class StylesheetManager {
                 requiresXSLT20 = true;
             }
         }
+        
         /* Now create serializer */
         Transformer serializer;
         try {
@@ -311,7 +312,7 @@ public final class StylesheetManager {
         catch (TransformerConfigurationException e) {
             throw new SnuggleRuntimeException("Unexpected failure to create serializer", e);
         }
-
+        
         /* Now configure it as per options */
         if (serializationOptions!=null) {
             SerializationMethod serializationMethod = serializationOptions.getSerializationMethod();

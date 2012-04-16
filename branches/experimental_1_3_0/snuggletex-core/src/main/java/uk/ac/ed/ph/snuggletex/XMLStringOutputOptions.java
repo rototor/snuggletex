@@ -96,6 +96,12 @@ public class XMLStringOutputOptions extends DOMOutputOptions implements Serializ
     /**
      * Sets whether the resulting XML will be indented or not.
      * (This depends on how clever the underlying XSLT engine will be!)
+     * <p>
+     * NOTE: The old version of Xalan that comes bundled with Java 6 (and below) appears to be
+     * unable to indent output when using {@link XMLStringOutputOptions#setIndenting(boolean)}
+     * with {@link SerializationMethod#HTML}.
+     * I have not checked this behaviour with Java 7 (or above). I however recommend using Saxon, 
+     * or including a newer version of Xalan in the ClassPath.
      * 
      * @param indenting true to indent, false otherwise.
      */

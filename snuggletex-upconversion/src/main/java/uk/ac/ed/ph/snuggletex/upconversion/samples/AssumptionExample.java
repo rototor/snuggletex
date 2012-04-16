@@ -9,10 +9,10 @@ import uk.ac.ed.ph.snuggletex.SnuggleEngine;
 import uk.ac.ed.ph.snuggletex.SnuggleInput;
 import uk.ac.ed.ph.snuggletex.SnuggleSession;
 import uk.ac.ed.ph.snuggletex.XMLStringOutputOptions;
+import uk.ac.ed.ph.snuggletex.upconversion.IllegalUpconversionOptionException;
 import uk.ac.ed.ph.snuggletex.upconversion.UpConversionOptionDefinitions;
 import uk.ac.ed.ph.snuggletex.upconversion.UpConversionOptions;
 import uk.ac.ed.ph.snuggletex.upconversion.UpConvertingPostProcessor;
-import uk.ac.ed.ph.snuggletex.upconversion.IllegalUpconversionOptionException;
 import uk.ac.ed.ph.snuggletex.upconversion.internal.UpConversionPackageDefinitions;
 
 import java.io.IOException;
@@ -56,6 +56,7 @@ public final class AssumptionExample {
         defaultOptions.setSpecifiedOption(UpConversionOptionDefinitions.DO_CONTENT_MATHML_NAME, "true");
         defaultOptions.setSpecifiedOption(UpConversionOptionDefinitions.DO_MAXIMA_NAME, "true");
         defaultOptions.setSpecifiedOption(UpConversionOptionDefinitions.ADD_OPTIONS_ANNOTATION_NAME, "true");
+        defaultOptions.setSpecifiedOption(UpConversionOptionDefinitions.DO_BRACKETED_PRESENTATION_MATHML, "true");
         
         /* Create UpConvertingPostProcessor to perform the up-conversion. */
         UpConvertingPostProcessor upConverter = new UpConvertingPostProcessor(defaultOptions);

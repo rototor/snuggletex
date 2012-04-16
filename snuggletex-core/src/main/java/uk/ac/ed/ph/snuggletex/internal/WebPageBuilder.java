@@ -343,9 +343,6 @@ public final class WebPageBuilder {
      * @throws SnuggleRuntimeException if a serializer cannot be created.
      */
     private final Transformer createSerializer() {
-        /* Decide on serialization method, using XSLT 2.0's "xhtml" method if requested and
-         * available, falling back to "xml" otherwise.
-         */
         StylesheetManager stylesheetManager = sessionContext.getStylesheetManager();
         boolean supportsXSLT20 = stylesheetManager.supportsXSLT20();
         
@@ -362,11 +359,24 @@ public final class WebPageBuilder {
             outputProperties.remove(OutputKeys.DOCTYPE_PUBLIC);
             outputProperties.remove(OutputKeys.DOCTYPE_SYSTEM);
         }
-        if (supportsXSLT20 && options.getSerializationMethod()!=SerializationMethod.XML) {
-            /* XSLT 2.0 allows us to explicitly stop serializer adding Content Type declaration,
-             * which is something we've already done here.
+        if (options.getSerializationMethod()!=SerializationMethod.XML) {
+            /* (Try to) suppress additional of a <meta content-type="..."> element in the output,
+             * as we're adding our own one or doing something different in HTML5 output.
+             * 
+             * XSLT 2.0 lets you do this via a new output property, otherwise newer versions of
+             * Xalan have a custom property.
+             * 
+             * BUG: This DOES NOT work with the Xalan bundled in the JDK (at least in Java 6)
+             * and I can't find a way of fixing that.
              */
-            serializer.setOutputProperty("include-content-type", "no");
+            if (supportsXSLT20) {
+                /* (XSLT 2.0 way) */
+                serializer.setOutputProperty("include-content-type", "no");
+            }
+            else {
+                /* (Xalan only, but doesn't work on the version included in my Java 6) */
+                serializer.setOutputProperty("{http://xml.apache.org/xalan}omit-meta-tag", "yes");
+            }
         }
         return serializer;
     }

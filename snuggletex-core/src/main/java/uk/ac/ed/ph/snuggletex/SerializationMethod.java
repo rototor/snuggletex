@@ -32,6 +32,11 @@ public enum SerializationMethod {
      * namespaces are kept as-is
      * <p>
      * (This is how you might serialize HTML for IE/MathPlayer, for example)
+     * <p>
+     * NOTE: The old version of Xalan that comes bundled with Java 6 (and below) appears to be
+     * unable to indent HTML output when using {@link XMLStringOutputOptions#setIndenting(boolean)}.
+     * I have not checked this behaviour with Java 7 (or above). I however recommend using Saxon, 
+     * or including a newer version of Xalan in the ClassPath.
      */
     HTML("html"),
     

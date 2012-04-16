@@ -154,8 +154,8 @@ public final class StylesheetManager {
      *   
      * @return compiled XSLT stylesheet.
      */
-    public Templates getStylesheet(final String classPathUri) {
-        return getStylesheet(classPathUri, false);
+    public Templates getCompiledStylesheet(final String classPathUri) {
+        return getCompiledStylesheet(classPathUri, false);
     }
     
     /**
@@ -170,16 +170,16 @@ public final class StylesheetManager {
      *   
      * @return compiled XSLT stylesheet.
      */
-    public Templates getStylesheet(final String classPathUri, final boolean requireXSLT20) {
+    public Templates getCompiledStylesheet(final String classPathUri, final boolean requireXSLT20) {
         Templates result;
         if (stylesheetCache==null) {
-            result = compileInternalStylesheet(classPathUri, requireXSLT20);
+            result = compileStylesheet(classPathUri, requireXSLT20);
         }
         else {
             synchronized(stylesheetCache) {
                 result = stylesheetCache.getStylesheet(classPathUri);
                 if (result==null) {
-                    result = compileInternalStylesheet(classPathUri, requireXSLT20);
+                    result = compileStylesheet(classPathUri, requireXSLT20);
                     stylesheetCache.putStylesheet(classPathUri, result);
                 }
             }
@@ -187,7 +187,7 @@ public final class StylesheetManager {
         return result;
     }
     
-    private Templates compileInternalStylesheet(final String classPathUri, final boolean requireXSLT20) {
+    private Templates compileStylesheet(final String classPathUri, final boolean requireXSLT20) {
         TransformerFactory transformerFactory = getTransformerFactory(requireXSLT20);
         Source resolved;
         try {
@@ -202,6 +202,62 @@ public final class StylesheetManager {
         }
         catch (TransformerException e) {
             throw new SnuggleRuntimeException("Could not resolve internal stylesheet location " + classPathUri, e);
+        }
+    }
+    
+    /**
+     * Obtains a "driver" XSLT stylesheet that imports the stylesheets having the given
+     * ClassPath URIs, using the {@link StylesheetCache} (if set) to cache the resulting driver for efficiency.
+     * 
+     * @param importClassPathUris List of locations of the XSLT stylesheets to be compiled, following the
+     *   URI scheme in {@link ClassPathURIResolver}.
+     * @param requireXSLT20 if false uses the JAXP default {@link TransformerFactory}, otherwise
+     *   specifies that we require an XSLT 2.0-compliant transformer, of which the only currently
+     *   supported implementation is SAXON 9.x.
+     *   
+     * @return compiled XSLT stylesheet.
+     */
+    public Templates getCompiledStylesheetDriver(final List<String> importClassPathUris, final boolean requireXSLT20) {
+        Templates result;
+        if (stylesheetCache==null) {
+            result = compileStylesheetDriver(importClassPathUris, requireXSLT20);
+        }
+        else {
+            String cacheKey = "xslt-driver(" + StringUtilities.join(importClassPathUris, ",") + ")";
+            synchronized(stylesheetCache) {
+                result = stylesheetCache.getStylesheet(cacheKey);
+                if (result==null) {
+                    result = compileStylesheetDriver(importClassPathUris, requireXSLT20);
+                    stylesheetCache.putStylesheet(cacheKey, result);
+                }
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Compiles a "driver" XSLT stylesheet that imports the stylesheets at the given URIs.
+     * 
+     * @param importUris
+     */
+    private Templates compileStylesheetDriver(final List<String> importUris, boolean requireXSLT20) {
+        TransformerFactory transformerFactory = getTransformerFactory(requireXSLT20);
+        /* Build up driver XSLT that simply imports the required stylesheets */
+        StringBuilder xsltBuilder = new StringBuilder("<stylesheet version='")
+            .append(requireXSLT20 ? "2.0" : "1.0")
+            .append("' xmlns='http://www.w3.org/1999/XSL/Transform'>\n");
+        for (String importUri : importUris) {
+            xsltBuilder.append("<import href='").append(importUri).append("'/>\n");
+        }
+        xsltBuilder.append("</stylesheet>");
+        String xslt = xsltBuilder.toString();
+        
+        /* Now compile and return result */
+        try {
+            return transformerFactory.newTemplates(new StreamSource(new StringReader(xslt)));
+        }
+        catch (TransformerConfigurationException e) {
+            throw new SnuggleRuntimeException("Could not compile stylesheet driver " + xslt, e);
         }
     }
     
@@ -246,10 +302,10 @@ public final class StylesheetManager {
                 serializer = getTransformerFactory(false).newTransformer();
             }
             else if (stylesheetUris.size()==1) {
-                serializer = getStylesheet(stylesheetUris.get(0), requiresXSLT20).newTransformer();
+                serializer = getCompiledStylesheet(stylesheetUris.get(0), requiresXSLT20).newTransformer();
             }
             else {
-                serializer = cacheImporterStylesheet(stylesheetUris, requiresXSLT20).newTransformer();
+                serializer = getCompiledStylesheetDriver(stylesheetUris, requiresXSLT20).newTransformer();
             }
         }
         catch (TransformerConfigurationException e) {
@@ -282,52 +338,8 @@ public final class StylesheetManager {
         return serializer;
     }
     
-    private Templates cacheImporterStylesheet(final List<String> importUris, final boolean requireXSLT20) {
-        Templates result;
-        TransformerFactory transformerFactory = getTransformerFactory(requireXSLT20);
-        if (stylesheetCache==null) {
-            result = compileImporterStylesheet(transformerFactory, importUris, requireXSLT20);
-        }
-        else {
-            String cacheKey = "snuggletex-importer(" + StringUtilities.join(importUris, ",") + ")";
-            synchronized(stylesheetCache) {
-                result = stylesheetCache.getStylesheet(cacheKey);
-                if (result==null) {
-                    result = compileImporterStylesheet(transformerFactory, importUris, requireXSLT20);
-                    stylesheetCache.putStylesheet(cacheKey, result);
-                }
-            }
-        }
-        return result;
-    }
-    
-    /**
-     * Helper to create "driver" XSLT stylesheets that import the stylesheets at the given URIs,
-     * using the given {@link TransformerFactory}.
-     * 
-     * @param transformerFactory
-     * @param importUris
-     */
-    private Templates compileImporterStylesheet(final TransformerFactory transformerFactory,
-            final List<String> importUris, boolean requireXSLT20) {
-        /* Build up driver XSLT that simply imports the required stylesheets */
-        StringBuilder xsltBuilder = new StringBuilder("<stylesheet version='")
-            .append(requireXSLT20 ? "2.0" : "1.0")
-            .append("' xmlns='http://www.w3.org/1999/XSL/Transform'>\n");
-        for (String importUri : importUris) {
-            xsltBuilder.append("<import href='").append(importUri).append("'/>\n");
-        }
-        xsltBuilder.append("</stylesheet>");
-        String xslt = xsltBuilder.toString();
-        
-        /* Now compile and return result */
-        try {
-            return transformerFactory.newTemplates(new StreamSource(new StringReader(xslt)));
-        }
-        catch (TransformerConfigurationException e) {
-            throw new SnuggleRuntimeException("Could not compile stylesheet driver " + xslt, e);
-        }
-    }
+
+
     
     private void ensureChooserSpecified() {
         if (transformerFactoryChooser==null) {

@@ -82,7 +82,7 @@ public final class MathMLDownConverter {
         CSSPropertiesURIResolver uriResolver = new CSSPropertiesURIResolver(cssPropertiesDocument);
 
         /* Run the conversion XSLT */
-        Templates templates = stylesheetManager.getStylesheet(Globals.MATHML_TO_XHTML_XSL_RESOURCE_NAME);
+        Templates templates = stylesheetManager.getCompiledStylesheet(Globals.MATHML_TO_XHTML_XSL_RESOURCE_NAME);
         Document result = XMLUtilities.createNSAwareDocumentBuilder().newDocument();
         try {
             Transformer transformer = templates.newTransformer();

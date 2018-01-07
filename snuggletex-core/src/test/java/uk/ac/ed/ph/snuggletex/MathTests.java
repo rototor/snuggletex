@@ -5,18 +5,18 @@
  */
 package uk.ac.ed.ph.snuggletex;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.w3c.dom.Document;
 import uk.ac.ed.ph.snuggletex.testutil.SnuggleTeXTestDriver;
 import uk.ac.ed.ph.snuggletex.testutil.SnuggleTeXTestDriver.DriverCallback;
 import uk.ac.ed.ph.snuggletex.testutil.TestFileHelper;
 import uk.ac.ed.ph.snuggletex.testutil.TestUtilities;
 
 import java.util.Collection;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.w3c.dom.Document;
+import java.util.Locale;
 
 /**
  * Set of simple maths-based tests that read their data in from <tt>{@link #TEST_RESOURCE_NAME}</tt>.
@@ -50,6 +50,7 @@ public class MathTests implements DriverCallback {
     @Test
     public void runTest() throws Throwable {
         SnuggleEngine engine = new SnuggleEngine();
+        engine.getDefaultSessionConfiguration().setNumberMatcher(new SimpleNumberMatcher(Locale.ENGLISH));
         
         SnuggleTeXTestDriver caller = new SnuggleTeXTestDriver(engine, this);
         

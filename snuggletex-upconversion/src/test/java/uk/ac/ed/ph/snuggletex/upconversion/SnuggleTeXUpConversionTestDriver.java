@@ -5,10 +5,10 @@
  */
 package uk.ac.ed.ph.snuggletex.upconversion;
 
-import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
-import uk.ac.ed.ph.snuggletex.SnuggleEngine;
-import uk.ac.ed.ph.snuggletex.SnuggleInput;
-import uk.ac.ed.ph.snuggletex.SnuggleSession;
+import junit.framework.Assert;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import uk.ac.ed.ph.snuggletex.*;
 import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
 import uk.ac.ed.ph.snuggletex.testutil.TestUtilities;
 import uk.ac.ed.ph.snuggletex.upconversion.internal.UpConversionPackageDefinitions;
@@ -16,13 +16,9 @@ import uk.ac.ed.ph.snuggletex.upconversion.internal.UpConversionPackageDefinitio
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import junit.framework.Assert;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Helper class to drive tests that expect successful parsing and DOM Building,
@@ -67,6 +63,7 @@ public final class SnuggleTeXUpConversionTestDriver {
          * as much detail as the driver for the core tests.
          */
         SnuggleEngine engine = new SnuggleEngine();
+        engine.getDefaultSessionConfiguration().setNumberMatcher(new SimpleNumberMatcher(Locale.ENGLISH));
         engine.addPackage(UpConversionPackageDefinitions.getPackage());
         
         SnuggleSession session = engine.createSession();

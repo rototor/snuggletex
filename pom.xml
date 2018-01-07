@@ -19,7 +19,9 @@ All Rights Reserved
 		<module>snuggletex-jeuclid</module>
 		<module>snuggletex-webapp</module>
 		<module>snuggletex-upconversion</module>
+		<!--
 		<module>snuggletex-distribution</module>
+		-->
 	</modules>
 	<properties>
 		<junit.version>4.12</junit.version>

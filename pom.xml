@@ -11,7 +11,7 @@ All Rights Reserved
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.rototor.snuggletex</groupId>
 	<artifactId>snuggletex</artifactId>
-	<version>1.3.0</version>
+	<version>1.3.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>snuggletex-core</module>
@@ -102,7 +102,7 @@ All Rights Reserved
 	<scm>
 		<url>https://github.com/rototor/snuggletex</url>
 		<connection>scm:git:https://github.com/rototor/snuggletex.git</connection>
-		<tag>snuggletex-1.3.0</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<build>
 		<pluginManagement>

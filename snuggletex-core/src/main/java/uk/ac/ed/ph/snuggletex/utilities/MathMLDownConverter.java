@@ -5,14 +5,13 @@
  */
 package uk.ac.ed.ph.snuggletex.utilities;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
 import uk.ac.ed.ph.snuggletex.SnuggleConstants;
 import uk.ac.ed.ph.snuggletex.SnuggleRuntimeException;
 import uk.ac.ed.ph.snuggletex.definitions.Globals;
 import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
-
-import java.util.Properties;
-import java.util.Map.Entry;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -20,9 +19,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 /**
  * This utility class "down-converts" a DOM {@link Document} so that simple MathML expressions
@@ -99,12 +97,12 @@ public final class MathMLDownConverter {
      * Converts the CSS Properties specified within the {@link DOMOutputOptions} into an XML
      * document of the form:
      * 
-     * <pre><![CDATA[
-     * <properties xmlns="http;//www.ph.ed.ac.uk/snuggletex">
-     *   <property name="..." value="..."/>
+     * <pre>
+     * &lt;properties xmlns="http;//www.ph.ed.ac.uk/snuggletex"&gt;
+     *   &lt;property name="..." value="..."/&gt;
      *   ...
-     * </properties>
-     * ]]></pre>
+     * &lt;/properties&gt;
+     * </pre>
      */
     public void buildCSSPropertiesDocument(Document result, Properties cssProperties) {
         Element root = result.createElementNS(SnuggleConstants.SNUGGLETEX_NAMESPACE, "properties");

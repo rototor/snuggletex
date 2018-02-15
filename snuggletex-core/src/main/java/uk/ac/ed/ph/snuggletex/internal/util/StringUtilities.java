@@ -162,7 +162,7 @@ public final class StringUtilities {
 
     /**
      * Converts the given String argument to a boolean using
-     * the scheme "yes"=>true, "no"=>false. Any other value
+     * the scheme "yes"=&gt;true, "no"=&gt;false. Any other value
      * results in an IllegalArgumentException.
      *
      * @param value
@@ -177,7 +177,7 @@ public final class StringUtilities {
 
     /**
      * Converts the given String argument to a boolean using
-     * the scheme "true"=>true, "false"=>false. Any other value
+     * the scheme "true"=&gt;true, "false"=&gt;false. Any other value
      * results in an IllegalArgumentException.
      *
      * @param value
@@ -192,7 +192,7 @@ public final class StringUtilities {
     
     /**
      * Converts the given String argument to a boolean using
-     * the scheme trueValue => true, falseValue => false.
+     * the scheme trueValue =&gt; true, falseValue =&gt; false.
      * Any other value results in an IllegalArgumentException.
      *
      * @param value

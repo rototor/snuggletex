@@ -44,7 +44,7 @@ public enum SerializationMethod {
      * Pure HTML serialization method. 
      * <p>
      * All XML elements have their namespaces removed on serialization. (Hence, there is the
-     * potential for name clashes if you use something like XLink & XHTML together.)
+     * potential for name clashes if you use something like XLink &amp; XHTML together.)
      * <p>
      * (This is how you would serialize HTML5, for example.)
      * 

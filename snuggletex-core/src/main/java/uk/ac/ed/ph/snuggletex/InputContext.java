@@ -60,7 +60,7 @@ public interface InputContext {
 
     /**
      * Tests whether all characters in the document with index satisfying
-     * startIndex <= index < endIndex are whitespace.
+     * startIndex &lt;= index &lt; endIndex are whitespace.
      */
     boolean isRegionWhitespace(final int startIndex, final int endIndex);
 
@@ -71,7 +71,7 @@ public interface InputContext {
 
     /**
      * Extracts a copy of a slice of the current entire content of the input as a {@link CharSequence},
-     * including all characters with startIndex <= index < endIndex. 
+     * including all characters with startIndex &lt;= index &lt; endIndex.
      */
     CharSequence extract(final int startIndex, final int endIndex);
 

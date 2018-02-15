@@ -14,7 +14,7 @@ import org.w3c.dom.Element;
 /**
  * This handles simple commands that essentially just stand in for single-character identifiers
  * that don't have any particular meaning when used in MATH mode (e.g. '$').
- * <p.
+ * <p>
  * In TEXT mode, the resulting character is appending to the DOM directly.
  * <p>
  * In MATH mode, the character is wrapped inside an <tt>mi</tt> element.

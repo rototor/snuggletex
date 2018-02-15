@@ -33,6 +33,7 @@ import java.util.List;
  *     Use {@link #createSession()} to create a "session" that will take one (or more) input
  *     documents and produce a DOM.
  *   </li>
+ *   <li>
  *     Each {@link SnuggleSession} created will use a _copy_ of
  *     the {@link SnugglePackage}s registered with the engine and _copies_ of
  *     the current {@link #defaultSessionConfiguration}, {@link #defaultDOMOutputOptions},

@@ -5,41 +5,20 @@
  */
 package uk.ac.ed.ph.snuggletex.internal;
 
-import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
+import org.w3c.dom.*;
+import uk.ac.ed.ph.snuggletex.*;
 import uk.ac.ed.ph.snuggletex.DOMOutputOptions.ErrorOutputOptions;
-import uk.ac.ed.ph.snuggletex.ErrorCode;
-import uk.ac.ed.ph.snuggletex.InputError;
-import uk.ac.ed.ph.snuggletex.LinkResolver;
-import uk.ac.ed.ph.snuggletex.SnuggleConstants;
-import uk.ac.ed.ph.snuggletex.SnuggleLogicException;
-import uk.ac.ed.ph.snuggletex.SnuggleSession;
-import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle;
+import uk.ac.ed.ph.snuggletex.definitions.*;
 import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle.FontFamily;
 import uk.ac.ed.ph.snuggletex.definitions.ComputedStyle.FontSize;
-import uk.ac.ed.ph.snuggletex.definitions.CoreErrorCode;
-import uk.ac.ed.ph.snuggletex.definitions.MathCharacter;
-import uk.ac.ed.ph.snuggletex.definitions.MathVariantMap;
-import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.dombuilding.CommandHandler;
 import uk.ac.ed.ph.snuggletex.dombuilding.EnvironmentHandler;
 import uk.ac.ed.ph.snuggletex.dombuilding.EqnArrayHandler;
 import uk.ac.ed.ph.snuggletex.internal.util.ArrayListStack;
 import uk.ac.ed.ph.snuggletex.internal.util.StringUtilities;
 import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
-import uk.ac.ed.ph.snuggletex.semantics.Interpretation;
-import uk.ac.ed.ph.snuggletex.semantics.InterpretationType;
-import uk.ac.ed.ph.snuggletex.semantics.MathFunctionInterpretation;
-import uk.ac.ed.ph.snuggletex.semantics.MathIdentifierInterpretation;
-import uk.ac.ed.ph.snuggletex.semantics.MathNumberInterpretation;
-import uk.ac.ed.ph.snuggletex.semantics.MathOperatorInterpretation;
-import uk.ac.ed.ph.snuggletex.tokens.ArgumentContainerToken;
-import uk.ac.ed.ph.snuggletex.tokens.BraceContainerToken;
-import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
-import uk.ac.ed.ph.snuggletex.tokens.EnvironmentToken;
-import uk.ac.ed.ph.snuggletex.tokens.ErrorToken;
-import uk.ac.ed.ph.snuggletex.tokens.FlowToken;
-import uk.ac.ed.ph.snuggletex.tokens.SimpleToken;
-import uk.ac.ed.ph.snuggletex.tokens.Token;
+import uk.ac.ed.ph.snuggletex.semantics.*;
+import uk.ac.ed.ph.snuggletex.tokens.*;
 import uk.ac.ed.ph.snuggletex.utilities.CSSUtilities;
 import uk.ac.ed.ph.snuggletex.utilities.MessageFormatter;
 
@@ -48,12 +27,6 @@ import java.net.URISyntaxException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Properties;
-
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * This takes a {@link List} of (fixed) {@link Token}s and builds a (raw) XHTML + MathML
@@ -276,7 +249,7 @@ public final class DOMBuilder {
      *
      * Example:
      * 
-     * \msub{1+2}{3-\mrow{4*5}} -> <msup><mrow>...</mrow><mrow>...</mrow></msup>
+     * \msub{1+2}{3-\mrow{4*5}} -&gt; &lt;msup&lt;mrow&gt;...&lt;/mrow&gt;&lt;mrow&gt;...&lt;/mrow&gt;&lt;/msup&gt;
      * @param parentElement
      * @param token
      * 

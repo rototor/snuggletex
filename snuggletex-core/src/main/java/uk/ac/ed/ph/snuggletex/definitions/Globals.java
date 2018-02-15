@@ -5,16 +5,13 @@
  */
 package uk.ac.ed.ph.snuggletex.definitions;
 
-import static uk.ac.ed.ph.snuggletex.definitions.LaTeXMode.LR;
-import static uk.ac.ed.ph.snuggletex.definitions.LaTeXMode.MATH;
-import static uk.ac.ed.ph.snuggletex.definitions.LaTeXMode.PARAGRAPH;
-
 import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
 import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
 
+import javax.xml.XMLConstants;
 import java.util.EnumSet;
 
-import javax.xml.XMLConstants;
+import static uk.ac.ed.ph.snuggletex.definitions.LaTeXMode.*;
 
 /**
  * Lists various useful (but internal) constants and helper methods.
@@ -63,16 +60,16 @@ public final class Globals {
     /** Specifies the location of the XSLT that converts MathML symbol characters to named entities */
     public static final String MATHML_ENTITIES_MAP_XSL_RESOURCE_NAME = "classpath:/uk/ac/ed/ph/snuggletex/mathml-entities-map.xsl";
     
-    /** Specifies the ClassPath location of the XHTML -> no namespace used for serializing as legacy HTML */
+    /** Specifies the ClassPath location of the XHTML -&gt; no namespace used for serializing as legacy HTML */
     public static final String STRIP_XHTML_NAMESPACE_XSL_RESOURCE_NAME = "classpath:/uk/ac/ed/ph/snuggletex/strip-xhtml-namespace.xsl";
     
-    /** Specifies the ClassPath location of the all XML -> no namespace used for serializing as legacy HTML */
+    /** Specifies the ClassPath location of the all XML -&gt; no namespace used for serializing as legacy HTML */
     public static final String STRIP_ALL_NAMESPACES_XSL_RESOURCE_NAME = "classpath:/uk/ac/ed/ph/snuggletex/strip-all-namespaces.xsl";
     
-    /** Specifies the ClassPath location of the MathML -> XHTML stylesheet to use for down-transforming */
+    /** Specifies the ClassPath location of the MathML -&gt; XHTML stylesheet to use for down-transforming */
     public static final String MATHML_TO_XHTML_XSL_RESOURCE_NAME = "classpath:/uk/ac/ed/ph/snuggletex/mathml-to-xhtml.xsl";
     
-    /** URN used in MathML -> XHTML to call up XML containing current CSS Properties */
+    /** URN used in MathML -&gt; XHTML to call up XML containing current CSS Properties */
     public static final String CSS_PROPERTIES_DOCUMENT_URN = "urn:snuggletex-css-properties";
 
     public static final EnumSet<LaTeXMode> MATH_MODE_ONLY = EnumSet.of(MATH);

@@ -14,9 +14,9 @@ import org.w3c.dom.Element;
 /**
  * Handles <tt>\\units</tt>, generating an <tt>mi</tt> element of the form:
  * 
- * <pre><![CDATA[
- *   <mi mathvariant="normal" class="MathML-Unit">...</mi>
- * ]]></pre>
+ * <pre>
+ *   &lt;mi mathvariant="normal" class="MathML-Unit"&gt;...&lt;/mi&gt;
+ * </pre>
  * 
  * @see <a href="http://www.w3.org/TR/mathml-units/">Units in MathML</a>
  *

@@ -5,20 +5,13 @@
  */
 package uk.ac.ed.ph.snuggletex.upconversion;
 
-import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
-import uk.ac.ed.ph.snuggletex.SnuggleConstants;
-import uk.ac.ed.ph.snuggletex.SnuggleLogicException;
-import uk.ac.ed.ph.snuggletex.SnuggleRuntimeException;
-import uk.ac.ed.ph.snuggletex.SnuggleSession;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import uk.ac.ed.ph.snuggletex.*;
 import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
-import uk.ac.ed.ph.snuggletex.utilities.SaxonTransformerFactoryChooser;
-import uk.ac.ed.ph.snuggletex.utilities.SimpleStylesheetCache;
-import uk.ac.ed.ph.snuggletex.utilities.StylesheetCache;
-import uk.ac.ed.ph.snuggletex.utilities.StylesheetManager;
-import uk.ac.ed.ph.snuggletex.utilities.TransformerFactoryChooser;
-
-import java.io.IOException;
-import java.io.StringReader;
+import uk.ac.ed.ph.snuggletex.utilities.*;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -26,11 +19,8 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import java.io.IOException;
+import java.io.StringReader;
 
 /**
  * Standalone utility class for "up-converting" MathML Documents created by either SnuggleTeX
@@ -57,7 +47,8 @@ import org.xml.sax.SAXException;
  *   <li>
  *     If you use XSLT in your own application, consider using the constructor that
  *     takes a {@link StylesheetCache} to integrate with your own caching mechanism.
- *   </li> 
+ *   </li>
+ *   <li>
  *     If you don't use XSLT in your own application, you can use the default constructor
  *     that creates a cache used by the instance of this class. In this case, you'll want
  *     to ensure your instance has "application-wide" context to maximise performance.
@@ -71,7 +62,7 @@ import org.xml.sax.SAXException;
  */
 public class MathMLUpConverter {
 
-    /* (Names of the various annotations. These are also defined in the XSLT so, if changing, we
+    /* (Names of the various annotations. These are also defined in the XSLT so, if changing, w
      * must ensure that things are manually kept in sync. I could pass all of these as parameters
      * but it seems like overkill here!)
      */

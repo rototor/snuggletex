@@ -5,12 +5,12 @@
  */
 package uk.ac.ed.ph.snuggletex;
 
-import static uk.ac.ed.ph.snuggletex.internal.util.ObjectUtilities.concat;
-
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.internal.util.ConstraintUtilities;
 
 import javax.xml.transform.Transformer;
+
+import static uk.ac.ed.ph.snuggletex.internal.util.ObjectUtilities.concat;
 
 /**
  * Builds on {@link XMLStringOutputOptions} to add in options for configuring how to build a
@@ -510,7 +510,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
      * (in the {@link W3CConstants#MATHML_PREF_NAMESPACE})
      * that can be added to the HTML root element to control certain aspects of the
      * client-side 
-     * <a href="http://www.w3.org/Math/XSL/Overview-tech.html Universal StyleSheets for MathML</a>
+     * <a href="http://www.w3.org/Math/XSL/Overview-tech.html"> Universal StyleSheets for MathML</a>
      * <p>
      * The default is null, indicating that no attribute will be added
      * 
@@ -525,7 +525,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
      * (in the {@link W3CConstants#MATHML_PREF_NAMESPACE})
      * that can be added to the HTML root element to control certain aspects of the
      * client-side 
-     * <a href="http://www.w3.org/Math/XSL/Overview-tech.html Universal StyleSheets for MathML</a>
+     * <a href="http://www.w3.org/Math/XSL/Overview-tech.html"> Universal StyleSheets for MathML</a>
      * <p>
      * A null value is allowed, which prevents such an attribute being added.
      * 

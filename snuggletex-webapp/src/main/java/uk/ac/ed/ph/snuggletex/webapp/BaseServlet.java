@@ -5,14 +5,10 @@
  */
 package uk.ac.ed.ph.snuggletex.webapp;
 
-import static uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities.isMathMLElement;
-
-import uk.ac.ed.ph.snuggletex.DownConvertingPostProcessor;
-import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
-import uk.ac.ed.ph.snuggletex.SnuggleConstants;
-import uk.ac.ed.ph.snuggletex.SnuggleEngine;
-import uk.ac.ed.ph.snuggletex.WebPageOutputOptions;
-import uk.ac.ed.ph.snuggletex.WebPageOutputOptionsTemplates;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import uk.ac.ed.ph.snuggletex.*;
 import uk.ac.ed.ph.snuggletex.WebPageOutputOptions.WebPageType;
 import uk.ac.ed.ph.snuggletex.definitions.W3CConstants;
 import uk.ac.ed.ph.snuggletex.upconversion.UpConversionUtilities;
@@ -21,18 +17,15 @@ import uk.ac.ed.ph.snuggletex.utilities.SerializationOptions;
 import uk.ac.ed.ph.snuggletex.utilities.StylesheetCache;
 import uk.ac.ed.ph.snuggletex.utilities.StylesheetManager;
 
-import java.io.InputStream;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import java.io.InputStream;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import static uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities.isMathMLElement;
 
 /**
  * Trivial base class for servlets in the demo webapp
@@ -187,7 +180,7 @@ abstract class BaseServlet extends HttpServlet {
 
     /**
      * Untangles the given {@link NodeList} to find an expected single MathML element,
-     * and possibly some whitespace and possibly any number of <c:upconversion-options/>
+     * and possibly some whitespace and possibly any number of &lt;c:upconversion-options/&gt;
      * elements.
      */
     protected Element extractMathMLElement(final NodeList resultNodeList, final boolean allowUpConversionOptionsElements) {

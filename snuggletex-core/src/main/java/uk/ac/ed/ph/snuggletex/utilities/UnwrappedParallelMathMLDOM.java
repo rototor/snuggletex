@@ -5,11 +5,11 @@
  */
 package uk.ac.ed.ph.snuggletex.utilities;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Trivial wrapper Object that encapsulates the results of
@@ -37,28 +37,28 @@ public final class UnwrappedParallelMathMLDOM {
         this.xmlAnnotations = new HashMap<String, NodeList>();
     }
     
-    /** Returns the containing <math/> element */
+    /** Returns the containing &lt;math/&gt; element */
     public Element getMathElement() {
         return mathElement;
     }
     
-    /** Sets the containing <math/> element */
+    /** Sets the containing &lt;math/&gt; element */
     public void setMathElement(Element mathElement) {
         this.mathElement = mathElement;
     }
 
-    /** Returns the first branch of the top <semantics/> element. */
+    /** Returns the first branch of the top &lt;semantics/&gt; element. */
     public Element getFirstBranch() {
         return firstBranch;
     }
     
-    /** Sets the first branch of the top <semantics/> element. */
+    /** Sets the first branch of the top &lt;semantics/&gt; element. */
     public void setFirstBranch(Element firstBranch) {
         this.firstBranch = firstBranch;
     }
 
     /**
-     * Returns a {@link Map} of <annotation/> elements, keyed on the "encoding" attribute with
+     * Returns a {@link Map} of &lt;annotation/&gt; elements, keyed on the "encoding" attribute with
      * the text content as values.
      */
     public Map<String, String> getTextAnnotations() {
@@ -66,7 +66,7 @@ public final class UnwrappedParallelMathMLDOM {
     }
 
     /**
-     * Returns a {@link Map} of <annotation-xml/> elements, keyed on the "encoding" attribute with
+     * Returns a {@link Map} of &lt;annotation-xml/&gt; elements, keyed on the "encoding" attribute with
      * the {@link NodeList} content as values.
      */
     public Map<String, NodeList> getXmlAnnotations() {

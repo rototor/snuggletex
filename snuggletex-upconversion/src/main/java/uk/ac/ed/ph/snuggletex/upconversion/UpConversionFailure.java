@@ -50,8 +50,8 @@ public final class UpConversionFailure implements Serializable {
     
     /** 
      * XPath String corresponding to the first error Element. This is given relative to the
-     * "top" of the original MathML (normally a <math/> Element but might be a <semantics/> or
-     * <annotation-xml/> and assumes that MathML namespace is the default.)
+     * "top" of the original MathML (normally a &lt;math/&gt; Element but might be a &lt;semantics/&gt; or
+     * &lt;annotation-xml/&gt; and assumes that MathML namespace is the default.)
      * 
      * @since 1.2.0
      */

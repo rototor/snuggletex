@@ -5,6 +5,9 @@
  */
 package uk.ac.ed.ph.snuggletex.upconversion.samples;
 
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
 import uk.ac.ed.ph.snuggletex.SnuggleRuntimeException;
 import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
@@ -14,17 +17,12 @@ import uk.ac.ed.ph.snuggletex.upconversion.UpConvertingPostProcessor;
 import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 import uk.ac.ed.ph.snuggletex.utilities.UnwrappedParallelMathMLDOM;
 
-import java.io.IOException;
-import java.io.StringReader;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerFactory;
-
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import java.io.IOException;
+import java.io.StringReader;
 
 /**
  * Simple demonstration of how to use some of the utilities within SnuggleTeX to up-convert
@@ -43,7 +41,7 @@ import org.xml.sax.SAXException;
  * <ul>
  *   <li>snuggletex-core.jar</li>
  *   <li>snuggletex-upconversion.jar</li>
- *   <li>saxon9.jar, saxon9-dom.jar</li> (These are required as the conversion process uses XSLT 2.0)
+ *   <li>saxon9.jar, saxon9-dom.jar (These are required as the conversion process uses XSLT 2.0)</li>
  * </ul>
  * 
  * If you're already using XSLT 1.0 in your application and <strong>don't</strong> want your

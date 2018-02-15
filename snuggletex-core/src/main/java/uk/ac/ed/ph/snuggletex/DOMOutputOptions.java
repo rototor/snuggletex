@@ -413,7 +413,7 @@ public class DOMOutputOptions implements Cloneable {
     
     /**
      * Returns whether we should wrap "display math" MathML content within an additional
-     * <![CDATA[<mstyle displaystyle="true">....</mstyle>]]> wrapper when generating
+     * &lt;mstyle displaystyle="true"&gt;....&lt;/mstyle&gt; wrapper when generating
      * annotated MathML when {@link #isAddingMathSourceAnnotations()} returns true.
      * <p>
      * This is a workaround for <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=468059">Bug 468059</a>
@@ -435,7 +435,7 @@ public class DOMOutputOptions implements Cloneable {
 
     /**
      * Specifies whether we should wrap "display math" MathML content within an additional
-     * <![CDATA[<mstyle displaystyle="true">....</mstyle>]]> wrapper when generating
+     * &lt;mstyle displaystyle="true"&gt;....&lt;/mstyle&gt; wrapper when generating
      * annotated MathML when {@link #isAddingMathSourceAnnotations()} returns true.
      * <p>
      * This is a workaround for <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=468059">Bug 468059</a>
@@ -460,7 +460,7 @@ public class DOMOutputOptions implements Cloneable {
      * "stylings" like <tt>\\mathcal</tt> and <tt>\\mathbb</tt>. Doing this can help if you
      * don't have control over CSS and if clients may not have appropriate fonts installed
      * as it forces the mapping of certain characters to glyphs that may be available.
-     * p>
+     * <p>
      * (Firefox by default does not change fonts for these cases as it is not clear what
      * font to map to so setting this to true can help with some characters.)
      * <p>
@@ -475,7 +475,7 @@ public class DOMOutputOptions implements Cloneable {
      * "stylings" like <tt>\\mathcal</tt> and <tt>\\mathbb</tt>. Doing this can help if you
      * don't have control over CSS and if clients may not have appropriate fonts installed
      * as it forces the mapping of certain characters to glyphs that may be available.
-     * p>
+     * <p>
      * (Firefox by default does not change fonts for these cases as it is not clear what
      * font to map to so setting this to true can help with some characters.)
      * 

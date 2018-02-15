@@ -5,27 +5,20 @@
  */
 package uk.ac.ed.ph.snuggletex.webapp;
 
-import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
-import uk.ac.ed.ph.snuggletex.SnuggleEngine;
-import uk.ac.ed.ph.snuggletex.SnuggleInput;
-import uk.ac.ed.ph.snuggletex.SnuggleSession;
-import uk.ac.ed.ph.snuggletex.WebPageOutputOptions;
-import uk.ac.ed.ph.snuggletex.WebPageOutputOptionsTemplates;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import uk.ac.ed.ph.snuggletex.*;
 import uk.ac.ed.ph.snuggletex.WebPageOutputOptions.WebPageType;
 import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
 import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
-
-import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Transformer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.io.IOException;
 
 /**
  * Servlet demonstrating the up-conversion process on MathML generated
@@ -51,7 +44,7 @@ public final class ASCIIMathMLUpConversionDemoServlet extends BaseServlet {
         generatePage(request, response, true, null, null, null, null, null, null);
     }
     
-    /** Handles the posted raw input & PMathML extracted from ASCIIMathML. */
+    /** Handles the posted raw input &amp; PMathML extracted from ASCIIMathML. */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

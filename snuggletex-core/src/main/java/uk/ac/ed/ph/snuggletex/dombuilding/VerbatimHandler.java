@@ -16,7 +16,7 @@ import uk.ac.ed.ph.snuggletex.tokens.TokenType;
 import org.w3c.dom.Element;
 
 /**
- * Handles the <tt>verbatim</tt> environment and <tt>\\verb<//tt> command.
+ * Handles the <tt>verbatim</tt> environment and <tt>\\verb</tt> command.
  *
  * @author  David McKain
  * @version $Revision:179 $

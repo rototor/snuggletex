@@ -24,7 +24,7 @@ import java.io.IOException;
  * <ul>
  *   <li>snuggletex-core.jar</li>
  *   <li>snuggletex-upconversion.jar</li>
- *   <li>saxon9.jar, saxon9-dom.jar</li> (These are required as the conversion process uses XSLT 2.0)
+ *   <li>saxon9.jar, saxon9-dom.jar (These are required as the conversion process uses XSLT 2.0)</li>
  * </ul>
  * 
  * @since 1.1.0

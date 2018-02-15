@@ -46,7 +46,7 @@ public final class WebPageOutputOptionsTemplates {
      * <h2>JEuclid Notes</h2>
      * 
      * If you are using the JEuclid extension for converting MathML to images, then you should
-     * use the {@link uk.ac.ed.ph.snuggletex.jeuclid.JEuclidUtilities} helper class to create
+     * use the uk.ac.ed.ph.snuggletex.jeuclid.JEuclidUtilities helper class to create
      * appropriate {@link WebPageOutputOptions}.
      *   
      * @param webPageType type of web page you want

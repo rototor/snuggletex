@@ -16,7 +16,7 @@ import uk.ac.ed.ph.snuggletex.tokens.FlowToken;
 import org.w3c.dom.Element;
 
 /**
- * Handles the internal <![CDATA[<style>]]> environment delimiting a branch of content to be
+ * Handles the internal &lt;style&gt; environment delimiting a branch of content to be
  * rendered in a different style.
  *
  * @author  David McKain

@@ -9,7 +9,7 @@ package uk.ac.ed.ph.snuggletex.internal.util;
  * Enumerates the different options that can be used for outputting property values in
  * {@link ObjectUtilities#beanToString(Object)}.
  *
- * (This is copied from <tt>ph-commons-util</tt>.)
+ * (This is copied from <code>ph-commons-util</code>.)
  * 
  * @author  David McKain
  * @version $Revision$

@@ -11,7 +11,7 @@ package uk.ac.ed.ph.snuggletex.internal.util;
  * <p>
  * They are listed in order of verbosity.
  *
- * (This is copied from <tt>ph-commons-util</tt>.)
+ * (This is copied from <code>ph-commons-util</code>.)
  * 
  * @author  David McKain
  * @version $Revision$

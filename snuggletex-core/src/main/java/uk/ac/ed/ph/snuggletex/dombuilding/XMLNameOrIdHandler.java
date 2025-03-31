@@ -13,7 +13,7 @@ import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import org.w3c.dom.Element;
 
 /**
- * Trivial handler for the <tt>\\xmlName</tt> and <tt>\\xmlId</tt> commands.
+ * Trivial handler for the <code>\\xmlName</code> and <code>\\xmlId</code> commands.
  * All this does is check that the argument is a proper XML Name or ID and then outputs it
  * as normal.
  *

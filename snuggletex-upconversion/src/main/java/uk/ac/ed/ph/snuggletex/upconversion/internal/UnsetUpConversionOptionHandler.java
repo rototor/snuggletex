@@ -15,7 +15,7 @@ import uk.ac.ed.ph.snuggletex.upconversion.UpConversionUtilities;
 import org.w3c.dom.Element;
 
 /**
- * Handler for the <tt>\\unsetUpConversionOption{name}</tt> command.
+ * Handler for the <code>\\unsetUpConversionOption{name}</code> command.
  * 
  * @since 1.2.0
  *

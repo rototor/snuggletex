@@ -17,10 +17,10 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 /**
- * Handles the AMSLaTeX <tt>cases</tt> and the various <tt>matrix</tt> environments.
+ * Handles the AMSLaTeX <code>cases</code> and the various <code>matrix</code> environments.
  * <p>
- * This can only be used in MATH mode and generates a <tt>mtable</tt> as a result, wrapped
- * inside an <tt>mfenced</tt> for the matrix/cases delimiters as required.
+ * This can only be used in MATH mode and generates a <code>mtable</code> as a result, wrapped
+ * inside an <code>mfenced</code> for the matrix/cases delimiters as required.
  * 
  * @author  David McKain
  * @version $Revision$

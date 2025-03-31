@@ -11,7 +11,7 @@ import java.util.Iterator;
  * Some vaguely useful String-related methods that are used from
  * time to time.
  * <p>
- * (This is a cut-down version of the same class in <tt>ph-commons-util</tt>.)
+ * (This is a cut-down version of the same class in <code>ph-commons-util</code>.)
  *
  * @author  David McKain
  * @version $Revision$

@@ -648,7 +648,7 @@ public final class TokenFixer {
     }
     
     /**
-     * Hunts through tokens for occurrences of primes used as <tt>f'</tt>, which are converted
+     * Hunts through tokens for occurrences of primes used as <code>f'</code>, which are converted
      * to a superscript by binding to the preceding token
      * 
      * @param tokens
@@ -867,7 +867,7 @@ public final class TokenFixer {
      * Note that this means that while $[1,2)$ will successfully be matched, the notation
      * $[1,2[$ will *not* be considered matched, even though it is common in subjects like
      * Mathematical Analysis. To get the correct semantics here, you must use
-     * <tt>$\left[1,2\right[$ and let {@link #fencePairedParentheses(Token, List)}
+     * <code>$\left[1,2\right[$ and let {@link #fencePairedParentheses(Token, List)}
      * take care of this for you.
      * 
      * @see #fencePairedParentheses(Token, List)

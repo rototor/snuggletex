@@ -75,7 +75,7 @@ public final class UpConversionUtilities {
     
     /**
      * Populates and returns an {@link UpConversionFailure} for the given {@link Element},
-     * which is assumed to be a <tt>s:fail</tt> element having the appropriate structure.
+     * which is assumed to be a <code>s:fail</code> element having the appropriate structure.
      * 
      * @param sFailElement
      */
@@ -132,7 +132,7 @@ public final class UpConversionUtilities {
     }
     
     /**
-     * Extracts all of the <tt>s:fail</tt> elements within the given {@link UnwrappedParallelMathMLDOM}
+     * Extracts all of the <code>s:fail</code> elements within the given {@link UnwrappedParallelMathMLDOM}
      * 
      * @since 1.3.0
      */
@@ -158,14 +158,14 @@ public final class UpConversionUtilities {
     }
     
     /**
-     * Searches the given DOM {@link Document} for all <tt>s:fail</tt> elements contained therein.
+     * Searches the given DOM {@link Document} for all <code>s:fail</code> elements contained therein.
      */
     public static List<UpConversionFailure> extractUpConversionFailures(Document upConvertedDocument) {
         return extractUpConversionFailures(upConvertedDocument.getDocumentElement());
     }
     
     /**
-     * Searches the given DOM {@link Element} and all its descendents for all <tt>s:fail</tt> elements
+     * Searches the given DOM {@link Element} and all its descendents for all <code>s:fail</code> elements
      * contained therein.
      */
     public static List<UpConversionFailure> extractUpConversionFailures(Element startSearchElement) {
@@ -209,7 +209,7 @@ public final class UpConversionUtilities {
     }
     
     /**
-     * Checks to see whether the given DOM Node is an <tt>s:fail</tt> element.
+     * Checks to see whether the given DOM Node is an <code>s:fail</code> element.
      * 
      * @since 1.3.0
      */

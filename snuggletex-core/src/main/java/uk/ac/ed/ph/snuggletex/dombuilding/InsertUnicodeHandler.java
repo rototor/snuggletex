@@ -14,7 +14,7 @@ import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import org.w3c.dom.Element;
 
 /**
- * Handles the non-standard <tt>\\ux</tt> command to insert a Unicode character into the output.
+ * Handles the non-standard <code>\\ux</code> command to insert a Unicode character into the output.
  * <p>
  * NOTE: This is experimental and currently doesn't generate nice MathML, so is subject to change
  * or disappear. Use at your peril!

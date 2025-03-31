@@ -23,7 +23,7 @@ public final class SpaceHandler implements CommandHandler {
     /** String to use to create space text Node in TEXT mode, null if not supported */
     private final String textString;
     
-    /** Width attribute for <tt>mspace</tt> Element in MATH mode, null if not supported */
+    /** Width attribute for <code>mspace</code> Element in MATH mode, null if not supported */
     private final String mathWidth;
 
     public SpaceHandler(final String textString, final String mathWidth) {

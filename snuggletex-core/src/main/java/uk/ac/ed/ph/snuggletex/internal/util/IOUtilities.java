@@ -20,7 +20,7 @@ import java.nio.channels.FileChannel;
 /**
  * A collection of vaguely useful utilities for doing common I/O and File-related tasks.
  * <p>
- * (This is a cut-down version of the Class of the same name in <tt>ph-commons-util</tt>.)
+ * (This is a cut-down version of the Class of the same name in <code>ph-commons-util</code>.)
  * 
  * @author  David McKain
  * @version $Revision$

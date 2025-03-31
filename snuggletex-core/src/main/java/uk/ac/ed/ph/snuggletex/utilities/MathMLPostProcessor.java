@@ -30,9 +30,9 @@ public abstract class MathMLPostProcessor implements DOMPostProcessor {
     }
     
     /**
-     * This method is called for each MathML <tt>math</tt> element discovered, in document order.
+     * This method is called for each MathML <code>math</code> element discovered, in document order.
      * 
-     * @param inputMathIsland MathML <tt>math</tt> element discovered
+     * @param inputMathIsland MathML <code>math</code> element discovered
      * @param outputDocument resulting {@link Document} being built up
      * @param outputParentNode parent {@link Node} in the resulting {@link Document} that would
      *   own this MathML element if left unchanged.
@@ -45,7 +45,7 @@ public abstract class MathMLPostProcessor implements DOMPostProcessor {
     /**
      * This inner class traverses a {@link Document} in document order, calling back on the
      * {@link MathMLPostProcessor#handleMathMLIsland(Element, Document, Node, int)} for
-     * each MathML <tt>math</tt> element discovered.
+     * each MathML <code>math</code> element discovered.
      */
     private class DocumentWalker {
         

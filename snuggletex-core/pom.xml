@@ -31,10 +31,16 @@ All Rights Reserved
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>thaiopensource</groupId>
+      <groupId>com.thaiopensource</groupId>
       <artifactId>jing</artifactId>
       <version>20091111</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>net.sf.saxon</groupId>
+          <artifactId>saxon</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>net.sf.saxon</groupId>

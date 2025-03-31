@@ -34,7 +34,7 @@ public interface DOMPostProcessor {
      * Implement this to post-process the raw DOM produced by SnuggleTeX.
      * <p>
      * You will be given an entire DOM Document to analyse, containing a root element
-     * called <tt>root</tt> in the {@link SnuggleConstants#SNUGGLETEX_NAMESPACE} namespace.
+     * called <code>root</code> in the {@link SnuggleConstants#SNUGGLETEX_NAMESPACE} namespace.
      * <p>
      * You should create a new Document and return it. The children of the root element will
      * end up being the Nodes added to the final DOM.

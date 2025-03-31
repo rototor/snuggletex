@@ -13,7 +13,7 @@ import java.util.EmptyStackException;
  * Trivial extension of {@link ArrayList} that mixes in the stack-like bits from
  * {@link java.util.Stack} whilst still being non-synchronized.
  * 
- * (This is copied from <tt>ph-commons-util</tt>.)
+ * (This is copied from <code>ph-commons-util</code>.)
  *
  * @author  David McKain
  * @version $Revision$

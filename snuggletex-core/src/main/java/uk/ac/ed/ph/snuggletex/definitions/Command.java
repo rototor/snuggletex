@@ -6,7 +6,7 @@
 package uk.ac.ed.ph.snuggletex.definitions;
 
 /**
- * Base interface for LaTeX commands, i.e. things entered in the form <tt>\\command</tt>.
+ * Base interface for LaTeX commands, i.e. things entered in the form <code>\\command</code>.
  *
  * @author  David McKain
  * @version $Revision:179 $

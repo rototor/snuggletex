@@ -12,7 +12,7 @@ package uk.ac.ed.ph.snuggletex.internal.util;
  * party JARs), but we need this to work at the client-side too and may opt not
  * to such 3rd party products there. Regardless, this is trivial anyway!
  * 
- * (This is copied from <tt>ph-commons-util</tt>.)
+ * (This is copied from <code>ph-commons-util</code>.)
  *
  * @author  David McKain
  * @version $Revision$

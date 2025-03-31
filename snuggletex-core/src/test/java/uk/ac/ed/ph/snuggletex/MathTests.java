@@ -19,9 +19,9 @@ import java.util.Collection;
 import java.util.Locale;
 
 /**
- * Set of simple maths-based tests that read their data in from <tt>{@link #TEST_RESOURCE_NAME}</tt>.
- * The input is a single line of LaTeX which will be put into <tt>$...$</tt> and parsed
- * then compared with the given multi-line XML. The enclosing <tt>math</tt> element is
+ * Set of simple maths-based tests that read their data in from <code>{@link #TEST_RESOURCE_NAME}</code>.
+ * The input is a single line of LaTeX which will be put into <code>$...$</code> and parsed
+ * then compared with the given multi-line XML. The enclosing <code>math</code> element is
  * automatically added to the XML for convenience. See the sample file for examples.
  * <p>
  * As of SnuggleTeX 1.3.0, the resulting XML is validated against the MathML 3.0 RELAX NG schema.

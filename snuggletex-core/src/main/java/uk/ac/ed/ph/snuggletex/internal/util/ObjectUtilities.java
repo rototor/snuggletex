@@ -12,7 +12,7 @@ import java.util.Arrays;
 /**
  * Some random "macros" for doing common Object-based tasks.
  *
- * (This is copied from <tt>ph-commons-util</tt>, though now has a couple of extra things in it.)
+ * (This is copied from <code>ph-commons-util</code>, though now has a couple of extra things in it.)
  * 
  * @author  David McKain
  * @version $Revision$

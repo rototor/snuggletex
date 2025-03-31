@@ -16,7 +16,7 @@ import uk.ac.ed.ph.snuggletex.tokens.FlowToken;
 import org.w3c.dom.Element;
 
 /**
- * Handles things like the <tt>\\underline</tt> command, which are simpler than the classic
+ * Handles things like the <code>\\underline</code> command, which are simpler than the classic
  * LaTeX style controls.
  *
  * @author  David McKain

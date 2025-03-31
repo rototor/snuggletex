@@ -209,7 +209,7 @@ public final class WorkingDocument implements InputContext {
      * sure he/she understands the implications of doing this.
      * <p>
      * The main requirement for having this is when evaluating single-argument user-defined commands
-     * like <tt>\\udc \\alpha</tt> where the argument is implicitly taken to be the next
+     * like <code>\\udc \\alpha</code> where the argument is implicitly taken to be the next
      * valid token.
      * 
      * @param newFreezeIndex

@@ -12,7 +12,7 @@ import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import org.w3c.dom.Element;
 
 /**
- * Handles <tt>\\mbox</tt>, <tt>\\fbox</tt> and friends.
+ * Handles <code>\\mbox</code>, <code>\\fbox</code> and friends.
  *
  * @author  David McKain
  * @version $Revision$

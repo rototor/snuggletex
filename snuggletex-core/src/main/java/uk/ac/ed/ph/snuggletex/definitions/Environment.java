@@ -7,7 +7,7 @@ package uk.ac.ed.ph.snuggletex.definitions;
 
 /**
  * Base interface for LaTeX environment, i.e. constructs defined like
- * <tt>\\begin{environment} ... \\end{environment}</tt>.
+ * <code>\\begin{environment} ... \\end{environment}</code>.
  *
  * @author  David McKain
  * @version $Revision:179 $

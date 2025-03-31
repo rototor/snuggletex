@@ -36,7 +36,7 @@ All Rights Reserved
       LaTeX in the usual way.
     </p>
     <p>
-      Simply enter some LaTeX into the box below and hit <tt>Go!</tt> to see
+      Simply enter some LaTeX into the box below and hit <code>Go!</code> to see
       the results.
     </p>
     <p>

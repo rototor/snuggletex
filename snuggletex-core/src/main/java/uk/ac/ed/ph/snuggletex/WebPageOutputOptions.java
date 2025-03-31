@@ -55,8 +55,8 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
         /** 
          * Mozilla-compatible output. XHTML + MathML; no XML declaration; no DOCTYPE.
          * <p>
-         * This is intended to be served as <tt>application/xhtml+xml</tt> with
-         * encoding declared via HTTP header and <tt>meta</tt> element.
+         * This is intended to be served as <code>application/xhtml+xml</code> with
+         * encoding declared via HTTP header and <code>meta</code> element.
          * <p>
          * This is the best option for serving content exclusively on Mozilla-based browsers.
          * <p>
@@ -73,10 +73,10 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
          * "Cross-browser" XHTML + MathML; has XML declaration and DOCTYPE declaration
          * consisting of the Public identifier defined in {@link W3CConstants#XHTML_11_MATHML_20_PUBLIC_IDENTIFIER}
          * and System identifier defined in {@link W3CConstants#XHTML_11_MATHML_20_SYSTEM_IDENTIFIER}.
-         * The <tt>charset</tt> is declared only in the <tt>meta</tt> element in order
+         * The <code>charset</code> is declared only in the <code>meta</code> element in order
          * to appease MathPlayer.
          * <p>
-         * Intended to be served as <tt>application/xhtml+xml</tt>
+         * Intended to be served as <code>application/xhtml+xml</code>
          * <p>
          * Works on both Mozilla and IE6/7 (<strong>provided</strong> MathPlayer has been installed).
          * This will display wrongly on IE6/7 if MathPlayer is not installed.
@@ -94,7 +94,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
         /**
          * HTML + MathML intended for Internet Explorer 6/7 with the MathPlayer plug-in.
          * <p>
-         * Intended to be served as <tt>text/html</tt>.
+         * Intended to be served as <code>text/html</code>.
          * <p>
          * This only works on IE clients with the MathPlayer plug-in preinstalled,
          * but is a good option if that's your target audience.
@@ -119,8 +119,8 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
          * <p>
          * Page is created with an XML declaration but no DOCTYPE declaration.
          * <p>
-         * The <strong>pref:renderer</strong> attribute on the <tt>html</tt> element will be set
-         * to <tt>mathplayer-dl</tt>.
+         * The <strong>pref:renderer</strong> attribute on the <code>html</code> element will be set
+         * to <code>mathplayer-dl</code>.
          * <p>
          * You <strong>MUST</strong> also call
          * {@link #setClientSideXSLTStylesheetURLs(String...)}
@@ -145,7 +145,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
          * XHTML + MathML containing one or more processing instructions designed to invoke
          * client-side XSLT. No XML declaration and no DOCTYPE.
          * <p>
-         * Intended to be served as <tt>application/xhtml+xml</tt>.
+         * Intended to be served as <code>application/xhtml+xml</code>.
          * <p>
          * Combining this with the Universal Math Stylesheet or something similar can give
          * good cross-browser results.
@@ -160,7 +160,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
         /**
          * HTML deemed suitable for use by any User Agent. 
          * <p>
-         * Intended to be served as <tt>text/html</tt>.
+         * Intended to be served as <code>text/html</code>.
          * <p>
          * You will have to use a suitable {@link DOMPostProcessor} to convert any MathML islands
          * into other forms. (E.g. replace by an applet, replace by images, ...)
@@ -212,14 +212,14 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
     
     /**
      * Indicates whether page title should be inserted at the start of the web page
-     * body as an XHTML <tt>h1</tt> element. This has no effect if title is null.
+     * body as an XHTML <code>h1</code> element. This has no effect if title is null.
      * <p>
      * Default is false.
      */
     private boolean addingTitleHeading;
     
     /**
-     * Indicates whether to include the necessary processing instruction and <tt>object</tt>
+     * Indicates whether to include the necessary processing instruction and <code>object</code>
      * element required to explicitly trigger the MathPlayer plugin.
      * <p>
      * The default is false.
@@ -229,7 +229,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
     private boolean addingMathPlayerImport;
     
     /**
-     * Value of the optional <tt>pref:renderer</tt> attribute 
+     * Value of the optional <code>pref:renderer</code> attribute 
      * (in the {@link W3CConstants#MATHML_PREF_NAMESPACE})
      * that can be added to the HTML root element to control certain aspects of the
      * client-side 
@@ -242,8 +242,8 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
     private String mathPrefRenderer;
     
     /**
-     * Set to include SnuggleTeX-related CSS as a <tt>style</tt> element within the resulting
-     * page. If you choose not to do this, you probably want to put <tt>snuggletex.css</tt>
+     * Set to include SnuggleTeX-related CSS as a <code>style</code> element within the resulting
+     * page. If you choose not to do this, you probably want to put <code>snuggletex.css</code>
      * somewhere accessible and pass its location in {@link #clientSideXSLTStylesheetURLs}.
      * <p>
      * Default is true, as that's the simplest way of getting up to speed quickly.
@@ -256,7 +256,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
      * <p>
      * The URLs are used as-is; the caller should have ensured they make sense in advance!
      * <p>
-     * The caller can use this to specify the location of <tt>snuggletex.css</tt>, as well
+     * The caller can use this to specify the location of <code>snuggletex.css</code>, as well
      * as any other required stylesheets.
      */
     private String[] cssStylesheetURLs;
@@ -433,7 +433,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
      * <p>
      * Default is null.
      * <p>
-     * This is used to generate a <tt>title</tt> and possible a <tt>h1</tt>
+     * This is used to generate a <code>title</code> and possible a <code>h1</code>
      * header if {@link #isAddingTitleHeading()} returns true.
      */
     public String getTitle() {
@@ -443,7 +443,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
     /**
      * Sets the title for the resulting page.
      * <p>
-     * This is used to generate a <tt>title</tt> and possible a <tt>h1</tt>
+     * This is used to generate a <code>title</code> and possible a <code>h1</code>
      * header if {@link #isAddingTitleHeading()} returns true.
      * 
      * @param title title for the required page, which may be null to indicate
@@ -456,7 +456,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
     
     /**
      * Returns whether page title should be inserted at the start of the web page
-     * body as an XHTML <tt>h1</tt> element.
+     * body as an XHTML <code>h1</code> element.
      * <p>
      * Default is false.
      * <p>
@@ -468,7 +468,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
     
     /**
      * Sets whether page title should be inserted at the start of the web page
-     * body as an XHTML <tt>h1</tt> element.
+     * body as an XHTML <code>h1</code> element.
      * <p>
      * This has no effect if {@link #getTitle()} returns null.
      * 
@@ -480,7 +480,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
     
     
     /**
-     * Returns whether to include the necessary processing instruction and <tt>object</tt>
+     * Returns whether to include the necessary processing instruction and <code>object</code>
      * element required to explicitly trigger the MathPlayer plugin.
      * 
      * @since 1.3.0
@@ -493,7 +493,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
 
 
     /**
-     * Sets whether to include the necessary processing instruction and <tt>object</tt>
+     * Sets whether to include the necessary processing instruction and <code>object</code>
      * element required to explicitly trigger the MathPlayer plugin.
      *
      * @since 1.3.0
@@ -506,7 +506,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
     
     
     /**
-     * Gets the value of the optional <tt>pref:renderer</tt> attribute 
+     * Gets the value of the optional <code>pref:renderer</code> attribute 
      * (in the {@link W3CConstants#MATHML_PREF_NAMESPACE})
      * that can be added to the HTML root element to control certain aspects of the
      * client-side 
@@ -521,7 +521,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
     }
     
     /**
-     * Sets the value of the optional <tt>pref:renderer</tt> attribute 
+     * Sets the value of the optional <code>pref:renderer</code> attribute 
      * (in the {@link W3CConstants#MATHML_PREF_NAMESPACE})
      * that can be added to the HTML root element to control certain aspects of the
      * client-side 
@@ -537,8 +537,8 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
 
 
     /**
-     * Returns whether to include SnuggleTeX-related CSS as a <tt>style</tt> element within the
-     * resulting page. If you choose not to do this, you probably want to put <tt>snuggletex.css</tt>
+     * Returns whether to include SnuggleTeX-related CSS as a <code>style</code> element within the
+     * resulting page. If you choose not to do this, you probably want to put <code>snuggletex.css</code>
      * somewhere accessible and pass its location in via {@link #setClientSideXSLTStylesheetURLs(String...)}.
      * <p>
      * As of SnuggleTeX 1.2.3, this option is ignored if {@link #isInliningCSS()} returns true as its
@@ -551,14 +551,14 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
     }
     
     /**
-     * Sets whether to include SnuggleTeX-related CSS as a <tt>style</tt> element within the
-     * resulting page. If you choose not to do this, you probably want to put <tt>snuggletex.css</tt>
+     * Sets whether to include SnuggleTeX-related CSS as a <code>style</code> element within the
+     * resulting page. If you choose not to do this, you probably want to put <code>snuggletex.css</code>
      * somewhere accessible and pass its location in via {@link #setClientSideXSLTStylesheetURLs(String...)}.
      * <p>
      * As of SnuggleTeX 1.2.3, this option is ignored if {@link #isInliningCSS()} returns true as its
      * effect is clearly redundant in this case.
      * 
-     * @param includingStyleElement set to true to include a <tt>style</tt> element, false otherwise.
+     * @param includingStyleElement set to true to include a <code>style</code> element, false otherwise.
      */
     public void setIncludingStyleElement(boolean includingStyleElement) {
         this.includingStyleElement = includingStyleElement;
@@ -573,7 +573,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
      * <p>
      * The URLs are used as-is; the caller should have ensured they make sense in advance!
      * <p>
-     * The caller can use this to specify the location of <tt>snuggletex.css</tt>, as well
+     * The caller can use this to specify the location of <code>snuggletex.css</code>, as well
      * as any other required stylesheets.
      */
     public String[] getCSSStylesheetURLs() {
@@ -586,7 +586,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
      * <p>
      * The URLs are used as-is; the caller should have ensured they make sense in advance!
      * <p>
-     * The caller can use this to specify the location of <tt>snuggletex.css</tt>, as well
+     * The caller can use this to specify the location of <code>snuggletex.css</code>, as well
      * as any other required stylesheets.
      * 
      * @param cssStylesheetURLs array of CSS stylesheet URLs, which may be empty
@@ -601,7 +601,7 @@ public class WebPageOutputOptions extends XMLStringOutputOptions {
      * <p>
      * The URLs are used as-is; the caller should have ensured they make sense in advance!
      * <p>
-     * The caller can use this to specify the location of <tt>snuggletex.css</tt>, as well
+     * The caller can use this to specify the location of <code>snuggletex.css</code>, as well
      * as any other required stylesheets.
      * 
      * @param cssStylesheetURLs array of CSS stylesheet URLs to add, which may be empty

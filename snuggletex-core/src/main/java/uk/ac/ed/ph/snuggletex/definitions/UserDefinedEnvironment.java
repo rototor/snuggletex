@@ -9,7 +9,7 @@ import uk.ac.ed.ph.snuggletex.internal.FrozenSlice;
 
 /**
  * Represents a user-defined environment, created by clients using the
- * <tt>\\newenvironment</tt> command.
+ * <code>\\newenvironment</code> command.
  * 
  * @see UserDefinedCommand
  *

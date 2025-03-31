@@ -13,8 +13,8 @@ import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import org.w3c.dom.Element;
 
 /**
- * Handles the LaTeX <tt>\\sqrt</tt> command, which generates either a <tt>msqrt</tt>
- * or <tt>mroot</tt> depending on whether an optional argument has been passed or not.
+ * Handles the LaTeX <code>\\sqrt</code> command, which generates either a <code>msqrt</code>
+ * or <code>mroot</code> depending on whether an optional argument has been passed or not.
  *
  * @author  David McKain
  * @version $Revision$

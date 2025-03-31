@@ -9,7 +9,7 @@ import uk.ac.ed.ph.snuggletex.internal.util.ObjectUtilities;
 
 /**
  * Represents a generic Mathematical operator, associating it with the content of 
- * the resulting MathML <tt>mo</tt> element.
+ * the resulting MathML <code>mo</code> element.
  * 
  * @see MathBracketInterpretation
  * @see MathNegatableInterpretation

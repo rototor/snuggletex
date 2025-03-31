@@ -32,7 +32,7 @@ import org.w3c.dom.NodeList;
  * Some trivial little helpers for creating suitably-configured {@link TransformerFactory}
  * instances.
  * <p>
- * (This is based on similar utility methods in <tt>ph-commons</tt>.)
+ * (This is based on similar utility methods in <code>ph-commons</code>.)
  *
  * @author  David McKain
  * @version $Revision$
@@ -233,7 +233,7 @@ public final class XMLUtilities {
     }
     
     /**
-     * Serializes the <tt>children</tt> of given {@link Node} to a well-formed external parsed entity.
+     * Serializes the <code>children</code> of given {@link Node} to a well-formed external parsed entity.
      * <p>
      * (This uses a little XSLT stylesheet to help, hence the requirement for a {@link StylesheetManager}).
      * 

@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Helper class that does the job of taking a {@link SnuggleInput}, checking its contents for
- * allowed Unicode characters, working out how to map absolute offsets into <tt>(line,column)</tt>
+ * allowed Unicode characters, working out how to map absolute offsets into <code>(line,column)</code>
  * pairs and producing a {@link WorkingDocument} for later use.
  * 
  * @author  David McKain

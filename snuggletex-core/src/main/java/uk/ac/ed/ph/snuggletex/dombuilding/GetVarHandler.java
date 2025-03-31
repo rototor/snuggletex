@@ -12,7 +12,7 @@ import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import org.w3c.dom.Element;
 
 /**
- * Handles the <tt>\\getvar</tt> macro.
+ * Handles the <code>\\getvar</code> macro.
  *
  * @author  David McKain
  * @version $Revision$

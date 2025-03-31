@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
  * Trivial "meta"-builder that delegates to a {@link CommandHandler} depending on whether we
  * are in MATH or TEXT mode.
  * <p>
- * This is useful for things like <tt>\\underline</tt>
+ * This is useful for things like <code>\\underline</code>
  * 
  * @author  David McKain
  * @version $Revision$

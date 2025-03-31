@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Handler for the <tt>\\assumeSymbol{target}{property}</tt> command.
+ * Handler for the <code>\\assumeSymbol{target}{property}</code> command.
  * 
  * @since 1.2.0
  *

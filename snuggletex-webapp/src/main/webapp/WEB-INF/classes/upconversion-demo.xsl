@@ -48,10 +48,10 @@ All Rights Reserved
     </p>
     <p>
       Simply enter a LaTeX math mode expression
-      into the box below and hit <tt>Go!</tt> to see the resulting outputs.
+      into the box below and hit <code>Go!</code> to see the resulting outputs.
     </p>
     <p>
-      You can also click the <tt>Show Options</tt> button if you want to see
+      You can also click the <code>Show Options</code> button if you want to see
       or mess around with the various configurable options and assumptions
       that SnuggleTeX will use when processing your input.
     </p>

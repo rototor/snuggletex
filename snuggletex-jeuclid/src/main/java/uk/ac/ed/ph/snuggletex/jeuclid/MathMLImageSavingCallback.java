@@ -63,7 +63,7 @@ public interface MathMLImageSavingCallback {
     OutputStream getImageOutputStream(int mathmlCounter);
     
     /**
-     * Implement to return the URL String that will be put into the <tt>img</tt> <tt>src</tt>
+     * Implement to return the URL String that will be put into the <code>img</code> <code>src</code>
      * attribute to refer to the image.
      * 
      * @param mathmlCounter identifies the position of the image within the document being processed,

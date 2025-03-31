@@ -13,7 +13,7 @@ import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import org.w3c.dom.Element;
 
 /**
- * Handles lonely instances of <tt>\\xmlAttr</tt>, which results in {@link CoreErrorCode#TDEX02}
+ * Handles lonely instances of <code>\\xmlAttr</code>, which results in {@link CoreErrorCode#TDEX02}
  * being emitted.
  *
  * @author  David McKain

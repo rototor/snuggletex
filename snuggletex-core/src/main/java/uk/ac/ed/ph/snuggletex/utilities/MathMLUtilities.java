@@ -304,7 +304,7 @@ public final class MathMLUtilities {
 	 * having the given localName.
 	 *
 	 * @param node      Node to test
-	 * @param localName MathML local name to test for, such as <tt>mi</tt> or <tt>math</tt>,
+	 * @param localName MathML local name to test for, such as <code>mi</code> or <code>math</code>,
 	 *                  or null to indicate "any name in the MathML namespace".
 	 * @throws IllegalArgumentException if node is null.
 	 */
@@ -322,7 +322,7 @@ public final class MathMLUtilities {
 	}
 
 	/**
-	 * Checks that the given DOM {@link Document} contains a single MathML <tt>math</tt>
+	 * Checks that the given DOM {@link Document} contains a single MathML <code>math</code>
 	 * Element. If so, the Element is returned. Otherwise, an {@link IllegalArgumentException} is
 	 * thrown.
 	 */
@@ -400,7 +400,7 @@ public final class MathMLUtilities {
 
 	/**
 	 * Extracts the first textual annotation found having the given encoding attribute from
-	 * the given MathML <tt>math</tt> element, if such an annotation is found.
+	 * the given MathML <code>math</code> element, if such an annotation is found.
 	 * <p>
 	 * This assumes the following structure:
 	 * <pre>
@@ -422,7 +422,7 @@ public final class MathMLUtilities {
 
 	/**
 	 * Extracts the first XML-based annotation having the given encoding attribute from the given MathML
-	 * <tt>math</tt> element, if such an annotation is found.
+	 * <code>math</code> element, if such an annotation is found.
 	 * <p>
 	 * This assumes the following structure:
 	 * <pre>
@@ -436,7 +436,7 @@ public final class MathMLUtilities {
 	 *
 	 * @param mathElement
 	 * @return DOM NodeList corresponding to the child Nodes of the first matching
-	 * <tt>annotation-xml</tt> element, or null if no such annotation found.
+	 * <code>annotation-xml</code> element, or null if no such annotation found.
 	 */
 	public static NodeList extractAnnotationXML(final Element mathElement, final String encodingAttribute) {
 		Element annotationElement = extractAnnotationElement(mathElement, ANNOTATION_XML_LOCAL_NAME, encodingAttribute);
@@ -490,11 +490,11 @@ public final class MathMLUtilities {
 	 *   &lt;/math&gt;
 	 *   </pre>
 	 *
-	 * @return new MathML Document with the given structure or null if the given <tt>math</tt>
+	 * @return new MathML Document with the given structure or null if the given <code>math</code>
 	 *   element is not annotated.
 	 *
 	 * @throws IllegalArgumentException if passed null or the given element is not a
-	 *   <tt>math</tt> element.
+	 *   <code>math</code> element.
 	 */
 	public static Document isolateFirstSemanticsBranch(final Element mathElement) {
 		Element firstSemantics = extractFirstSemanticsBranch(mathElement);
@@ -535,10 +535,10 @@ public final class MathMLUtilities {
 	 *   &lt;/math&gt;
 	 *   </pre>
 	 *
-	 * @return new MathML Document with the given structure or null if the given <tt>math</tt>
+	 * @return new MathML Document with the given structure or null if the given <code>math</code>
 	 * element is not annotated or does not have the required annotation.
 	 * @throws IllegalArgumentException if passed null or the given element is not a
-	 *                                  <tt>math</tt> element.
+	 *                                  <code>math</code> element.
 	 */
 	public static Document isolateAnnotationXML(final Element mathElement, final String encodingAttribute) {
 		NodeList annotationContents = extractAnnotationXML(mathElement, encodingAttribute);

@@ -12,7 +12,7 @@ import javax.xml.transform.TransformerFactory;
 
 /**
  * Implementation of {@link TransformerFactoryChooser} that is hard-wired to use whichever version
- * of Saxon can be found in the ClassPath under the <tt>net.sf.saxon</tt> package hierarchy, thus
+ * of Saxon can be found in the ClassPath under the <code>net.sf.saxon</code> package hierarchy, thus
  * providing support for XSLT 2.0.
  * 
  * @since 1.2.0

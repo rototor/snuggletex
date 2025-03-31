@@ -9,7 +9,7 @@ import uk.ac.ed.ph.snuggletex.internal.FrozenSlice;
 
 /**
  * Represents a user-defined {@link Command}, i.e. one defined in the client data using
- * <tt>\\newcommand</tt>.
+ * <code>\\newcommand</code>.
  * 
  * @see UserDefinedEnvironment
  * 

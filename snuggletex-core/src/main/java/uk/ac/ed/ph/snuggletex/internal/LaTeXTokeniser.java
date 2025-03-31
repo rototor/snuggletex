@@ -183,7 +183,7 @@ public final class LaTeXTokeniser {
     
     /**
      * This implementation of {@link Terminator} represents terminators specified as regular
-     * expressions. This is generally only useful for hunting out the end of <tt>verbatim</tt>
+     * expressions. This is generally only useful for hunting out the end of <code>verbatim</code>
      * environments. 
      */
     public static final class PatternTerminator implements Terminator {
@@ -731,7 +731,7 @@ public final class LaTeXTokeniser {
     }
     
     /**
-     * Reads in a Math environment opened with <tt>$</tt> or <tt>$$</tt>.
+     * Reads in a Math environment opened with <code>$</code> or <code>$$</code>.
      */
     private FlowToken readDollarMath() throws SnuggleParseException {
         /* Record current LaTeX mode and position */
@@ -771,7 +771,7 @@ public final class LaTeXTokeniser {
     }
     
     /**
-     * Reads the content of a region explicitly delimited inside <tt>{....}</tt>. This is the
+     * Reads the content of a region explicitly delimited inside <code>{....}</code>. This is the
      * simplest type of "mode change" in the tokenisation process so is a useful template in
      * understanding more complicated changes.
      */
@@ -789,7 +789,7 @@ public final class LaTeXTokeniser {
     }
     
     /** 
-     * Reads in a token starting with a <tt>\\</tt>
+     * Reads in a token starting with a <code>\\</code>
      */
     private FlowToken readSlashToken() throws SnuggleParseException {
         FlowToken result;
@@ -848,7 +848,7 @@ public final class LaTeXTokeniser {
     // Commands and Environments (this is by far the most complicated part of tokenisation!)
     
     /**
-     * Reads in a command, <tt>\\verb(*)</tt> or environment control token.
+     * Reads in a command, <code>\\verb(*)</code> or environment control token.
      */
     private FlowToken readCommandOrEnvironmentOrVerb() throws SnuggleParseException {
         /* We are handling either:
@@ -964,13 +964,13 @@ public final class LaTeXTokeniser {
     }
     
     /**
-     * This is called once it has become clear that the next token is <tt>\verb</tt>
-     * or <tt>\verb*</tt>.
+     * This is called once it has become clear that the next token is <code>\verb</code>
+     * or <code>\verb*</code>.
      * <p>
      * As with LaTeX, this next character is used to delimit the verbatim region, which must
      * end on the same line. No whitespace can occur after \verb.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\verb</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\verb</code>.
      * 
      * @throws SnuggleParseException 
      */
@@ -1046,7 +1046,7 @@ public final class LaTeXTokeniser {
      * Finishes reading a Command, which will either be a {@link BuiltinCommand} or a
      * {@link UserDefinedCommand}.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\commandName</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\commandName</code>.
      * 
      * @param commandName name of the command being read in
      */
@@ -1076,7 +1076,7 @@ public final class LaTeXTokeniser {
      * Finishes reading in a {@link BuiltinCommand}, catering for the different types of
      * those commands.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\commandName</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\commandName</code>.
      *  
      * @throws SnuggleParseException
      */
@@ -1123,7 +1123,7 @@ public final class LaTeXTokeniser {
      * non-alphanumeric) commands which leave trailing whitespace intact so we need to be
      * a little bit careful here.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\commandName</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\commandName</code>.
      */
     private FlowToken finishSimpleCommand(final BuiltinCommand command) {
         /* Work out the next significant index after the command:
@@ -1144,9 +1144,9 @@ public final class LaTeXTokeniser {
     }
 
     /** 
-     * Deals with pulling in the next token after something like <tt>\not</tt>
+     * Deals with pulling in the next token after something like <code>\not</code>
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\commandName</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\commandName</code>.
      *  
      * @throws SnuggleParseException
      */
@@ -1181,7 +1181,7 @@ public final class LaTeXTokeniser {
      * Finishes the process or reading in a "complex" command, by searching for any required
      * and optional arguments.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\commandName</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\commandName</code>.
      */
     private FlowToken finishComplexCommand(final BuiltinCommand command) throws SnuggleParseException {
         int startCommandIndex = startTokenIndex; /* Record this as we'll be parsing following tokens */
@@ -1229,7 +1229,7 @@ public final class LaTeXTokeniser {
      * <p>
      * Trailing whitespace is always preserved after the command/environment.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\commandName</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\commandName</code>.
      * POST-CONDITION: position will point to immediately after the last argument.
      * 
      * @param commandOrEnvironment
@@ -1357,7 +1357,7 @@ public final class LaTeXTokeniser {
     /**
      * Finishes the process of reading in and evaluating a {@link UserDefinedCommand}.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\commandName</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\commandName</code>.
      */
     private FlowToken finishUserDefinedCommand(final UserDefinedCommand command)
             throws SnuggleParseException {
@@ -1391,7 +1391,7 @@ public final class LaTeXTokeniser {
     /**
      * This helper substitutes the arguments provided for a user-defined command/environment
      * into the content of the given {@link FrozenSlice}, handling correctly escaped arguments
-     * such as <tt>\#1</tt>.
+     * such as <code>\#1</code>.
      * <p>
      * As with built-in commands, the arguments are substituted into occurrences of #n, which
      * denotes the n'th argument (with the optional argument counting first, if applicable).
@@ -1462,7 +1462,7 @@ public final class LaTeXTokeniser {
      * <p>
      * Trailing whitespace is always preserved after the command/environment.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\commandName</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\commandName</code>.
      * POST-CONDITION: position will point to immediately after the last argument.
      * 
      * @param commandOrEnvironment
@@ -1557,9 +1557,9 @@ public final class LaTeXTokeniser {
     // Environments
     
     /**
-     * Handles <tt>\\begin...</tt>
+     * Handles <code>\\begin...</code>
      * <p>
-     * POST-CONDITION: position will point to the character immediately after <tt>\\begin</tt>.
+     * POST-CONDITION: position will point to the character immediately after <code>\\begin</code>.
      */
     private FlowToken finishBeginEnvironment() throws SnuggleParseException {
         /* Read {envName} */
@@ -1590,9 +1590,9 @@ public final class LaTeXTokeniser {
     }
     
     /**
-     * Handles <tt>\\end...</tt>
+     * Handles <code>\\end...</code>
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\\end</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\\end</code>.
      */
     private FlowToken finishEndEnvironment() throws SnuggleParseException {
         /* Read {envName} */
@@ -1646,8 +1646,8 @@ public final class LaTeXTokeniser {
      * <p>
      * Returns null if this information was not found.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\\begin</tt> or <tt>\\end</tt>
-     * POST-CONDITION: position will point to just after the <tt>{envName}</tt>, if found
+     * PRE-CONDITION: position will point to the character immediately after <code>\\begin</code> or <code>\\end</code>
+     * POST-CONDITION: position will point to just after the <code>{envName}</code>, if found
      */
     private String advanceOverBracesAndEnvironmentName() {
         /* Skip leading comments/whitespace */
@@ -1673,7 +1673,7 @@ public final class LaTeXTokeniser {
     /**
      * Finishes off reading a built-in environment.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\\begin{envName}</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\\begin{envName}</code>.
      * 
      * @param environment environment being read in
      */
@@ -1772,9 +1772,9 @@ public final class LaTeXTokeniser {
 
     /**
      * Finishes the handling of the start of a user-defined environment. This replaces the
-     * <tt>\\begin{envName}</tt> with the appropriate substitution and reparses.
+     * <code>\\begin{envName}</code> with the appropriate substitution and reparses.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\\begin{envName}</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\\begin{envName}</code>.
      */
     private FlowToken finishBeginUserDefinedEnvironment(final UserDefinedEnvironment environment) throws SnuggleParseException {
         /* Read in arguments in unparsed form. */
@@ -1806,9 +1806,9 @@ public final class LaTeXTokeniser {
     
     /**
      * Finishes the handling of the end of a user-defined environment. This replaces the
-     * <tt>\\end{envName}</tt> with the appropriate substitution and reparses.
+     * <code>\\end{envName}</code> with the appropriate substitution and reparses.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\\begin{envName}</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\\begin{envName}</code>.
      */
     private FlowToken finishEndUserDefinedEnvironment(final UserDefinedEnvironment environment)
             throws SnuggleParseException {
@@ -1824,7 +1824,7 @@ public final class LaTeXTokeniser {
      * substituted into the input when processing the start of a user-defined environment.
      * This prompts some house-keeping, which is performed here.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\\end</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\\end</code>.
      */
     private FlowToken handleUserDefinedEnvironmentControl() throws SnuggleParseException {
         /* Read {envName} */
@@ -1852,10 +1852,10 @@ public final class LaTeXTokeniser {
     // Command and Environment Definition
 
     /**
-     * Finishes reading the definition of a user-defined command specified using <tt>\\newcommand</tt>
+     * Finishes reading the definition of a user-defined command specified using <code>\\newcommand</code>
      * or similar.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\\newcommand</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\\newcommand</code>.
      */
     private FlowToken finishCommandDefinition(final BuiltinCommand definitionCommand)
             throws SnuggleParseException {
@@ -1962,9 +1962,9 @@ public final class LaTeXTokeniser {
 
     /**
      * Finishes reading the definition of a user-defined environment specified using
-     * <tt>\\newenvironment</tt> or similar.
+     * <code>\\newenvironment</code> or similar.
      * <p>
-     * PRE-CONDITION: position will point to the character immediately after <tt>\\newenvironment</tt>.
+     * PRE-CONDITION: position will point to the character immediately after <code>\\newenvironment</code>.
      */
     private FlowToken finishEnvironmentDefinition(final BuiltinCommand definitionCommand)
             throws SnuggleParseException {
@@ -2110,12 +2110,12 @@ public final class LaTeXTokeniser {
     /**
      * Reads in the argument specification for a new command or environment. This will be of
      * the form:
-     * <tt>[n]</tt>
+     * <code>[n]</code>
      * OR
-     * <tt>[n][opt]</tt>.
+     * <code>[n][opt]</code>.
      * <p>
-     * PRE-CONDITION: position should be set to just after <tt>\\newcommand{name}</tt>
-     *   or <tt>\\newenvironment{name}</tt>
+     * PRE-CONDITION: position should be set to just after <code>\\newcommand{name}</code>
+     *   or <code>\\newenvironment{name}</code>
      * POST-CONDITION: position will now be directly after the arguments
      * 
      * @param commandOrEnvironmentName

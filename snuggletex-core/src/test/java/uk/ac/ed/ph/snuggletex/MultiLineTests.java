@@ -20,7 +20,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 
 /**
- * Set of multiple line tests, defined in <tt>{@link #TEST_RESOURCE_NAME}</tt>. See this file
+ * Set of multiple line tests, defined in <code>{@link #TEST_RESOURCE_NAME}</code>. See this file
  * for examples of how it all works.
  * 
  * @author  David McKain

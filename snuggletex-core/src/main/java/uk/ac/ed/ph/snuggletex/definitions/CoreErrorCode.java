@@ -16,7 +16,7 @@ import uk.ac.ed.ph.snuggletex.ErrorGroup;
  * 
  * <ul>
  *   <li>
- *     See the <tt>core-error-messages_en.properties</tt> file for descriptions of each code.
+ *     See the <code>core-error-messages_en.properties</code> file for descriptions of each code.
  *   </li>
  *   <li>
  *     To make things easier to read, add a comment whenever raising an error that briefly

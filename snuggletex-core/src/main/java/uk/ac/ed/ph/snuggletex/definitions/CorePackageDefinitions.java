@@ -19,48 +19,7 @@ import static uk.ac.ed.ph.snuggletex.definitions.TextFlowContext.START_NEW_XHTML
 
 import uk.ac.ed.ph.snuggletex.SnugglePackage;
 import uk.ac.ed.ph.snuggletex.SnuggleRuntimeException;
-import uk.ac.ed.ph.snuggletex.dombuilding.AccentHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.AnchorHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.ArrayHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.BoxHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.CharacterCommandHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.DoNothingHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.EnsureMathHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.EqnArrayHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.GetVarHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.HSpaceHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.HrefHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.InsertUnicodeHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.InterpretableSimpleMathHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.LineBreakHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.ListEnvironmentHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.LiteralHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.MathComplexCommandHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.MathEnvironmentHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.MathFenceHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.MathLimitsHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.MathNotHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.MathRootHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.MathUnderOrOverHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.MathVariantMapHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.MatrixHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.ModeDelegatingHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.MrowHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.ParagraphHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.SetVarHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.SimpleXHTMLContainerBuildingHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.SpaceHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.StyleHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.TabularHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.TextClassHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.TextSafeInterpretableMathIdentifierHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.UnitsHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.VerbatimHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.XMLAttrHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.XMLBlockElementHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.XMLInlineElementHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.XMLNameOrIdHandler;
-import uk.ac.ed.ph.snuggletex.dombuilding.XMLUnparseHandler;
+import uk.ac.ed.ph.snuggletex.dombuilding.*;
 import uk.ac.ed.ph.snuggletex.semantics.Interpretation;
 import uk.ac.ed.ph.snuggletex.semantics.InterpretationType;
 import uk.ac.ed.ph.snuggletex.semantics.MathBracketInterpretation;
@@ -295,7 +254,8 @@ public final class CorePackageDefinitions {
         corePackage.addComplexCommandOneArg("textbf", false, ALL_MODES, LR, StyleDeclarationInterpretation.BF, null, ALLOW_INLINE);
         corePackage.addComplexCommandOneArg("texttt", false, ALL_MODES, LR, StyleDeclarationInterpretation.TT, null, ALLOW_INLINE);
         corePackage.addComplexCommandOneArg("emph",   false, ALL_MODES, LR, StyleDeclarationInterpretation.EM, null, ALLOW_INLINE);
-        
+        corePackage.addComplexCommandSameArgMode("text", false, 1, ALL_MODES, new TextHandler(), null);
+
         /* Text size control macros. As above, these are converted to environments of the same name
          * during token fixing, which are easier to deal with.
          */
@@ -388,6 +348,8 @@ public final class CorePackageDefinitions {
         corePackage.addSimpleCommand("qquad", ALL_MODES, new SpaceHandler("\u00a0\u00a0", "2em"), null);
         corePackage.addComplexCommandSameArgMode("hspace", false, 1, ALL_MODES, new HSpaceHandler(), null);
         corePackage.addComplexCommandSameArgMode("hspace*", false, 1, ALL_MODES, new HSpaceHandler(), null);
+        corePackage.addComplexCommandSameArgMode("tag", true, 1, ALL_MODES, new TagHandler(), null);
+
 
         /* Math accents */
         corePackage.addComplexCommandSameArgMode("hat", false, 1, MATH_MODE_ONLY, new AccentHandler(AccentMaps.CIRCUMFLEX, '\u0302', "mover"), null);

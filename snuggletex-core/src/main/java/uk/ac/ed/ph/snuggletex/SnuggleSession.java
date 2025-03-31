@@ -553,15 +553,15 @@ public final class SnuggleSession implements SessionContext {
      * The provided {@link WebPageOutputOptions} Object is
      * used to determine which type of web page to generate and how it should be configured.
      * <p>
-     * If the <tt>contentTypeSettable</tt> Object has a
-     * property called <tt>contentType</tt>, then it is set in advance to the appropriate HTTP
-     * <tt>Content-Type</tt> header for the resulting page before the web page data is written.
+     * If the <code>contentTypeSettable</code> Object has a
+     * property called <code>contentType</code>, then it is set in advance to the appropriate HTTP
+     * <code>Content-Type</code> header for the resulting page before the web page data is written.
      * 
      * @return true if completed successfully, false if the process was terminated by an error in the
      *   input LaTeX and if the session was configured to fail on the first error. 
      * 
      * @throws IOException if an I/O problem arose whilst writing out the web page data.
-     * @throws SnuggleRuntimeException if calling <tt>setContentType()</tt> on the contentTypeSettable
+     * @throws SnuggleRuntimeException if calling <code>setContentType()</code> on the contentTypeSettable
      *   Object failed, with the underlying Exception wrapped up.
      */
     public boolean writeWebPage(final WebPageOutputOptions options, final Object contentTypeSettable,
@@ -577,9 +577,9 @@ public final class SnuggleSession implements SessionContext {
      * The provided {@link WebPageOutputOptions} Object is
      * used to determine which type of web page to generate and how it should be configured.
      * <p>
-     * If the <tt>contentTypeSettable</tt> Object has a
-     * property called <tt>contentType</tt>, then it is set in advance to the appropriate HTTP
-     * <tt>Content-Type</tt> header for the resulting page before the web page data is written.
+     * If the <code>contentTypeSettable</code> Object has a
+     * property called <code>contentType</code>, then it is set in advance to the appropriate HTTP
+     * <code>Content-Type</code> header for the resulting page before the web page data is written.
      * 
      * @since 1.2.2
      * 
@@ -587,7 +587,7 @@ public final class SnuggleSession implements SessionContext {
      *   input LaTeX and if the session was configured to fail on the first error. 
      * 
      * @throws IOException if an I/O problem arose whilst writing out the web page data.
-     * @throws SnuggleRuntimeException if calling <tt>setContentType()</tt> on the contentTypeSettable
+     * @throws SnuggleRuntimeException if calling <code>setContentType()</code> on the contentTypeSettable
      *   Object failed, with the underlying Exception wrapped up.
      */
     public boolean writeWebPage(final WebPageOutputOptions options, final Object contentTypeSettable,
@@ -606,10 +606,10 @@ public final class SnuggleSession implements SessionContext {
     }
     
     /**
-     * Calls the <tt>setContentType</tt> of the given Object to something appropriate for the
+     * Calls the <code>setContentType</code> of the given Object to something appropriate for the
      * given {@link WebPageOutputOptions}. This may be useful in some cases.
      * <p>
-     * The main example for this would be passing a <tt>javax.servlet.http.HttpResponse</tt>
+     * The main example for this would be passing a <code>javax.servlet.http.HttpResponse</code>
      * Object, which I want to avoid a compile-time dependency on.
      * 
      * @see #writeWebPage(WebPageOutputOptions, Object, OutputStream)
@@ -636,7 +636,7 @@ public final class SnuggleSession implements SessionContext {
     
     /**
      * Returns the {@link BuiltinCommand} corresponding to LaTeX command called
-     * <tt>\texName</tt>, or null if this command is not defined.
+     * <code>\texName</code>, or null if this command is not defined.
      */
     public BuiltinCommand getBuiltinCommandByTeXName(String texName) {
         ConstraintUtilities.ensureNotNull(texName, "texName");
@@ -652,7 +652,7 @@ public final class SnuggleSession implements SessionContext {
     
     /**
      * Returns the {@link BuiltinEnvironment} corresponding to LaTeX environment
-     * called <tt>texName</tt>, or null if this environment is not defined.
+     * called <code>texName</code>, or null if this environment is not defined.
      */
     public BuiltinEnvironment getBuiltinEnvironmentByTeXName(String texName) {
         ConstraintUtilities.ensureNotNull(texName, "texName");

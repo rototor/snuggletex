@@ -204,7 +204,7 @@ public final class TestUtilities {
     }
 
     /**
-     * Wraps in the MathML test input data, by adding in the enclosing <tt>math</tt>
+     * Wraps in the MathML test input data, by adding in the enclosing <code>math</code>
      * element in the correct namespace. It also removes indentation whitespace.
      */
     public static String wrapMathMLTestData(String mathmlTestData) {

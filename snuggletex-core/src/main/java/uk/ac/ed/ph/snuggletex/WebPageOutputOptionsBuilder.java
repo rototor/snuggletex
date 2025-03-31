@@ -98,8 +98,8 @@ public final class WebPageOutputOptionsBuilder {
      * 
      * This generates XHTML + MathML; no XML declaration; no DOCTYPE.
      * <p>
-     * This is intended to be served as <tt>application/xhtml+xml</tt> with
-     * encoding declared via HTTP header and <tt>meta</tt> element.
+     * This is intended to be served as <code>application/xhtml+xml</code> with
+     * encoding declared via HTTP header and <code>meta</code> element.
      * <p>
      * This will display as an XML tree on IE, which is not useful.
      */
@@ -121,7 +121,7 @@ public final class WebPageOutputOptionsBuilder {
      *  
      * <h3>Technical notes</h3>
      * 
-     * Intended to be served as <tt>text/html</tt>, containing prefixed MathML islands.
+     * Intended to be served as <code>text/html</code>, containing prefixed MathML islands.
      * <p>
      * This only works on IE clients with the MathPlayer plug-in preinstalled,
      * but is a good option if that's your target audience.
@@ -159,8 +159,8 @@ public final class WebPageOutputOptionsBuilder {
      * 
      * The resulting page is created with an XML declaration but no DOCTYPE declaration.
      * <p>
-     * The <strong>pref:renderer</strong> attribute on the <tt>html</tt> element will be set
-     * to <tt>mathplayer-dl</tt>.
+     * The <strong>pref:renderer</strong> attribute on the <code>html</code> element will be set
+     * to <code>mathplayer-dl</code>.
      */
     public static final WebPageOutputOptions createUniversalStylesheetOptions(String clientStylesheetUrl) {
         return createUniversalStylesheetOptions(clientStylesheetUrl, "mathplayer-dl");
@@ -188,10 +188,10 @@ public final class WebPageOutputOptionsBuilder {
      * Output has XML declaration and DOCTYPE declaration
      * consisting of the Public identifier defined in {@link W3CConstants#XHTML_11_MATHML_20_PUBLIC_IDENTIFIER}
      * and System identifier defined in {@link W3CConstants#XHTML_11_MATHML_20_SYSTEM_IDENTIFIER}.
-     * The <tt>charset</tt> is declared only in the <tt>meta</tt> element in order
+     * The <code>charset</code> is declared only in the <code>meta</code> element in order
      * to appease MathPlayer.
      * <p>
-     * This is intended to be served as <tt>application/xhtml+xml</tt>
+     * This is intended to be served as <code>application/xhtml+xml</code>
      * <p>
      * Works on both Mozilla and IE6/7 (<strong>provided</strong> MathPlayer has been installed).
      * This will display wrongly on IE6/7 if MathPlayer is not installed.

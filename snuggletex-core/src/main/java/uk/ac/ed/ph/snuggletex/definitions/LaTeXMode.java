@@ -22,12 +22,12 @@ public enum LaTeXMode {
     PARAGRAPH,
     
     /** 
-     * LaTeX LR (left-to-right) Mode, used in things like <tt>\\mbox</tt> and friends
+     * LaTeX LR (left-to-right) Mode, used in things like <code>\\mbox</code> and friends
      */
     LR,
     
     /** 
-     * LaTeX MATH Mode, entered from PARAGRAPH or LR mode via commands such as <tt>\[</tt>
+     * LaTeX MATH Mode, entered from PARAGRAPH or LR mode via commands such as <code>\[</code>
      * or by certain explicit MATH environments.
      */
     MATH,

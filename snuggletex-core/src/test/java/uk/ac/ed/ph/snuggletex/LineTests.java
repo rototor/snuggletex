@@ -20,7 +20,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 
 /**
- * Set of simple tests that read in data from <tt>{@link #TEST_RESOURCE_NAME}</tt>.
+ * Set of simple tests that read in data from <code>{@link #TEST_RESOURCE_NAME}</code>.
  * These all take one input line, parse and compare with XML, which
  * may be specified on multiple input lines for convenience.
  * 

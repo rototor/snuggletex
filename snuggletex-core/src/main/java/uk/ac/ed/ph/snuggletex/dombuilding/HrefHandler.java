@@ -15,7 +15,7 @@ import java.net.URI;
 import org.w3c.dom.Element;
 
 /**
- * Handles the SnuggleTeX-specific <tt>\\href</tt> command for easily creating web links.
+ * Handles the SnuggleTeX-specific <code>\\href</code> command for easily creating web links.
  * 
  * @author  David McKain
  * @version $Revision$

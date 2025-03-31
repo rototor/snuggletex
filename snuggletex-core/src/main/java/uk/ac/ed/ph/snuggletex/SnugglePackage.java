@@ -162,7 +162,7 @@ public final class SnugglePackage {
     
     /**
      * Returns a read-only {@link Map} of all {@link BuiltinCommand}s defined in this package,
-     * keyed on the name <tt>texName</tt> of the command (<tt>\texName</tt>).
+     * keyed on the name <code>texName</code> of the command (<code>\texName</code>).
      */
     public Map<String, BuiltinCommand> getBuiltinCommandMap() {
         return Collections.unmodifiableMap(builtinCommandMap);
@@ -170,7 +170,7 @@ public final class SnugglePackage {
     
     /**
      * Returns the {@link BuiltinCommand} corresponding to LaTeX command called
-     * <tt>\texName</tt> defined by this package, or null if this command is not defined.
+     * <code>\texName</code> defined by this package, or null if this command is not defined.
      */
     public BuiltinCommand getBuiltinCommandByTeXName(String texName) {
         return builtinCommandMap.get(texName);
@@ -186,7 +186,7 @@ public final class SnugglePackage {
     
     /**
      * Returns the {@link BuiltinEnvironment} corresponding to LaTeX environment
-     * called <tt>texName</tt> defined by this package, or null if this environment is not defined.
+     * called <code>texName</code> defined by this package, or null if this environment is not defined.
      */
     public BuiltinEnvironment getBuiltinEnvironmentByTeXName(String texName) {
         return builtinEnvironmentMap.get(texName);

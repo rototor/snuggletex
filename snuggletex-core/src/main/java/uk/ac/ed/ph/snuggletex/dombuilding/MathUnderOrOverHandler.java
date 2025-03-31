@@ -13,7 +13,7 @@ import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import org.w3c.dom.Element;
 
 /**
- * Handles the <tt>\\stackrel</tt>, <tt>\\overset</tt> and <tt>\\underset</tt> commands.
+ * Handles the <code>\\stackrel</code>, <code>\\overset</code> and <code>\\underset</code> commands.
  *
  * @author  David McKain
  * @version $Revision$

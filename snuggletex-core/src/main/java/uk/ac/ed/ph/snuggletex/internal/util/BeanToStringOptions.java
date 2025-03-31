@@ -11,10 +11,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Trivial annotation that can be applied to a <tt>getX()</tt> method to prevent its
+ * Trivial annotation that can be applied to a <code>getX()</code> method to prevent its
  * details from being listed by {@link ObjectUtilities#beanToString(Object)}.
  * 
- * (This is copied from <tt>ph-commons-util</tt>.)
+ * (This is copied from <code>ph-commons-util</code>.)
  *
  * @author  David McKain
  * @version $Revision$

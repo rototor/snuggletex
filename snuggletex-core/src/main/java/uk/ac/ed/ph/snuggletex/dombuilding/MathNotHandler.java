@@ -17,7 +17,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 /**
- * Handles the <tt>\\not</tt> combiner command.
+ * Handles the <code>\\not</code> combiner command.
  *
  * @author  David McKain
  * @version $Revision$

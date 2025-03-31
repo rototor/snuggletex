@@ -16,7 +16,7 @@ import java.util.Map.Entry;
  * Trivial but slightly useful helper for creating deep dumps of Objects and their
  * its properties, which can be useful for displaying status messages and debugging.
  *
- * (This is copied from <tt>ph-commons-util</tt>.)
+ * (This is copied from <code>ph-commons-util</code>.)
  * 
  * @author  David McKain
  * @version $Revision$

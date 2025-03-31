@@ -18,7 +18,7 @@ import java.util.Locale;
  * By default, this uses the default {@link DecimalFormat} with the platform default {@link Locale}.
  * <p>
  * You will probably want your {@link DecimalFormat} to have grouping turned off, otherwise
- * something like <tt>1,2</tt> (in UK locale) would be parsed as a number 12.
+ * something like <code>1,2</code> (in UK locale) would be parsed as a number 12.
  * 
  * @since 1.3.0
  *

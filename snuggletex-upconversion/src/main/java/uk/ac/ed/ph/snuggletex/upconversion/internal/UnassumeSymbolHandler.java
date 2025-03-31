@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Handler for the <tt>\\unassumeSymbol{target}</tt> command.
+ * Handler for the <code>\\unassumeSymbol{target}</code> command.
  * 
  * @since 1.2.0
  *

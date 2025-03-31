@@ -40,7 +40,7 @@ public final class SnuggleUtilities {
     }
     
     /**
-     * Extracts a SnuggleTeX annotation from a MathML <tt>math</tt> element, if found. This allows
+     * Extracts a SnuggleTeX annotation from a MathML <code>math</code> element, if found. This allows
      * you to extract the input LaTeX from a MathML element created by SnuggleTeX, provided that
      * {@link DOMOutputOptions#isAddingMathSourceAnnotations()} returned true when the element was
      * generated.

@@ -109,7 +109,7 @@ public final class MessageFormatter {
      * Creates a DOM {@link Element} containing information about the given error, including
      * either just the {@link ErrorCode} or full details.
      * <p>
-     * The error {@link Element} will have qualified name <tt>error</tt> and belong to the
+     * The error {@link Element} will have qualified name <code>error</code> and belong to the
      * {@link SnuggleConstants#SNUGGLETEX_NAMESPACE} namespace.
      * 
      * @param ownerDocument {@link Document} that will contain the resulting element.

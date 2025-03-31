@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Handles the special <tt>xmlUnparsed</tt> command and environment.
+ * Handles the special <code>xmlUnparsed</code> command and environment.
  * <p>
  * This has the effect of handling content as normal, before effectively putting the results
  * inside a CDATA section. This is very useful for documenting how SnuggleTeX works, but may

@@ -13,7 +13,7 @@ import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import org.w3c.dom.Element;
 
 /**
- * This handles the <tt>\\ensuremath</tt> command.
+ * This handles the <code>\\ensuremath</code> command.
  *
  * @author  David McKain
  * @version $Revision$

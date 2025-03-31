@@ -43,7 +43,7 @@ All Rights Reserved
     </p>
     <p>
       Simply enter a LaTeX math mode expression into the box below and hit
-      <tt>Go!</tt> to see the resulting output and MathML.
+      <code>Go!</code> to see the resulting output and MathML.
     </p>
     <form method="post" class="input" action="{$context-path}/MathInputDemo">
       <div class="inputBox">

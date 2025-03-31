@@ -190,7 +190,7 @@ public final class SnuggleEngine {
     
     /**
      * Returns the {@link BuiltinCommand} corresponding to LaTeX command called
-     * <tt>\texName</tt>, or null if this command is not defined.
+     * <code>\texName</code>, or null if this command is not defined.
      */
     public BuiltinCommand getBuiltinCommandByTeXName(String texName) {
         ConstraintUtilities.ensureNotNull(texName, "texName");
@@ -206,7 +206,7 @@ public final class SnuggleEngine {
     
     /**
      * Returns the {@link BuiltinEnvironment} corresponding to LaTeX environment
-     * called <tt>texName</tt>, or null if this environment is not defined.
+     * called <code>texName</code>, or null if this environment is not defined.
      */
     public BuiltinEnvironment getBuiltinEnvironmentByTeXName(String texName) {
         ConstraintUtilities.ensureNotNull(texName, "texName");

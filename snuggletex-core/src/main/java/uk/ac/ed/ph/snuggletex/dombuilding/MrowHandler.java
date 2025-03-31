@@ -12,7 +12,7 @@ import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import org.w3c.dom.Element;
 
 /**
- * Builds MathML <tt>mrow</tt>s.
+ * Builds MathML <code>mrow</code>s.
  *
  * @author  David McKain
  * @version $Revision$

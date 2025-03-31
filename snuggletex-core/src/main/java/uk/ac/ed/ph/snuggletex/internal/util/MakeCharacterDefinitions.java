@@ -17,8 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This is used during the build process to create the SnuggleTeX <tt>all-math-characters.txt</tt>
- * from the <tt>unicode-math-table.tex</tt> from the <tt>unicode-math</tt> LaTeX package.
+ * This is used during the build process to create the SnuggleTeX <code>all-math-characters.txt</code>
+ * from the <code>unicode-math-table.tex</code> from the <code>unicode-math</code> LaTeX package.
  *
  * @author  David McKain
  * @version $Revision$

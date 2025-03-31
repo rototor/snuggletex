@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
  * This annotation is used by {@link ObjectDumper} to specify how types or properties
  * should be dumped.
  * <p>
- * It can be applied to both types and properties (i.e. <tt>getP()</tt> methods).
+ * It can be applied to both types and properties (i.e. <code>getP()</code> methods).
  *
- * (This is copied from <tt>ph-commons-util</tt>.)
+ * (This is copied from <code>ph-commons-util</code>.)
  * 
  * @author  David McKain
  * @version $Revision$

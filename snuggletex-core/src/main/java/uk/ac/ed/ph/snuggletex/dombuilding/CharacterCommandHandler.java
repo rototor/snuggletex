@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
  * <p>
  * In TEXT mode, the resulting character is appending to the DOM directly.
  * <p>
- * In MATH mode, the character is wrapped inside an <tt>mi</tt> element.
+ * In MATH mode, the character is wrapped inside an <code>mi</code> element.
  *
  * @author  David McKain
  * @version $Revision$

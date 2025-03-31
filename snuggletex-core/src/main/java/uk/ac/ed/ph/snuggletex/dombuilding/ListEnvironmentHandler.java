@@ -21,7 +21,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 /**
- * This handles LaTeX list environments (i.e. <tt>itemize</tt> and <tt>enumerate</tt>).
+ * This handles LaTeX list environments (i.e. <code>itemize</code> and <code>enumerate</code>).
  * 
  * @author  David McKain
  * @version $Revision$

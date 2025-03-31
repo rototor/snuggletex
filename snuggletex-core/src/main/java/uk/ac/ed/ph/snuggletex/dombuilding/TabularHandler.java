@@ -24,8 +24,8 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 /**
- * Handles the (rather complex) <tt>tabular</tt> environment.
- * It also handles the <tt>\\hline</tt> command.
+ * Handles the (rather complex) <code>tabular</code> environment.
+ * It also handles the <code>\\hline</code> command.
  * 
  * FIXME: This is legal inside $\mbox{...}$ so needs to output MathML in this case. Eeek!!!
  * FIXME: No support for \vline and friends!!!
@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
 public final class TabularHandler implements CommandHandler, EnvironmentHandler {
 
     /**
-     * The command matched here is <tt>\\hline</tt>.
+     * The command matched here is <code>\\hline</code>.
      * <p>
      * This case will have been dealt with explicitly by the tabular environment when
      * used correctly so, if we end up here, then client has made a boo-boo. 
@@ -217,7 +217,7 @@ public final class TabularHandler implements CommandHandler, EnvironmentHandler 
     /**
      * Computes the dimensions of the table by looking at its content.
      * 
-     * @param tableContent content of the <tt>tabular</tt> environment.
+     * @param tableContent content of the <code>tabular</code> environment.
      * 
      * @return { rowCount, columnCount } pair
      */

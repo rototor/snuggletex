@@ -19,9 +19,9 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 /**
- * Handles the LaTeX <tt>array</tt> environment.
+ * Handles the LaTeX <code>array</code> environment.
  * <p>
- * This can only be used in MATH mode and generates a <tt>mtable</tt> as a result.
+ * This can only be used in MATH mode and generates a <code>mtable</code> as a result.
  * 
  * @author  David McKain
  * @version $Revision$

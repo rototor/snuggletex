@@ -25,8 +25,8 @@ import org.w3c.dom.Element;
 
 /**
  * Handles matched parentheses encapsulated within {@link CorePackageDefinitions#ENV_BRACKETED}
- * environments. These have either been explicitly specified with <tt>\\left</tt> and
- * <tt>\\right</tt> or have been inferred by the {@link TokenFixer}.
+ * environments. These have either been explicitly specified with <code>\\left</code> and
+ * <code>\\right</code> or have been inferred by the {@link TokenFixer}.
  *
  * @author  David McKain
  * @version $Revision$

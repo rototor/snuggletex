@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
 
 /**
  * Handles the mathematical "limit" tokens like {@link CorePackageDefinitions#CMD_MSUB_OR_MUNDER}, generating
- * either <tt>msub</tt> or <tt>munder</tt> as appropriate, with analogous results for
+ * either <code>msub</code> or <code>munder</code> as appropriate, with analogous results for
  * {@link CorePackageDefinitions#CMD_MSUP_OR_MOVER} and {@link CorePackageDefinitions#CMD_MSUBSUP_OR_MUNDEROVER}.
  *
  * @author  David McKain

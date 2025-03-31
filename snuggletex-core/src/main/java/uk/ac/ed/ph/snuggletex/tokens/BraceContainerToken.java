@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * Represents a literal braced section in the original LaTeX document, i.e. something like
- * <tt>{ ... }</tt>.
+ * <code>{ ... }</code>.
  * <p>
  * The {@link TokenFixer} strips these out when in PARAGRAPH mode as they're only used to
  * delimit stylings. They are kept in for MATH and LR mode since they are used as implicit

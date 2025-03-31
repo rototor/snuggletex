@@ -786,7 +786,7 @@ public final class DOMBuilder {
     // Various Helpers
     
     /**
-     * Builds a MathML <tt>math</tt> element for the given Token token, using contentToken
+     * Builds a MathML <code>math</code> element for the given Token token, using contentToken
      * to provide the content, descending into child Nodes as normal.
      */
     public void buildMathElement(final Element parentElement,
@@ -827,7 +827,7 @@ public final class DOMBuilder {
     };
     
     /**
-     * Builds a MathML <tt>math</tt> element for the given Token token, using contentToken
+     * Builds a MathML <code>math</code> element for the given Token token, using contentToken
      * to provide the content, using the given {@link MathContentBuilderCallback} to
      * supply the content.
      * <p>

@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
 
 /**
  * Trivial "do nothing" handler for commands and environments that don't add anything to
- * the resulting DOM. (E.g. <tt>\\newcommand</tt> doesn't make any visible output.)
+ * the resulting DOM. (E.g. <code>\\newcommand</code> doesn't make any visible output.)
  *
  * @author  David McKain
  * @version $Revision$

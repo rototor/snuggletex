@@ -11,7 +11,7 @@ import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import org.w3c.dom.Element;
 
 /**
- * Handles instances of <tt>\\\\</tt>, which forces a line break at the given point.
+ * Handles instances of <code>\\\\</code>, which forces a line break at the given point.
  *
  * @author  David McKain
  * @version $Revision$

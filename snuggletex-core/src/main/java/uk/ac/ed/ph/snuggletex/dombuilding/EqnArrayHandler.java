@@ -19,7 +19,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 /**
- * Handles the <tt>eqnarray*</tt> environment.
+ * Handles the <code>eqnarray*</code> environment.
  * 
  * @see MathEnvironmentHandler
  * 

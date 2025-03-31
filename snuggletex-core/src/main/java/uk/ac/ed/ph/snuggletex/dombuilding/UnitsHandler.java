@@ -12,7 +12,7 @@ import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import org.w3c.dom.Element;
 
 /**
- * Handles <tt>\\units</tt>, generating an <tt>mi</tt> element of the form:
+ * Handles <code>\\units</code>, generating an <code>mi</code> element of the form:
  * 
  * <pre>
  *   &lt;mi mathvariant="normal" class="MathML-Unit"&gt;...&lt;/mi&gt;

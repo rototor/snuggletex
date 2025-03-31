@@ -75,7 +75,7 @@ All Rights Reserved
         <p>
           To try the demo, simply enter some some ASCIIMathML into the box below.
           You should see a real time preview of this while you type.
-          Then hit <tt>Go!</tt> to use SnuggleTeX to semantically enrich your
+          Then hit <code>Go!</code> to use SnuggleTeX to semantically enrich your
           input.
         </p>
         <form method="post" class="input" action="{$context-path}/ASCIIMathMLUpConversionDemo">

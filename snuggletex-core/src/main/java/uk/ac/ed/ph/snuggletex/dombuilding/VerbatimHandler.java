@@ -16,14 +16,14 @@ import uk.ac.ed.ph.snuggletex.tokens.TokenType;
 import org.w3c.dom.Element;
 
 /**
- * Handles the <tt>verbatim</tt> environment and <tt>\\verb</tt> command.
+ * Handles the <code>verbatim</code> environment and <code>\\verb</code> command.
  *
  * @author  David McKain
  * @version $Revision:179 $
  */
 public final class VerbatimHandler implements CommandHandler, EnvironmentHandler {
     
-    /** Set to handled 'starred' variants, e.g <tt>\\verb*</tt> */
+    /** Set to handled 'starred' variants, e.g <code>\\verb*</code> */
     private final boolean starred;
     
     public VerbatimHandler(final boolean starred) {

@@ -19,7 +19,7 @@ import javax.xml.transform.stream.StreamSource;
  * {@link ClassLoader}.
  * <p>
  * Such resources should be specified via a special URI scheme called {@link #URI_SCHEME},
- * i.e. of the form <tt>classpath:/uk/ac/ed/ph/snuggletex/thingy.xsl</tt>.
+ * i.e. of the form <code>classpath:/uk/ac/ed/ph/snuggletex/thingy.xsl</code>.
  * <p>
  * (The '/' is required here, unlike the similar mechanism in Spring Framework.)
  *

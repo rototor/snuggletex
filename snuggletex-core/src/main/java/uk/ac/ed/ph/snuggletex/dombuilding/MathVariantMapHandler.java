@@ -14,7 +14,7 @@ import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
 import org.w3c.dom.Element;
 
 /**
- * This handles changes to the current "mathvariant" caused by things like <tt>\\mathcal</tt>
+ * This handles changes to the current "mathvariant" caused by things like <code>\\mathcal</code>
  * and friends.
  * <p>
  * Because these commands' argument may consist of multiple tokens, we manage the application

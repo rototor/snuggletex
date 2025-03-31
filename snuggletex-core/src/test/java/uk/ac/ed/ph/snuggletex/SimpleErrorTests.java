@@ -14,7 +14,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Set of tests defined in <tt>{@link #TEST_RESOURCE_NAME}</tt> that take single line
+ * Set of tests defined in <code>{@link #TEST_RESOURCE_NAME}</code> that take single line
  * inputs in the hope of generating errors. These are then compared against the
  * specified list of errors. See the input file for examples.
  *

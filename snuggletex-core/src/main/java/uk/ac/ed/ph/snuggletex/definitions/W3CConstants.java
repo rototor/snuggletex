@@ -13,7 +13,7 @@ import javax.xml.XMLConstants;
  * <p>
  * These supplement the core XML-related constants in {@link XMLConstants}.
  * <p>
- * (This is copied from <tt>ph-commons-util</tt>.)
+ * (This is copied from <code>ph-commons-util</code>.)
  * 
  * @since 1.2.0
  *

@@ -44,11 +44,11 @@ import org.slf4j.LoggerFactory;
  * SnuggleTeX. Main points:
  * <ul>
  *   <li>
- *     Documentation is written in SnuggleTeX format as <tt>.tex</tt> files under
+ *     Documentation is written in SnuggleTeX format as <code>.tex</code> files under
  *     {@link #TEX_SOURCE_BASE_RESOURCE}
  *   </li>
  *   <li>
- *     Servlet responds to requests under a particular base URL as defined in <tt>web.xml</tt>.
+ *     Servlet responds to requests under a particular base URL as defined in <code>web.xml</code>.
  *     The extra path info is mapped to a "resource path".
  *   </li>
  *   <li>
@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  *   </li>
  *   <li>
  *     Servlet stores generated versions of documentation in a temp directory. If not found,
- *     it tries to recreate from scratch using the <tt>.tex</tt> file.
+ *     it tries to recreate from scratch using the <code>.tex</code> file.
  *   </li>
  *   <li>
  *     Limited caching is available. If off, we recreate each documentation resource each time,
@@ -73,7 +73,7 @@ public final class DocumentationServlet extends BaseServlet {
 
     static final Logger logger = LoggerFactory.getLogger(DocumentationServlet.class);
     
-    /** <tt>init-param</tt> controlling whether we are caching or not */
+    /** <code>init-param</code> controlling whether we are caching or not */
     private static final String CACHING_PARAM = "caching";
     
     /** Location of XSLT for formatting the resulting web pages */
@@ -82,7 +82,7 @@ public final class DocumentationServlet extends BaseServlet {
     /** Location of macros TeX file (relative to webapp) */
     private static final String MACROS_RESOURCE_LOCATION = "/WEB-INF/macros.tex";
     
-    /** Base Location for <tt>.tex</tt> source files (relative to webapp) */
+    /** Base Location for <code>.tex</code> source files (relative to webapp) */
     private static final String TEX_SOURCE_BASE_RESOURCE = "/WEB-INF/docs";
     
     /** Maps supported extensions to Content Types, for all extensions we support here */
